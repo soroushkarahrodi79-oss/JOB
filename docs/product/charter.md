@@ -72,6 +72,36 @@ The prototype is additionally **not**:
 - evidence of regulatory compliance,
 - connected to any real provider, registry, or payment rail.
 
+### Prototype non-goals — features deliberately excluded
+
+Each of these is a feature that would make the prototype look richer and the thesis weaker. They
+were evaluated individually rather than dismissed as a class; several are plausible and one is a
+close call.
+
+| Excluded | Why |
+| --- | --- |
+| **Social feed** | Attention product mechanics on an income product. Serves no decision in any story, and pulls toward the "mini LinkedIn" failure the experience must avoid. |
+| **Career coaching** | A different product with a different buyer. The thesis is that a portable record removes the need to re-argue competence, not that the Platform develops it. |
+| **Training marketplace** | Plausible adjacency and a real revenue idea — and it makes the Platform a party to what a worker can do, which entangles the neutral-intermediary posture (Q6) for no demo gain. |
+| **Chat / messaging between parties** | The closest call. Rejected because the narrower alternative produces **better** evidence: a structured, acknowledged amendment to agreed terms rather than an argument to interpret. This is what decides the dispute in Story C. Notifications go to a `MOCK` outbox instead. |
+| **Full payroll, tax filing, invoicing** | Charter non-goal above; Q10 `UNKNOWN`. |
+| **Real banking or payment rails** | Charter non-goal; Q5 `UNKNOWN` and severe; D11 unresearched. |
+| **Any Platform-held balance or escrow** | Charter non-goal; holding third-party funds is likely regulated (Q5). Present in the truth matrix as a permanent `MOCK` so its absence can be shown honestly. |
+| **Real KYC or identity rails** | Q3 `UNKNOWN`. Verification stays `SIMULATED` and stores outcomes only. |
+| **Legal verdicts or compliance guidance** | [ADR-0007](../adr/0007-legal-claims-carry-epistemic-status.md). The classification signal is a hypothesis with recorded factors and nothing more. |
+| **Machine-learned matching or an AI score** | Destroys success criterion 2 — an unexplainable ranking cannot state why someone was excluded, and cannot be audited for unfair exclusion (Q9). |
+| **Hundreds of job categories** | Breadth without depth. A small curated taxonomy for the demo scenarios only (D5's recorded default). |
+| **Nationwide coverage** | One city, named neighbourhoods. Claiming national coverage in a prototype with synthetic geography would be an overclaim of exactly the kind the truth matrix exists to prevent. |
+| **Evidence media for Proof of Work** | Photographs would be the most persuasive thing in the demo and the least defensible: a new port, an unanswered consent basis (Q4), an unanswered retention rule (Q7), and a moderation surface. Recorded as D17. |
+| **Composite trust score, ratings, badges, levels** | Collapses the provenance the four-layer record exists to keep apart, and presents a person primarily as a number. Design principles 2, 6 and 9. |
+| **Worker-to-worker features, referrals, growth loops** | No decision, no state, no thesis. |
+| **Employer applicant-tracking features** | Persona P2 is not a recruiter and will not operate a pipeline. |
+| **Real notifications over SMS or any carrier** | `MOCK` outbox only. No message leaves the system. |
+| **Multi-language toggle** | Persian is the source language, not an option ([ADR-0005](../adr/0005-persian-first-rtl-native-ui.md)). A toggle would imply a Latin-shaped product underneath. |
+
+Adding any of these to the prototype requires a decision recorded here, and — where it introduces a
+port or changes a truth level — an ADR.
+
 ## Success criteria for the prototype
 
 The prototype succeeds if a competent, sceptical reviewer can:

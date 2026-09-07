@@ -6,13 +6,16 @@ file is the defect.
 
 ## 1. Current state
 
-**GATE 0 — FOUNDATION.** Documentation and governance only.
+**GATE 1 — PRODUCT AND INTERACTION DEFINITION.** Documentation and governance only.
+GATE 0 closed `FOUNDATION_LOCKED`; GATE 0.1 closed `FOUNDATION_RECONCILED`.
 
 There is **no application code, no dependencies, no build tooling, no database**. This is
 deliberate, not incomplete.
 
 **Do not**, in this gate: implement screens, install dependencies, add `package.json` or build
-config, provision a database, connect any external service, or create empty directory skeletons.
+config, provision a database, connect any external service, create empty directory skeletons,
+choose visual styling, or generate demo data. Screens are *defined* at this gate and *designed* at
+GATE 2.
 
 Gate definitions and exit criteria: [docs/acceptance-gates.md](docs/acceptance-gates.md).
 
@@ -37,6 +40,12 @@ The four you will need most often:
 - What is real vs simulated → [docs/demo-truth-matrix.md](docs/demo-truth-matrix.md)
 - Architecture rules → [docs/architecture/system-architecture.md](docs/architecture/system-architecture.md)
 - Provider boundaries → [docs/architecture/provider-boundaries.md](docs/architecture/provider-boundaries.md)
+
+And, from GATE 1 onward:
+
+- What the prototype does → [docs/product/screen-inventory.md](docs/product/screen-inventory.md)
+  and [docs/product/experience/](docs/product/experience/)
+- What the demo is → [docs/product/demo-scenarios.md](docs/product/demo-scenarios.md)
 
 ## 4. Hard rules
 

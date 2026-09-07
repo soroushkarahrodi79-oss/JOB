@@ -4,7 +4,8 @@
 > **Not canonical for:** persistence or representation (see
 > [../architecture/data-model.md](../architecture/data-model.md)), classification rules (see
 > [engagement-classification.md](engagement-classification.md)), human actors (see
-> [../product/personas.md](../product/personas.md)).
+> [../product/personas.md](../product/personas.md)), or entity lifecycle states (see
+> [state-transitions.md](state-transitions.md)).
 > **Status:** Draft. Conceptual only — no fields, no types, no schema. Those arrive at GATE 3.
 
 ## Ubiquitous language
@@ -24,6 +25,7 @@ If a term is being used loosely, that is a defect.
 | **Proof of Work** | Evidence that work occurred, derived from recorded events. | Surveillance data, and not the blockchain term. |
 | **Reputation** | A derived signal from completed engagements and outcomes. | A score the Platform can adjust by hand. |
 | **Preferred Crew** | An employer's rehire relationship with specific workers. | A guarantee of future work or of eligibility. |
+| **Work Graph** | The accumulating network of worker–employer relationships, derived from engagement history, Preferred Crew and reputation. | An entity, a stored structure, or a product feature. It is a name for a projection, and it is visible only through its effects — a prior-relationship reason on a candidate list, an employer's repeat-worker rate, a case reviewer's relationship history. |
 | **Engagement Classification** | The Platform's *hypothesis* about the nature of an engagement. | A legal determination. See [engagement-classification.md](engagement-classification.md). |
 | **Dispute** | A recorded disagreement about an engagement. | Arbitration. The Platform does not adjudicate. |
 
@@ -73,3 +75,9 @@ structural commitment of the model.
   auditable.
 - No skills taxonomy. Whether skills are a controlled vocabulary or free text is open — D5.
 - No geographic hierarchy. Whether location is administrative, point-based, or both is open — D6.
+- **No `WorkGraph` entity.** The term names a projection over `EngagementEvent`, `Reputation` and
+  Preferred Crew, and it is defined above so the term cannot drift into meaning a stored graph. A
+  materialised graph that can disagree with the events it summarises would break invariant 1 in the
+  one place the product's compounding claim is made.
+- No `Application` or `Offer` entity. Offer and acceptance are states of `Engagement`, not a
+  separate concept — see [state-transitions.md](state-transitions.md).
