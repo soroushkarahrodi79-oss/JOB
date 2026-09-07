@@ -50,9 +50,10 @@ The project collects the minimum required for a stated purpose.
 
 ## Not decided
 
-- Database engine deployment and hosting location. PostgreSQL is provisional — see
-  [ADR-0008](../adr/0008-provisional-application-stack.md) and D4. Where data physically resides
-  is a legal question, not only an operational one.
+- Database engine deployment and hosting location. PostgreSQL is accepted for the prototype
+  ([ADR-0008](../adr/0008-provisional-application-stack.md)); production hosting topology (D13) and
+  personal-data residency (D14) are not. Where data physically resides is a legal question (Q8), not
+  only an operational one, and the prototype avoids it entirely by holding synthetic data only.
 - Multi-tenancy model. No current requirement.
 - Retention periods. These depend on unresolved legal questions and are not guessed — Q7.
 - Encryption at rest and key management. Deferred to the gate that introduces real data;

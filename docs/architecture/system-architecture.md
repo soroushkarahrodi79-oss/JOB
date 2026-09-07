@@ -71,9 +71,18 @@ enforced by tooling in CI, not by review discipline. The specific mechanism is c
 - Caching, background workers, rate limiting. No evidence of need.
 - Multi-tenancy model. See [data-model.md](data-model.md).
 
-## Known architectural tension
+## Runtime portability
 
-The provisional stack ([ADR-0008](../adr/0008-provisional-application-stack.md)) is built on
-foreign infrastructure — package registries, font and asset CDNs, and hosting platforms — which
-sits in tension with the charter's provider-portability constraint. The tension is real,
-unresolved, and tracked as D4. It is recorded rather than smoothed over.
+The prototype stack is accepted under a standing portability constraint, defined in
+[ADR-0008](../adr/0008-provisional-application-stack.md) constraints 2 and 3 and not restated here.
+Its enforcement follows the same rule as dependency direction above: verified in CI, not by review
+discipline.
+
+Runtime portability is deliberately separated from three things it is often confused with:
+
+- **Dependency supply-chain availability** is a build-time concern, mitigated but not solved (D15).
+- **Production hosting topology** (D13) is undecided and is not implied by the prototype stack.
+- **Production personal-data residency** (D14) is undecided, depends on Q8, and constrains D13.
+
+The residual, genuinely unresolved tension is the last two. Recording them separately is what stops
+a prototype convenience from being read later as a production commitment.

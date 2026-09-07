@@ -48,7 +48,12 @@ in code. This is the first gate that installs dependencies. It is also the first
 this repository can define validation commands; until then, `CLAUDE.md` correctly states that
 none exist.
 
-**Blocked on:** the GATE 2 entries in [open-decisions.md](open-decisions.md) — principally D4 — and [ADR-0008](adr/0008-provisional-application-stack.md) moving from Proposed to Accepted.
+**Not blocked.** [ADR-0008](adr/0008-provisional-application-stack.md) is accepted for the
+prototype, and GATE 2 was previously blocked on a production hosting question it never depended on.
+
+**Must be satisfied within this gate:** D15 (dependency and supply-chain resilience) and the
+CI-enforced portability check required by ADR-0008 constraint 3. These are work inside the gate,
+not preconditions for entering it.
 
 ## GATE 3 — Domain implementation
 

@@ -40,4 +40,4 @@ determined by an accepted ADR.
 | [0005](0005-persian-first-rtl-native-ui.md) | Persian-first, RTL-native UI | Accepted |
 | [0006](0006-single-source-of-truth-documentation.md) | Single-source-of-truth documentation | Accepted |
 | [0007](0007-legal-claims-carry-epistemic-status.md) | Legal claims carry epistemic status | Accepted |
-| [0008](0008-provisional-application-stack.md) | Provisional application stack | **Proposed** |
+| [0008](0008-provisional-application-stack.md) | Prototype application stack | Accepted |

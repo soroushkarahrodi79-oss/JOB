@@ -55,8 +55,35 @@ Legal uncertainty is contained so it does not become a rewrite:
   identity data are `UNKNOWN`.
 - **Retention is not implemented** rather than guessed.
 
+## The limit of this containment
+
+The containment above is real but partial, and overstating it would be its own form of false
+certainty.
+
+Persisting factors rather than verdicts protects against a **re-weighting** of the analysis: if the
+correct legal test gives different importance to facts the system already records, the factor model
+changes and recorded history is reinterpreted without loss.
+
+It does **not** protect against a **factor-set expansion**: if the correct test turns on facts the
+system never captured, history cannot be reinterpreted, because the data was never collected. No
+storage design can reinterpret an unrecorded fact.
+
+The practical consequence: the architectural exposure of Q1 is low, while the exposure of **Q2** —
+whether the recorded factors are the right ones — is high, and rises with every month of accumulated
+history built on the wrong factor set. Q2 is therefore more urgent than its `High` severity suggests
+when read alone, and is the strongest argument for obtaining legal review early rather than at
+production.
+
 ## What would change the architecture
 
-If Q1, Q5 or Q6 resolve unfavourably, the affected changes are **not** local. They would be
-material architectural changes requiring an ADR and potentially a re-scoping of the product. This
-is stated plainly so the risk is not discovered late.
+- **Q6 unfavourable** — changes the Platform's legal posture, which is a charter-level
+  re-scoping, not a refactor.
+- **Q5 unfavourable** — may require a different payment topology; contained to the payment port and
+  the ledger, not the domain.
+- **Q2 unfavourable** — changes what must be captured, and is the one case the containment above
+  does not cover.
+- **Q1 unfavourable** — changes classification logic and downstream obligations; contained by the
+  factor-not-verdict design, within the limit stated above.
+
+These are stated plainly so the risk is not discovered late, and separated so that a severe legal
+outcome is not assumed to be an architectural one, or vice versa.
