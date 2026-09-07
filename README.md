@@ -5,8 +5,8 @@ seeking short-duration work with businesses that need reliable workers.
 
 ## Status
 
-**GATE 1 — PRODUCT AND INTERACTION DEFINITION.** This repository currently contains documentation
-and governance only.
+**GATE 1.5 — DESIGN SYSTEM AND VISUAL PRODUCT LANGUAGE.** This repository currently contains
+documentation and governance only.
 
 There is no application, no dependencies, and no database. That is intentional. See
 [docs/acceptance-gates.md](docs/acceptance-gates.md).
@@ -18,6 +18,7 @@ There is no application, no dependencies, and no database. That is intentional. 
 | What the product is and is not | [docs/product/charter.md](docs/product/charter.md) |
 | What the prototype demonstrates, screen by screen | [docs/product/screen-inventory.md](docs/product/screen-inventory.md) |
 | What the investor demo looks like | [docs/product/investor-narrative.md](docs/product/investor-narrative.md) |
+| What it looks like, and why | [docs/design/visual-language.md](docs/design/visual-language.md) |
 | Where every concept is documented | [docs/README.md](docs/README.md) |
 | What is real, simulated, mocked or planned | [docs/demo-truth-matrix.md](docs/demo-truth-matrix.md) |
 | Why the architecture looks like this | [docs/adr/](docs/adr/README.md) |

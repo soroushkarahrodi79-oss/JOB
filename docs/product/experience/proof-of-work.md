@@ -35,7 +35,7 @@ arrival. Produces an arrival attestation with a time.
 collecting the data — and the screen says exactly that where the simulated strength is shown.
 
 Chosen over a QR code because it works on the cheapest phone, over a poor camera, in a badly lit
-storeroom. QR is a presentation option for GATE 2, not a requirement; the mechanism is a shared
+storeroom. QR is a presentation option for GATE 1.5, not a requirement; the mechanism is a shared
 single-use secret either way.
 
 ### 2 — Time confirmation

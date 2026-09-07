@@ -9,7 +9,7 @@ Work belonging to a later gate is not started early, even when it looks cheap.
 
 ## Current gate
 
-**GATE 1 — PRODUCT AND INTERACTION DEFINITION.**
+**GATE 1.5 — DESIGN SYSTEM AND VISUAL PRODUCT LANGUAGE.**
 
 ## Gate history
 
@@ -18,6 +18,7 @@ Work belonging to a later gate is not started early, even when it looks cheap.
 | GATE 0 — Foundation | `FOUNDATION_LOCKED` | 2026-09-07 |
 | GATE 0.1 — Architecture reconciliation | `FOUNDATION_RECONCILED` | 2026-09-07 |
 | GATE 1 — Product and interaction definition | `PROTOTYPE_EXPERIENCE_LOCKED` — on authorised prototype-provisional defaults for D1, D2, D3, D8 and D9, none of which is resolved | 2026-09-07 |
+| GATE 1.5 — Design system and visual product language | `DESIGN_SYSTEM_LOCKED` — on the same five authorised defaults, with D19 newly recorded `PENDING AUTHORISATION` | 2026-09-07 |
 
 GATE 1 first returned `PROTOTYPE_EXPERIENCE_NOT_READY` because the gate rule and the decision
 register contradicted each other. The contradiction was resolved by
@@ -26,6 +27,12 @@ register contradicted each other. The contradiction was resolved by
 GATE 0.1 was an unplanned reconciliation gate, recorded here after the fact because it produced an
 accepted ADR ([ADR-0008](adr/0008-provisional-application-stack.md)) and changed a gate's blocking
 status. A gate that leaves no record in this document is a gate that did not happen.
+
+GATE 1.5 was inserted on explicit human instruction and is numbered fractionally for the reason
+recorded in [ADR-0011](adr/0011-design-system-gate.md): renumbering the later gates would have
+required editing three accepted ADRs, and accepted ADRs are immutable. GATE 1.5 also found and
+corrected a contradiction GATE 1 had introduced — three GATE 1 documents used "GATE 2" to mean the
+design gate while this document used it to mean the engineering skeleton.
 
 ## GATE 0 — Foundation
 
@@ -91,6 +98,54 @@ GATE 1 previously had none. They are recorded here so the gate can be judged rat
 **Verdict vocabulary:** `PROTOTYPE_EXPERIENCE_LOCKED` or `PROTOTYPE_EXPERIENCE_NOT_READY`. No other
 verdict is valid.
 
+## GATE 1.5 — Design system and visual product language
+
+The visual and interaction system the later gates implement. Specification only: no dependencies, no
+components, no styling code, no scaffold. Inserted by
+[ADR-0011](adr/0011-design-system-gate.md).
+
+**Blocked on:** nothing. It inherits GATE 1's five authorised prototype-provisional defaults and adds
+no dependency on an unresolved decision.
+
+**Exit criteria**
+
+1. Two or more credible visual directions are assessed against the same surface, and **one is
+   selected**, with the rejections and their reasons recorded.
+2. Typography, colour, spacing, density, radius, borders, elevation, iconography, motion, focus,
+   responsive behaviour and content hierarchy each have a canonical decision with a product reason.
+   A value chosen for completeness is a defect.
+3. The typography system is specified against Persian first — body readability, mixed Persian/Latin,
+   Persian numerals, tabular alignment, money and Jalali dates — and creates no foreign-CDN runtime
+   dependency.
+4. Brand colour and semantic state are architecturally separate, and every semantic role is defined
+   by meaning rather than by hue.
+5. Every state the domain holds has exactly one rendering, produced by one state system rather than
+   by an independent treatment per status. A state present in
+   [domain/state-transitions.md](domain/state-transitions.md) and absent from the vocabulary is a
+   defect.
+6. No state, provenance level or truth level is communicated by colour alone.
+7. The Opportunity Card, the Worker Passport and the Employer Trust Profile each have a specification
+   covering content, hierarchy, variants, empty states, mobile and RTL behaviour, and anti-patterns.
+8. Matching explanation, classification signal, Proof of Work, payment and dispute review each have a
+   rendering pattern that satisfies the demonstration requirements in
+   [product/experience/](product/experience/).
+9. Every Golden Path view is mapped to the visual system, and the supporting screens are confirmed to
+   reuse it without a second visual language.
+10. Accessibility is specified to WCAG 2.2 Level AA as a floor, including focus behaviour, keyboard
+    expectations, contrast, touch targets, motion, semantic heading hierarchy, error messaging, and
+    screen-reader expectations for status and evidence.
+11. Navigation is defined per actor and adds no destination the screen inventory does not make an
+    entry point.
+12. The token architecture is proposed, semantic, bounded, and carries an explicit rule against
+    token growth.
+13. The adversarial audits in [design/adversarial-review.md](design/adversarial-review.md) have been
+    run, their findings corrected, and unresolved risks carried forward explicitly rather than
+    closed.
+14. No application code, dependency, component, route or stylesheet is produced.
+
+**Verdict vocabulary:** `DESIGN_SYSTEM_LOCKED` or `DESIGN_SYSTEM_NOT_READY`. No other verdict is
+valid.
+
 ## GATE 2 — Engineering skeleton
 
 Workspace, strict TypeScript, linting, test runners, and the domain/ports separation expressed
@@ -104,6 +159,11 @@ prototype, and GATE 2 was previously blocked on a production hosting question it
 **Must be satisfied within this gate:** D15 (dependency and supply-chain resilience) and the
 CI-enforced portability check required by ADR-0008 constraint 3. These are work inside the gate,
 not preconditions for entering it.
+
+**Also within this gate**, per [ADR-0011](adr/0011-design-system-gate.md) decision 4: the token layer
+from [design/tokens.md](design/tokens.md), the accessibility semantics of the primitives, and the
+eight verification risks carried out of GATE 1.5 in
+[design/adversarial-review.md](design/adversarial-review.md). Screens are GATE 4.
 
 ## GATE 3 — Domain implementation
 

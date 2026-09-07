@@ -29,6 +29,7 @@ should be settled by an agent or by default.
 | **D16** | Is the default acceptance mode open acceptance (any eligible worker may accept) or invite-only? | Open acceptance is fast, which is what persona P2 needs within 24 hours; invite-only gives the employer control and reduces the chance a worker accepts work that turns out badly matched. Both are defensible and the choice affects who bears the cost of a bad match. Recorded at GATE 1. | GATE 4 | Both modes exist and the employer chooses per opportunity; the pre-selected mode is invite-only. |
 | **D17** | Does Proof of Work require evidence media (photograph, file), and therefore a storage port? | Media is the most persuasive proof and the least defensible: it needs a new port ([ADR-0003](adr/0003-provider-ports-and-adapters.md)), a consent basis (Q4), a retention rule (Q7) and a moderation surface. Excluding it may also make proof too weak for some work types, which is a demand question nobody has answered. Recorded at GATE 1. | Any real pilot | Not built. Structured fields only. Adding it requires an ADR. |
 | **D18** | The employer response window for submitted proof: its length, and whether non-response should authorise release at all. | Non-response authorising release puts the cost of employer inattention on the employer; non-response withholding release puts it on the worker, who has already performed. The first is the defensible default and it is still a guess about a real behavioural distribution. Recorded at GATE 1. | GATE 4 | A stated window with release on elapse, recorded as `ApprovedByNonResponse` and never rendered as an approval. |
+| **D19** | Which Persian text face and which monospace face the product uses. | The selection criteria are settled ([design/typography.md](design/typography.md)) and the choice is not. Criterion 1 requires a person to read the licence and confirm that self-hosting and redistribution are permitted; an agent may not assert a licence fact. Criteria 4 and 5 — Persian tabular figures, and usable weight separation at body size — can only be settled by rendering, not by reading a specimen. Recorded at GATE 1.5. | GATE 2 | None acceptable. A font shipped on an unverified licence is a legal exposure, and an unverified one is a rendering risk. |
 
 ## Prototype-provisional defaults
 
@@ -52,12 +53,18 @@ and does not remove the entry from the table above. Scope is **prototype only** 
 | **D16** | Both acceptance modes exist; the pre-selected mode is invite-only. | [domain/state-transitions.md](domain/state-transitions.md) | The engagement state machine needs both entry paths defined. | Entry to GATE 4. | **Prohibited without review** | `PENDING AUTHORISATION` — agent-proposed at GATE 1 |
 | **D17** | No evidence media. Structured completion fields only. | [product/experience/proof-of-work.md](product/experience/proof-of-work.md) | Proof mechanisms must be enumerable to be built. | Any pilot, or evidence that structured proof is too weak for a real work type. | **Prohibited without review** | `PENDING AUTHORISATION` — agent-proposed at GATE 1; selects an absence, so it cannot overclaim |
 | **D18** | A stated response window, with release on elapse recorded as `ApprovedByNonResponse` and never rendered as an approval. | [domain/state-transitions.md](domain/state-transitions.md) | Proof resolution needs a terminal path when the employer is silent. | Entry to GATE 4. | **Prohibited without review** | `PENDING AUTHORISATION` — agent-proposed at GATE 1 |
+| **D19** | A self-hosted, redistributable open Persian text face plus a self-hosted monospace face, selected against the seven criteria in [design/typography.md](design/typography.md). **No specific face is named**, because naming one would assert a licence fact. | [design/typography.md](design/typography.md) | The type scale, the numeric alignment and the whole visual system depend on a face with Persian tabular figures and usable weight separation. | Entry to GATE 2, when the faces must be selected and rendered. | **Prohibited without review** — the licence must be read by a person before any distribution | `PENDING AUTHORISATION` — agent-proposed at GATE 1.5 |
 
 `PENDING AUTHORISATION` entries were proposed by an agent and are **not** authorised. Per
 [ADR-0010](adr/0010-prototype-provisional-defaults.md) safeguard 8 they may not be relied upon past
-the gate named in their *Blocks* column. None of D16, D17 or D18 blocks GATE 1. **D18 is the
-consequential one** — it decides whether a worker is paid when an employer stays silent — and it
-requires human authorisation before GATE 4.
+the gate named in their *Blocks* column. None of D16, D17, D18 or D19 blocked GATE 1 or GATE 1.5.
+**D18 is the consequential one** — it decides whether a worker is paid when an employer stays silent
+— and it requires human authorisation before GATE 4.
+
+D19 is the narrowest of the four and is unusual in that its provisional value names a *shape* rather
+than a value: an agent may state the criteria a face must meet and may not state that any particular
+face meets criterion 1, because that is a claim about a licence. It must be discharged at GATE 2,
+which is the gate that would ship a font file.
 
 No entry in [legal/open-questions.md](legal/open-questions.md) appears here or ever may. Legal
 `UNKNOWN`s stay `UNKNOWN`; only prototype behaviour *around* them is selected, and only where that

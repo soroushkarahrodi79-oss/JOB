@@ -2,15 +2,15 @@
 
 > **Canonical for:** the prototype's screens, their stable IDs, purpose, decisions, transitions, and
 > the record of screens deliberately rejected.
-> **Not canonical for:** visual design or layout (not defined; see
-> [../design/design-principles.md](../design/design-principles.md)), the stories the screens serve
+> **Not canonical for:** visual design or layout (see [../design/](../design/), and
+> [../design/storyboard.md](../design/storyboard.md) for the per-view mapping), the stories the screens serve
 > (see [demo-scenarios.md](demo-scenarios.md)), entity states (see
 > [../domain/state-transitions.md](../domain/state-transitions.md)), or capability truth status
 > (see [../demo-truth-matrix.md](../demo-truth-matrix.md)).
 > **Status:** Draft.
 
 **No styling is defined here.** This document defines what each screen is *for*. Colour, type,
-spacing, iconography and component structure are GATE 2 work and are governed by
+spacing, iconography and component structure are GATE 1.5 work and are governed by
 [../design/design-system.md](../design/design-system.md).
 
 ## The justification test

@@ -1,9 +1,14 @@
 # Design System Principles
 
-> **Canonical for:** design-system governance — tokens, primitives, composition, and what may be built.
-> **Not canonical for:** product design values (see [design-principles.md](design-principles.md)) or
-> RTL and accessibility rules (see [rtl-accessibility.md](rtl-accessibility.md)).
-> **Status:** Draft. **No design system exists.** These are the rules the future one must satisfy.
+> **Canonical for:** design-system governance — how the system is built, extended and constrained.
+> **Not canonical for:** product design values (see [design-principles.md](design-principles.md)),
+> RTL and accessibility rules (see [rtl-accessibility.md](rtl-accessibility.md)), the visual
+> direction (see [visual-language.md](visual-language.md)), any token value (see
+> [tokens.md](tokens.md), [typography.md](typography.md), [color.md](color.md),
+> [foundations.md](foundations.md)), or any component specification (see
+> [components/](components/)).
+> **Status:** Draft. **No design system is built.** The system is *specified* at GATE 1.5; these are
+> the governance rules its implementation must satisfy.
 
 ## Approach
 
@@ -44,8 +49,28 @@ mechanism that marks a `SIMULATED` or `MOCK` capability at the point of use.
 It is a design-system primitive, not per-screen decoration, because it is a governance guarantee.
 Making it ad-hoc makes it omittable, and an omittable honesty mechanism is not one.
 
-## Not decided
+## Decided at GATE 1.5
 
-Visual identity, colour palette, typeface selection, dark mode, iconography and motion. All
-deferred to product design work at GATE 1. Choosing them now would be visual design without a
-product to design for.
+Visual identity, colour strategy, type system, iconography, motion, spacing, density and the
+component specifications were open when this document was first written and were deferred. They are
+now decided, and this document defines none of them — it links to their owners, per
+[ADR-0006](../adr/0006-single-source-of-truth-documentation.md):
+
+- Direction and non-goals → [visual-language.md](visual-language.md)
+- Type → [typography.md](typography.md) · Colour → [color.md](color.md)
+- Everything else foundational → [foundations.md](foundations.md)
+- State rendering → [state-vocabulary.md](state-vocabulary.md)
+- Tokens → [tokens.md](tokens.md) · Navigation → [navigation.md](navigation.md)
+- Components → [components/](components/)
+
+The truth-label primitive required above is specified in [color.md](color.md), and the state
+primitive that governs every other label is [state-vocabulary.md](state-vocabulary.md).
+
+## Still not decided
+
+- **The typeface itself** — D19, `PENDING AUTHORISATION`. Selection criteria are in
+  [typography.md](typography.md); the licence must be verified by a person.
+- **Dark mode** — out of prototype scope, and the token layer does not preclude it
+  ([visual-language.md](visual-language.md)).
+- **The product name and brand identity** — D8, still open. Nothing in the visual system depends on
+  it, which was a design constraint rather than a coincidence.

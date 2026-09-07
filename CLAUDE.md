@@ -6,16 +6,18 @@ file is the defect.
 
 ## 1. Current state
 
-**GATE 1 — PRODUCT AND INTERACTION DEFINITION.** Documentation and governance only.
-GATE 0 closed `FOUNDATION_LOCKED`; GATE 0.1 closed `FOUNDATION_RECONCILED`.
+**GATE 1.5 — DESIGN SYSTEM AND VISUAL PRODUCT LANGUAGE.** Documentation and specification only.
+GATE 0 closed `FOUNDATION_LOCKED`; GATE 0.1 closed `FOUNDATION_RECONCILED`; GATE 1 closed
+`PROTOTYPE_EXPERIENCE_LOCKED`.
 
 There is **no application code, no dependencies, no build tooling, no database**. This is
 deliberate, not incomplete.
 
-**Do not**, in this gate: implement screens, install dependencies, add `package.json` or build
-config, provision a database, connect any external service, create empty directory skeletons,
-choose visual styling, or generate demo data. Screens are *defined* at this gate and *designed* at
-GATE 2.
+**Do not**, in this gate: implement screens, write components or stylesheets, install dependencies,
+add `package.json` or build config, provision a database, connect any external service, create empty
+directory skeletons, or generate demo data. Screens are *defined* at GATE 1, *designed* at
+GATE 1.5, and *built* at GATE 4; the token layer and the primitives are GATE 2
+([ADR-0011](docs/adr/0011-design-system-gate.md)).
 
 Gate definitions and exit criteria: [docs/acceptance-gates.md](docs/acceptance-gates.md).
 
@@ -46,6 +48,12 @@ And, from GATE 1 onward:
 - What the prototype does → [docs/product/screen-inventory.md](docs/product/screen-inventory.md)
   and [docs/product/experience/](docs/product/experience/)
 - What the demo is → [docs/product/demo-scenarios.md](docs/product/demo-scenarios.md)
+
+And, from GATE 1.5 onward:
+
+- What it looks like and why → [docs/design/visual-language.md](docs/design/visual-language.md)
+- How anything is rendered → [docs/design/](docs/design/) and
+  [docs/design/components/](docs/design/components/)
 
 ## 4. Hard rules
 
@@ -92,10 +100,10 @@ When unsure whether something is needed: it is not. Add it when the need appears
 
 ## 7. Validation commands
 
-**None exist.** No tooling is installed at GATE 0. This section is populated at GATE 2 and is the
+**None exist.** No tooling is installed before GATE 2. This section is populated at GATE 2 and is the
 canonical location for validation commands when it is.
 
-Until then, validation is manual review against the GATE 0 exit criteria in
+Until then, validation is manual review against the current gate's exit criteria in
 [docs/acceptance-gates.md](docs/acceptance-gates.md).
 
 ## 8. When you are unsure

@@ -33,7 +33,23 @@ has an owner, link to the owner instead of describing it again.
 | Unresolved **legal** questions | [legal/open-questions.md](legal/open-questions.md) |
 | Unresolved **product and architecture** decisions | [open-decisions.md](open-decisions.md) |
 | Product design values and decision rules | [design/design-principles.md](design/design-principles.md) |
-| Design system governance: tokens, primitives, composition | [design/design-system.md](design/design-system.md) |
+| Visual direction, rejected directions, visual non-goals | [design/visual-language.md](design/visual-language.md) |
+| Type stack, semantic type scale, numerals, money and date rendering | [design/typography.md](design/typography.md) |
+| Colour strategy, semantic roles, truth-state and epistemic rendering | [design/color.md](design/color.md) |
+| Rendering of every domain state — label, mark, role, form | [design/state-vocabulary.md](design/state-vocabulary.md) |
+| Provenance margin, spacing, density, radius, borders, elevation, iconography, motion, focus, hierarchy, responsive strategy | [design/foundations.md](design/foundations.md) |
+| Token architecture and naming | [design/tokens.md](design/tokens.md) |
+| Navigation behaviour per actor | [design/navigation.md](design/navigation.md) |
+| Golden Path visual mapping and supporting-screen consistency | [design/storyboard.md](design/storyboard.md) |
+| The GATE 1.5 adversarial audit and its carried risks | [design/adversarial-review.md](design/adversarial-review.md) |
+| Opportunity Card specification | [design/components/opportunity-card.md](design/components/opportunity-card.md) |
+| Worker Passport surface specification | [design/components/worker-passport.md](design/components/worker-passport.md) |
+| Employer Trust Profile surface specification | [design/components/employer-trust-profile.md](design/components/employer-trust-profile.md) |
+| Match explanation and prior-relationship rendering | [design/components/explanation.md](design/components/explanation.md) |
+| Classification signal rendering | [design/components/classification-signal.md](design/components/classification-signal.md) |
+| Evidence chronology, Proof-of-Work capture, dispute review layout | [design/components/evidence-chronology.md](design/components/evidence-chronology.md) |
+| Payment surface rendering | [design/components/payment-surface.md](design/components/payment-surface.md) |
+| Design-system governance: how tokens and primitives are built, extended and constrained | [design/design-system.md](design/design-system.md) |
 | RTL and accessibility requirements | [design/rtl-accessibility.md](design/rtl-accessibility.md) |
 | Truth taxonomy and per-capability truth status | [demo-truth-matrix.md](demo-truth-matrix.md) |
 | Gate definitions and exit criteria | [acceptance-gates.md](acceptance-gates.md) |
@@ -77,6 +93,22 @@ These pairs are easy to duplicate. The split is intentional:
   domain document.
 - **screen-inventory vs design/** — `screen-inventory.md` owns what a screen is *for*. The design
   documents own how anything looks. No styling decision appears in the inventory.
+- **design-principles vs design-system vs visual-language** — `design-principles.md` owns the values
+  and what each rules out. `design-system.md` owns the *governance* of tokens and primitives: how the
+  system is built and extended. `visual-language.md` owns the direction that was chosen and what is
+  deliberately absent from it. None of the three states a value; values live in `tokens.md` and in
+  the foundation documents it references.
+- **state-vocabulary vs state-transitions** — `domain/state-transitions.md` owns which states exist,
+  what they mean, and the transitions between them. `design/state-vocabulary.md` owns the label, mark,
+  semantic role and permitted forms of each. A state appearing only in the design document is a
+  defect in the design document.
+- **design/components vs product/experience** — the experience documents own the *mechanism* and what
+  the demo must prove. The component documents own how it is rendered, and they restate no mechanism.
+  Where a component document names a demonstration requirement, it names it by reference.
+- **storyboard vs investor-narrative** — `investor-narrative.md` owns the path, its order, its timing
+  and what each stage proves. `storyboard.md` owns what each view looks like and what must remain
+  rendered without interaction. The storyboard consumes the narrative's stage numbering and restates
+  no stage's argument.
 - **screen-inventory vs investor-narrative, on the Golden Path** — the inventory owns *whether* a
   screen is on the primary path (its `Path` row). The narrative owns *when, in what order, for how
   long and why*. Neither restates the other's half, and the two counts — 13 primary, 11 supporting
