@@ -33,7 +33,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm --filter @platform/web dev --port ' + PORT,
+    command: `pnpm build:tokens && pnpm --filter @platform/web dev --port ${String(PORT)}`,
     port: PORT,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

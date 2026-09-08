@@ -91,10 +91,14 @@ export const raw = {
   focusRingWidth: '2px',
   focusRingOffset: '2px',
 
-  // Type families. The text face is D19 (Vazirmatn, human-authorised for this gate); the fallback
-  // stack is typography.md's and must not end at a Latin-only face.
+  // Type families. The text face is D19 (Vazirmatn, human-authorised for this gate), self-hosted
+  // and subset. The fallback stack is typography.md's and must not end at a Latin-only face:
+  // Tahoma is the reliably-present Persian-shaping fallback on the Windows machines common in the
+  // target market. The MONOSPACE face of D19 was not named by the human authorisation, so it is
+  // NOT bundled here — it falls back to a system monospace and its self-hosted selection stays
+  // deferred under D19 (an agent may not select a face and assert its licence).
   familyText: "'Vazirmatn', Tahoma, 'Segoe UI', system-ui, sans-serif",
-  familyMono: "'Vazirmatn Code', ui-monospace, 'Cascadia Mono', 'Consolas', monospace",
+  familyMono: "ui-monospace, 'Cascadia Mono', Consolas, 'Courier New', monospace",
 } as const;
 
 export type RawTokens = typeof raw;

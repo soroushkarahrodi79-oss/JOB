@@ -9,7 +9,7 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter @platform/web dev",
+    "dev": "pnpm build:tokens && pnpm --filter @platform/web dev",
     "build": "pnpm --filter @platform/tokens build && pnpm --filter @platform/web build",
     "build:tokens": "pnpm --filter @platform/tokens build",
     "typecheck": "pnpm -r --workspace-concurrency=1 typecheck",
