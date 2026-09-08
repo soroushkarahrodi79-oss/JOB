@@ -1,0 +1,22 @@
+/* UI base layer. Imported once by the app alongside the token sheet. Primitives carry their own
+   CSS modules; this file holds only cross-cutting behaviour. */
+
+/* Two-tone focus ring (foundations.md): inner ring in the accent, outer ring in the canvas, so
+   it holds contrast on any surface it lands on. Visible for every interactive element. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-inner);
+  outline-offset: var(--focus-ring-offset);
+  box-shadow: 0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset)) var(--focus-ring-outer);
+}
+
+/* Reduced motion is zero, not reduced (foundations.md). Nothing in the product loses meaning. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}

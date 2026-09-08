@@ -1,0 +1,9 @@
+{
+  "//": "Solution-level config for editors and eslint. Each workspace package owns its own tsconfig; typechecking runs per package via `pnpm -r typecheck`.",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false
+  },
+  "files": [],
+  "include": []
+}

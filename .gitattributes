@@ -1,0 +1,10 @@
+# Deterministic line endings across platforms (D15 reproducibility). CI runs on Linux; the
+# working copy may be Windows. Normalise all text to LF in the repository.
+* text=auto eol=lf
+
+# Binary assets must never be normalised.
+*.woff2 binary
+*.woff binary
+*.png binary
+*.jpg binary
+*.ico binary

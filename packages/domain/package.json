@@ -1,0 +1,13 @@
+{
+  "name": "@platform/domain",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Domain vocabulary and representation types (GATE 2). Depends on nothing outward (ADR-0002/0003). Domain rules land at GATE 3.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,64 @@
+/* The truth-label primitive (color.md "Truth states"). Ink, not alarm colour; it reads as a
+   technical annotation. The hatched inline-start edge is an ENHANCEMENT — the border and the
+   text are the meaning, so forced-colors mode loses nothing essential (adversarial R4). */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-fg-default);
+  background: var(--color-surface-canvas);
+  border: var(--border-width-hairline) solid var(--color-border-emphasis);
+  border-radius: var(--radius-control);
+  padding-block: 2px;
+  padding-inline: var(--space-2) var(--space-1);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  min-height: var(--target-minimum);
+}
+
+/* The hatch sits on the inline-start edge only. One texture, one meaning; it appears nowhere
+   else in the system (color.md rule 5). */
+.chip::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 10px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-fg-default) 0,
+    var(--color-fg-default) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+.chip[data-level='MOCK']::before {
+  /* denser hatch for MOCK (color.md) */
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-fg-default) 0,
+    var(--color-fg-default) 1.5px,
+    transparent 1.5px,
+    transparent 3px
+  );
+}
+
+.chip:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-inner);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.label {
+  padding-inline-start: 10px;
+}
+
+@media (forced-colors: active) {
+  .chip::before {
+    /* The hatch may be dropped; meaning is carried by the (system-repainted) border and text. */
+    forced-color-adjust: none;
+    background: canvastext;
+  }
+}

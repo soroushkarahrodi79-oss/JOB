@@ -1,0 +1,38 @@
+/* The Evidence Margin as a primitive (ADR-0012; foundations.md "The provenance margin").
+   Every evidence row is a margin (inline-start) + a content column. Alignment is logical, so in
+   Persian the margin is on the right and no component knows or cares. The margin never becomes a
+   tooltip, a popover, or an unlabelled icon, and it never disappears — at compact it collapses to
+   a leading marker (the highest-risk detail in the system; adversarial R5). */
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr; /* compact: stacked, marker leads */
+  gap: var(--space-1);
+  padding-block: var(--space-row);
+  border-block-end: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+.margin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.content {
+  min-inline-size: 0; /* allow the claim to wrap rather than overflow at 320px */
+}
+
+/* regular and up: a fixed rail at the inline start, aligned down the column. */
+@media (min-width: 640px) {
+  .row {
+    grid-template-columns: 12rem 1fr;
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .margin {
+    flex-direction: column;
+    align-items: start;
+  }
+}
