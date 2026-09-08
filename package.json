@@ -1,0 +1,50 @@
+{
+  "name": "the-platform",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Flexible-work marketplace prototype — GATE 2 engineering skeleton. See docs/acceptance-gates.md.",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm build:tokens && pnpm --filter @platform/web dev",
+    "build": "pnpm --filter @platform/tokens build && pnpm --filter @platform/web build",
+    "build:tokens": "pnpm --filter @platform/tokens build",
+    "typecheck": "pnpm -r --workspace-concurrency=1 typecheck",
+    "lint": "eslint .",
+    "lint:css": "stylelint \"**/*.css\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "9.18.0",
+    "@next/eslint-plugin-next": "15.1.6",
+    "@playwright/test": "1.50.1",
+    "@axe-core/playwright": "4.10.1",
+    "@testing-library/dom": "10.4.0",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.2.0",
+    "@types/node": "22.10.7",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
+    "eslint": "9.18.0",
+    "eslint-config-prettier": "10.0.1",
+    "eslint-plugin-react-hooks": "5.1.0",
+    "globals": "15.14.0",
+    "jsdom": "26.0.0",
+    "prettier": "3.4.2",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "stylelint": "16.13.2",
+    "stylelint-config-standard": "37.0.0",
+    "typescript": "5.7.3",
+    "typescript-eslint": "8.21.0",
+    "vite-node": "3.0.4",
+    "vitest": "3.0.4"
+  }
+}

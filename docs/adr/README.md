@@ -41,3 +41,7 @@ determined by an accepted ADR.
 | [0006](0006-single-source-of-truth-documentation.md) | Single-source-of-truth documentation | Accepted |
 | [0007](0007-legal-claims-carry-epistemic-status.md) | Legal claims carry epistemic status | Accepted |
 | [0008](0008-provisional-application-stack.md) | Prototype application stack | Accepted |
+| [0009](0009-prototype-experience-architecture.md) | Prototype experience architecture | Accepted |
+| [0010](0010-prototype-provisional-defaults.md) | Prototype-provisional defaults | Accepted |
+| [0011](0011-design-system-gate.md) | A design gate between product definition and engineering | Accepted |
+| [0012](0012-visual-product-language.md) | Visual product language: the Evidence Margin | Accepted |

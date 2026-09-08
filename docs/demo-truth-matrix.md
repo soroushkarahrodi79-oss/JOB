@@ -54,13 +54,21 @@ and must be labelled `MOCK`.
 | 11 | Payment orchestration | `SIMULATED` | `PLANNED` | Ledger and state machine are real; settlement is simulated. No funds move. |
 | 12 | Escrow-style assurance affordance | `MOCK` | `PLANNED` | Deliberately `MOCK`, and deliberately never `FUNCTIONAL`. The Platform does not hold third-party funds — that is a charter non-goal, and holding them is a regulated activity (Q5). This row exists only so the demo can show the *absence* honestly. |
 | 13 | Dispute handling | `FUNCTIONAL` | `PLANNED` | Case state machine only. Outcomes are recorded, not enforced. |
-| 14 | Reputation | `FUNCTIONAL` | `PLANNED` | |
+| 14 | Reputation — worker **and** employer | `FUNCTIONAL` | `PLANNED` | Covers both sides. Employer trust is not a separate capability; a matrix that listed only worker reputation would encode the asymmetry the model exists to prevent. Contents in `product/experience/trust-profiles.md`. |
 | 15 | Preferred Crew / rehire | `FUNCTIONAL` | `PLANNED` | |
 | 16 | Messaging / SMS notification | `MOCK` | `PLANNED` | Delivered to an in-app outbox viewer. No message leaves the system. |
 | 17 | Authentication | `SIMULATED` | `PLANNED` | Session handling is real; the credential/OTP channel is simulated. |
 | 18 | Legal compliance posture | `PLANNED` | `PLANNED` | The prototype demonstrates *no* validated compliance. See `legal/legal-architecture.md`. |
-| 19 | Trust and safety controls | `PLANNED` | `PLANNED` | Scope not yet defined. See `open-decisions.md` D7. |
+| 19 | Trust and safety controls | `PLANNED` | `PLANNED` | **Beyond dispute casework**, which is row 13. Account suspension, abuse reporting, fraud handling, moderation, and worker appeal against exclusion are all out of scope and unbuilt. The prototype's minimum scope is defined in `product/experience/disputes.md` on D7's recorded default; that definition scopes the gap, it does not close it. |
 | 20 | Operations / admin tooling | `FUNCTIONAL` | `PLANNED` | Scope limited to what the demo scenarios require. |
+| 21 | Demo scaffolding — actor switch, demo reset | `FUNCTIONAL` | `PLANNED` | Real logic, and it exists only in the prototype. Must declare itself a demo mechanism, not a product feature. |
+| 22 | In-product truth ledger | `FUNCTIONAL` | `PLANNED` | Renders this matrix inside the prototype and is reachable from every truth label. Required by the presentation rules in `product/demo-scenarios.md`. |
+| 23 | Work Graph accumulation | `FUNCTIONAL` | `PLANNED` | A projection over engagement events, Preferred Crew and reputation — not a stored structure and not a visualised feature. See `domain/domain-model.md`. |
+| 24 | Structured engagement amendment | `FUNCTIONAL` | `PLANNED` | A recorded, acknowledged change to agreed terms. Replaces free-form messaging, and is the decisive dispute evidence in Story C. |
 
 Rows 12, 18 and 19 exist to be honest about gaps. Removing a row because it is uncomfortable
 is a governance violation.
+
+Rows 21–24 were added at GATE 1 under
+[ADR-0009](adr/0009-prototype-experience-architecture.md). No previously recorded target level was
+changed; row 14's and row 19's notes were clarified, not re-levelled.

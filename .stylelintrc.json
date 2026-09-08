@@ -1,0 +1,29 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "property-disallowed-list": [
+      ["/(^|-)(left|right)(-|$)/"],
+      {
+        "message": "Physical left/right is prohibited (ADR-0005). Use logical properties: inline-start / inline-end / block-start / block-end."
+      }
+    ],
+    "declaration-property-value-disallowed-list": [
+      {
+        "text-align": ["left", "right"],
+        "float": ["left", "right"],
+        "clear": ["left", "right"]
+      },
+      {
+        "message": "Physical left/right values are prohibited (ADR-0005). Use `start` / `end`."
+      }
+    ],
+    "custom-property-pattern": "^_?[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+    "media-feature-range-notation": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+    "no-descending-specificity": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null,
+    "selector-class-pattern": null
+  },
+  "ignoreFiles": ["**/dist/**", "**/.next/**", "**/coverage/**", "**/node_modules/**"]
+}

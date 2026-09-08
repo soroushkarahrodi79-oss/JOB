@@ -1,0 +1,49 @@
+/* Self-hosted Vazirmatn (D19). No foreign CDN, no remote font runtime dependency
+   (ADR-0005, ADR-0008 constraint 4). font-display: swap with the Tahoma fallback in the stack so
+   a reflow does not move the fold; a metric-override refinement is deferred. */
+@font-face {
+  font-family: Vazirmatn;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/vazirmatn-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: Vazirmatn;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/vazirmatn-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: Vazirmatn;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/vazirmatn-700.woff2') format('woff2');
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: var(--color-surface-canvas);
+  color: var(--color-fg-default);
+  font-family: var(--type-family-text);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-line-height);
+  font-weight: var(--type-body-weight);
+
+  /* Persian typesetting invariants (typography.md): no tracking, no synthetic italic, no case
+     transform, start-aligned, never justified. */
+  letter-spacing: 0;
+  font-style: normal;
+  text-transform: none;
+  text-align: start;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@platform/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The design token layer (GATE 2). Canonical values from docs/design/tokens.md, typography.md, color.md, foundations.md.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./dist/tokens.generated.css"
+  },
+  "scripts": {
+    "build": "vite-node src/build-css.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

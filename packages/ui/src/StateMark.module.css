@@ -1,0 +1,44 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--_fg);
+}
+
+.root svg {
+  flex: none;
+}
+
+/* chip: bordered, self-contained, wraps to two lines rather than truncating
+   (state-vocabulary.md rule 3). It must survive being scanned in a list. */
+.chip {
+  padding-block: var(--space-1);
+  padding-inline: var(--space-2);
+  border: var(--border-width-hairline) solid var(--_border);
+  border-radius: var(--radius-control);
+  background: var(--_bg);
+  min-height: var(--target-minimum);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* marker: the mark sits at the inline-start of the row, the label alongside
+   (foundations.md provenance margin, `regular` width). */
+.marker {
+  align-items: start;
+}
+
+/* banner: full width, above the content it qualifies; at most one per screen. */
+.banner {
+  display: flex;
+  inline-size: 100%;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  border-inline-start: var(--border-width-emphasis) solid var(--_border);
+  background: var(--_bg);
+  border-radius: var(--radius-none);
+}
+
+.annotation {
+  color: var(--color-fg-muted);
+}

@@ -6,15 +6,21 @@ file is the defect.
 
 ## 1. Current state
 
-**GATE 0 — FOUNDATION.** Documentation and governance only.
+**GATE 2 — ENGINEERING SKELETON, closed `ENGINEERING_SKELETON_LOCKED`.** GATE 0 closed
+`FOUNDATION_LOCKED`; GATE 0.1 `FOUNDATION_RECONCILED`; GATE 1 `PROTOTYPE_EXPERIENCE_LOCKED`;
+GATE 1.5 `DESIGN_SYSTEM_LOCKED`. The next gate is **GATE 3 — domain implementation**.
 
-There is **no application code, no dependencies, no build tooling, no database**. This is
-deliberate, not incomplete.
+The repository now has a pnpm workspace, strict TypeScript, linting, test runners, a self-hosted
+font, the token layer and the design-system primitives — but **no domain rules, no provider
+adapters, no database, and no product screens**. That is the gate boundary, not an omission.
 
-**Do not**, in this gate: implement screens, install dependencies, add `package.json` or build
-config, provision a database, connect any external service, or create empty directory skeletons.
+**Do not**, before their gate: implement product screens or the screen inventory (GATE 4);
+implement domain rules, eligibility/classification logic, provider ports with failure contracts,
+or simulated adapters, or generate the demo dataset (GATE 3); author a database schema (GATE 3);
+connect any real external service (never in the prototype). Primitives compose into screens at
+GATE 4; the domain and its ports are GATE 3 ([ADR-0011](docs/adr/0011-design-system-gate.md)).
 
-Gate definitions and exit criteria: [docs/acceptance-gates.md](docs/acceptance-gates.md).
+Gate definitions, exit criteria and the current gate: [docs/acceptance-gates.md](docs/acceptance-gates.md).
 
 ## 2. Before you write anything
 
@@ -37,6 +43,18 @@ The four you will need most often:
 - What is real vs simulated → [docs/demo-truth-matrix.md](docs/demo-truth-matrix.md)
 - Architecture rules → [docs/architecture/system-architecture.md](docs/architecture/system-architecture.md)
 - Provider boundaries → [docs/architecture/provider-boundaries.md](docs/architecture/provider-boundaries.md)
+
+And, from GATE 1 onward:
+
+- What the prototype does → [docs/product/screen-inventory.md](docs/product/screen-inventory.md)
+  and [docs/product/experience/](docs/product/experience/)
+- What the demo is → [docs/product/demo-scenarios.md](docs/product/demo-scenarios.md)
+
+And, from GATE 1.5 onward:
+
+- What it looks like and why → [docs/design/visual-language.md](docs/design/visual-language.md)
+- How anything is rendered → [docs/design/](docs/design/) and
+  [docs/design/components/](docs/design/components/)
 
 ## 4. Hard rules
 
@@ -83,11 +101,23 @@ When unsure whether something is needed: it is not. Add it when the need appears
 
 ## 7. Validation commands
 
-**None exist.** No tooling is installed at GATE 0. This section is populated at GATE 2 and is the
-canonical location for validation commands when it is.
+Node is pinned in `.nvmrc`; the package manager is pinned in `package.json` (`packageManager`).
+Install with `pnpm install`; CI uses `pnpm install --frozen-lockfile` (D15).
 
-Until then, validation is manual review against the GATE 0 exit criteria in
-[docs/acceptance-gates.md](docs/acceptance-gates.md).
+| Command | Checks |
+| --- | --- |
+| `pnpm typecheck` | Strict TypeScript across every package; type errors are build failures. |
+| `pnpm lint` | ESLint, including the inward dependency-direction boundary (ADR-0002) and the no-physical-`left`/`right` rule in JS/TSX (ADR-0005). |
+| `pnpm lint:css` | Stylelint, including the CSS logical-properties rule (ADR-0005). |
+| `pnpm format:check` | Prettier. Canonical documentation is excluded so it is not reflowed. |
+| `pnpm test` | Vitest — token, domain and primitive unit/component tests, including the domain-state → visual-vocabulary exhaustiveness guard. |
+| `pnpm test:e2e` | Playwright — the GATE 1.5 rendered risk checks (R1–R5), RTL, keyboard focus and an axe pass. |
+| `pnpm build` | Generates the token CSS and builds the Next.js app. |
+| `pnpm dev` | Runs the app locally. |
+
+CI runs all of the above plus a generic Docker build-and-run portability check
+([ADR-0008](docs/adr/0008-provisional-application-stack.md) constraint 3) — see
+`.github/workflows/ci.yml`.
 
 ## 8. When you are unsure
 

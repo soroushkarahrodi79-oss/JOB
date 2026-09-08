@@ -1,13 +1,18 @@
 # User Flows
 
-> **Canonical for:** end-to-end flows and the decision points within them.
-> **Not canonical for:** screens or layout (not yet defined), demo narratives (see
-> [demo-scenarios.md](demo-scenarios.md)), entity definitions (see
-> [../domain/domain-model.md](../domain/domain-model.md)).
+> **Canonical for:** the end-to-end flow spine and the decision points within it.
+> **Not canonical for:** screens (see [screen-inventory.md](screen-inventory.md)), demo narratives
+> (see [demo-scenarios.md](demo-scenarios.md)), entity definitions (see
+> [../domain/domain-model.md](../domain/domain-model.md)), entity state machines (see
+> [../domain/state-transitions.md](../domain/state-transitions.md)), or the detailed mechanism of
+> any single capability (see [experience/](experience/)).
 > **Status:** Draft.
 
-Flows are described as sequences of state transitions and decisions, not as screens. Screen
-definition belongs to GATE 1.
+Flows are described as sequences of state transitions and decisions, not as screens.
+
+Each flow below states where it sits in the journey and delegates its mechanism to the canonical
+document for that capability. A flow that restated its mechanism would become a second, drifting
+copy of it.
 
 ---
 
@@ -42,19 +47,24 @@ inform them. This is a product *and* legal question — D3 and
 ## F3 — Eligibility-first matching
 
 1. Candidate set is filtered by **hard eligibility**: unmet requirement means excluded, not ranked lower.
-2. The remaining set is filtered by availability over the specific time window.
-3. The remaining set is ordered by location and reliability signals.
-4. Each result carries a machine-generated explanation of *why* it qualified.
+2. The remaining eligible set is ordered.
+3. Each result carries a machine-generated explanation of *why* it qualified and why it sits
+   where it sits.
 
 **Invariant:** exclusion is explainable to both sides. An eligibility engine that cannot state
 its reason is not acceptable, because it cannot be audited for unlawful or unfair exclusion.
+
+The pipeline stages, the split between filtering and ordering, the explanation rules, and which
+matching behaviour is functional versus simulated are canonical in
+[experience/matching.md](experience/matching.md).
 
 ---
 
 ## F4 — Engagement lifecycle
 
-`Offered → Accepted → InProgress → Completed → Settled`, with `Cancelled` and `Disputed` as
-terminal or diverting branches.
+An engagement moves from offer or acceptance through work to settlement, with cancellation and
+dispute as diverting branches. The states, their triggers and their guards are canonical in
+[../domain/state-transitions.md](../domain/state-transitions.md).
 
 Transitions are events. The Passport, reputation and payment state are all *derived from* this
 event record — never edited directly. This is what makes the Passport evidential rather than
@@ -72,6 +82,9 @@ declarative.
 is a privacy and consent question before it is a technical one. Tracked in
 [../legal/open-questions.md](../legal/open-questions.md) Q4.
 
+The proof mechanisms, and which part of each is functional versus simulated, are canonical in
+[experience/proof-of-work.md](experience/proof-of-work.md).
+
 ---
 
 ## F6 — Payment orchestration
@@ -84,14 +97,20 @@ is a privacy and consent question before it is a technical one. Tracked in
 **Constraint:** the Platform never represents itself as holding funds. See charter non-goals and
 [../legal/open-questions.md](../legal/open-questions.md) Q5.
 
+The payment experience, and the wording that carries that constraint to each party, are canonical
+in [experience/payment.md](experience/payment.md).
+
 ---
 
 ## F7 — Dispute
 
-1. Either party opens a case against a specific engagement.
+1. Either party opens a case against a specific engagement, or operations flags one.
 2. Evidence is assembled from the existing event record — not re-entered.
 3. Operations records an outcome.
 4. The outcome is recorded and affects reputation. The Platform does not adjudicate or enforce.
+
+The prototype's dispute scenario, the findings available to operations, and the prototype's
+trust-and-safety scope are canonical in [experience/disputes.md](experience/disputes.md).
 
 ---
 
@@ -104,5 +123,10 @@ before, so a preference relationship can never override a hard requirement.
 
 ## Flows deliberately not defined yet
 
-Trust-and-safety intake, worker appeal against exclusion, employer offboarding, and account
-deletion. Their absence is a known gap — D7 — not an oversight.
+Worker appeal against exclusion, employer offboarding, and account deletion. Their absence is a
+known gap — D7 — not an oversight.
+
+Trust-and-safety **case intake** was on this list and is now defined, at the minimum scope the
+prototype needs, in [experience/disputes.md](experience/disputes.md). Everything else in the
+trust-and-safety surface remains out of scope and `PLANNED`. Worker appeal against exclusion is the
+sharpest remaining gap and is recorded there as a prototype-to-pilot blocker.
