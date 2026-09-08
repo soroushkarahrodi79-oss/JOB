@@ -53,18 +53,19 @@ and does not remove the entry from the table above. Scope is **prototype only** 
 | **D16** | Both acceptance modes exist; the pre-selected mode is invite-only. | [domain/state-transitions.md](domain/state-transitions.md) | The engagement state machine needs both entry paths defined. | Entry to GATE 4. | **Prohibited without review** | `PENDING AUTHORISATION` — agent-proposed at GATE 1 |
 | **D17** | No evidence media. Structured completion fields only. | [product/experience/proof-of-work.md](product/experience/proof-of-work.md) | Proof mechanisms must be enumerable to be built. | Any pilot, or evidence that structured proof is too weak for a real work type. | **Prohibited without review** | `PENDING AUTHORISATION` — agent-proposed at GATE 1; selects an absence, so it cannot overclaim |
 | **D18** | A stated response window, with release on elapse recorded as `ApprovedByNonResponse` and never rendered as an approval. | [domain/state-transitions.md](domain/state-transitions.md) | Proof resolution needs a terminal path when the employer is silent. | Entry to GATE 4. | **Prohibited without review** | `PENDING AUTHORISATION` — agent-proposed at GATE 1 |
-| **D19** | A self-hosted, redistributable open Persian text face plus a self-hosted monospace face, selected against the seven criteria in [design/typography.md](design/typography.md). **No specific face is named**, because naming one would assert a licence fact. | [design/typography.md](design/typography.md) | The type scale, the numeric alignment and the whole visual system depend on a face with Persian tabular figures and usable weight separation. | Entry to GATE 2, when the faces must be selected and rendered. | **Prohibited without review** — the licence must be read by a person before any distribution | `PENDING AUTHORISATION` — agent-proposed at GATE 1.5 |
+| **D19** | **Text face: Vazirmatn** — self-hosted and subset to woff2 (weights 400/600/700), human-authorised at GATE 2. Its licence was verified against the licence text as SIL OFL 1.1 (2026-09-08); the notice ships beside the fonts. The **monospace** face is still unselected and falls back to a system monospace. | [design/typography.md](design/typography.md); [engineering/dependency-budget.md](engineering/dependency-budget.md) | The type scale, the numeric alignment and the whole visual system depend on a face with Persian tabular figures and usable weight separation. | Any change of the text face; selection of a self-hosted monospace face. | **Prohibited without review** — redistribution relies on the OFL, whose notice must ship with the fonts | `AUTHORISED` (text face) 2026-09-08 · monospace half `PENDING AUTHORISATION` |
 
 `PENDING AUTHORISATION` entries were proposed by an agent and are **not** authorised. Per
 [ADR-0010](adr/0010-prototype-provisional-defaults.md) safeguard 8 they may not be relied upon past
 the gate named in their *Blocks* column. None of D16, D17, D18 or D19 blocked GATE 1 or GATE 1.5.
 **D18 is the consequential one** — it decides whether a worker is paid when an employer stays silent
-— and it requires human authorisation before GATE 4.
+— and it requires human authorisation before GATE 4. D16 and D17 remain `PENDING AUTHORISATION`.
 
-D19 is the narrowest of the four and is unusual in that its provisional value names a *shape* rather
-than a value: an agent may state the criteria a face must meet and may not state that any particular
-face meets criterion 1, because that is a claim about a licence. It must be discharged at GATE 2,
-which is the gate that would ship a font file.
+D19's **text face** was human-authorised at GATE 2, which is the gate that ships a font file. The
+human named Vazirmatn; an agent then verified the SIL OFL 1.1 licence against the licence text — the
+agent applied a human-approved value, it did not select the face or assert the licence unprompted.
+The **monospace** half stays `PENDING AUTHORISATION`: no human named a monospace face, so an agent
+must not select one, and the code/identifier roles use a system-monospace fallback until one is.
 
 No entry in [legal/open-questions.md](legal/open-questions.md) appears here or ever may. Legal
 `UNKNOWN`s stay `UNKNOWN`; only prototype behaviour *around* them is selected, and only where that

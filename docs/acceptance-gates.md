@@ -9,7 +9,7 @@ Work belonging to a later gate is not started early, even when it looks cheap.
 
 ## Current gate
 
-**GATE 1.5 — DESIGN SYSTEM AND VISUAL PRODUCT LANGUAGE.**
+**GATE 3 — DOMAIN IMPLEMENTATION.** GATE 2 closed `ENGINEERING_SKELETON_LOCKED` on 2026-09-08.
 
 ## Gate history
 
@@ -19,6 +19,7 @@ Work belonging to a later gate is not started early, even when it looks cheap.
 | GATE 0.1 — Architecture reconciliation | `FOUNDATION_RECONCILED` | 2026-09-07 |
 | GATE 1 — Product and interaction definition | `PROTOTYPE_EXPERIENCE_LOCKED` — on authorised prototype-provisional defaults for D1, D2, D3, D8 and D9, none of which is resolved | 2026-09-07 |
 | GATE 1.5 — Design system and visual product language | `DESIGN_SYSTEM_LOCKED` — on the same five authorised defaults, with D19 newly recorded `PENDING AUTHORISATION` | 2026-09-07 |
+| GATE 2 — Engineering skeleton | `ENGINEERING_SKELETON_LOCKED` — on the same five authorised defaults; D19 human-authorised to Vazirmatn (text face) and discharged, its monospace half still `PENDING AUTHORISATION` | 2026-09-08 |
 
 GATE 1 first returned `PROTOTYPE_EXPERIENCE_NOT_READY` because the gate rule and the decision
 register contradicted each other. The contradiction was resolved by
@@ -164,6 +165,31 @@ not preconditions for entering it.
 from [design/tokens.md](design/tokens.md), the accessibility semantics of the primitives, and the
 eight verification risks carried out of GATE 1.5 in
 [design/adversarial-review.md](design/adversarial-review.md). Screens are GATE 4.
+
+**Exit criteria.** Recorded here so the gate can be judged rather than declared.
+
+1. The workspace installs from a committed, frozen lockfile; strict TypeScript, linting and test
+   runners run from canonical commands documented in `CLAUDE.md` §7.
+2. The domain/ports separation is expressed in code and the inward dependency direction is enforced
+   in CI ([ADR-0002](adr/0002-pragmatic-modular-monolith.md)), not by review.
+3. Persian-first RTL is enforced in CI: physical `left`/`right` is rejected in CSS and in JS/TSX
+   ([ADR-0005](adr/0005-persian-first-rtl-native-ui.md)).
+4. The token layer exists, is semantic and bounded, with contrast verified as a token constraint and
+   the [ADR-0012](adr/0012-visual-product-language.md) absences enforced by test.
+5. The primitives exist with their accessibility semantics, and every finite domain state in
+   [domain/state-transitions.md](domain/state-transitions.md) has exactly one rendering, guarded by a
+   test (GATE 1.5 exit criterion 5).
+6. The eight risks in [design/adversarial-review.md](design/adversarial-review.md) are discharged with
+   rendered evidence or explicitly carried; R1 (Persian tabular figures) and R8 (D19) among them.
+7. D15 is satisfied: a committed lockfile with integrity hashes, a reproducible frozen-lockfile
+   install, and a justified dependency budget ([engineering/dependency-budget.md](engineering/dependency-budget.md)).
+8. The generic-deployability portability check ([ADR-0008](adr/0008-provisional-application-stack.md)
+   constraint 3) runs in CI.
+9. No product screen, domain rule, provider adapter or database schema is built — those are GATE 3
+   and GATE 4.
+
+**Verdict vocabulary:** `ENGINEERING_SKELETON_LOCKED` or `ENGINEERING_SKELETON_NOT_READY`. No other
+verdict is valid.
 
 ## GATE 3 — Domain implementation
 

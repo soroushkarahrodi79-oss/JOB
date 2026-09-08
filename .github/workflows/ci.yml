@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable Corepack (provides the pinned pnpm)
+        run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      # Frozen lockfile: the committed lockfile is the single source of truth (D15 / ADR-0008).
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:tokens
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm lint:css
+      - run: pnpm format:check
+      - run: pnpm test
+      - run: pnpm build
+
+  e2e:
+    name: Rendered verification (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  portability:
+    name: Generic Docker build-and-run (ADR-0008 c3)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Build on a stock node image and run in a plain container — no managed platform.
+      - run: docker build -t platform-web:ci .
+      - name: Run the container and confirm it serves
+        run: |
+          docker run -d --name web -p 3000:3000 platform-web:ci
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3000/gate2-verification > /dev/null; then
+              echo "served OK"; SERVED=1; break
+            fi
+            sleep 2
+          done
+          docker logs web
+          docker rm -f web
+          test "${SERVED:-0}" = "1"

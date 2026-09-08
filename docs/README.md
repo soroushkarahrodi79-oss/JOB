@@ -29,6 +29,7 @@ has an owner, link to the owner instead of describing it again.
 | Layering, module boundaries, dependency direction | [architecture/system-architecture.md](architecture/system-architecture.md) |
 | Port catalogue and adapter substitution rules | [architecture/provider-boundaries.md](architecture/provider-boundaries.md) |
 | Persistence rules and data-representation decisions | [architecture/data-model.md](architecture/data-model.md) |
+| Dependency budget and supply-chain posture (D15) | [engineering/dependency-budget.md](engineering/dependency-budget.md) |
 | How legal claims are represented, and their epistemic status | [legal/legal-architecture.md](legal/legal-architecture.md) |
 | Unresolved **legal** questions | [legal/open-questions.md](legal/open-questions.md) |
 | Unresolved **product and architecture** decisions | [open-decisions.md](open-decisions.md) |
