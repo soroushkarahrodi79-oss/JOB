@@ -27,3 +27,69 @@ export {
   type TruthLevel,
 } from './vocabularies';
 export { rial, moneyEquals, type Money, type CurrencyCode } from './money';
+export {
+  DomainTransitionError,
+  type AdministrativeLocation,
+  type Attestation,
+  type AttestationStrength,
+  type EligibilityRequirement,
+  type Opportunity,
+  type OpportunityTerms,
+  type PaymentCommitment,
+  type Worker,
+} from './core';
+export {
+  evaluateEligibility,
+  type EligibilityEvaluation,
+  type EligibilityReason,
+} from './eligibility';
+export { coversOpportunityWindow, type AvailabilityWindow } from './availability';
+export { consumeArrivalCode, type ArrivalCode } from './proof';
+export {
+  acknowledgeAmendment,
+  recordAmendment,
+  transitionPreferredCrew,
+  type EngagementAmendment,
+} from './engagement-record';
+export {
+  CLASSIFICATION_FACTORS,
+  evaluateClassificationSignal,
+  type ClassificationFactor,
+  type ClassificationFactorKind,
+  type ClassificationFactorValue,
+  type ClassificationSignal,
+} from './classification';
+export {
+  isProofTerminal,
+  transitionDispute,
+  transitionEngagement,
+  transitionOpportunity,
+  transitionPayment,
+  transitionProofOfWork,
+  type DisputeLifecycle,
+  type EngagementCommand,
+  type EngagementLifecycle,
+  type OpportunityLifecycle,
+  type PaymentLifecycle,
+  type ProofOfWorkLifecycle,
+} from './lifecycle';
+export {
+  type AuthenticationPort,
+  type BusinessVerificationPort,
+  type ClockPort,
+  type GeolocationPort,
+  type IdGeneratorPort,
+  type IdentityVerificationPort,
+  type MessagingPort,
+  type PaymentPort,
+  type ProviderFailure,
+  type ProviderResult,
+} from './ports';
+export {
+  deriveEmployerTrust,
+  deriveWorkerTrust,
+  type EmployerTrustProjection,
+  type EngagementRecord,
+  type WorkerTrustProjection,
+} from './projections';
+export { generateSyntheticDemoWorld, type SyntheticDemoWorld } from './demo-data';
