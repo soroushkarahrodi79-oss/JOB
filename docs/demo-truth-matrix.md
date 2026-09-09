@@ -4,9 +4,10 @@
 > **Not canonical for:** what each capability does (see the domain and architecture docs).
 > **Status:** Draft — statuses are targets for the prototype, not descriptions of built software.
 
-Nothing has been built. Every row below is currently `PLANNED` **in reality**. The
-"Target" column states what the capability is intended to be at prototype delivery. When a
-capability is built, its "Actual" column is updated in the same pull request.
+The "Target" column states what the capability is intended to be at prototype delivery. The
+"Actual" column records the implementation state and is updated in the same pull request that
+builds a capability. At GATE 3 closure, domain logic and deterministic adapters are implemented;
+no product surface has been built.
 
 **A capability may never be demonstrated at a higher truth level than its `Actual` value.**
 

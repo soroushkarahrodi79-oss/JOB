@@ -9,7 +9,9 @@ Work belonging to a later gate is not started early, even when it looks cheap.
 
 ## Current gate
 
-**GATE 3 — DOMAIN IMPLEMENTATION.** GATE 2 closed `ENGINEERING_SKELETON_LOCKED` on 2026-09-08.
+**GATE 4 — PROTOTYPE SURFACE (ENTRY BLOCKED).** GATE 3 closed
+`DOMAIN_IMPLEMENTATION_LOCKED` on 2026-09-09. Entry is blocked by the human authorisations for
+D16 and D18 recorded in [open-decisions.md](open-decisions.md); no GATE 4 work has started.
 
 ## Gate history
 
@@ -20,6 +22,7 @@ Work belonging to a later gate is not started early, even when it looks cheap.
 | GATE 1 — Product and interaction definition | `PROTOTYPE_EXPERIENCE_LOCKED` — on authorised prototype-provisional defaults for D1, D2, D3, D8 and D9, none of which is resolved | 2026-09-07 |
 | GATE 1.5 — Design system and visual product language | `DESIGN_SYSTEM_LOCKED` — on the same five authorised defaults, with D19 newly recorded `PENDING AUTHORISATION` | 2026-09-07 |
 | GATE 2 — Engineering skeleton | `ENGINEERING_SKELETON_LOCKED` — on the same five authorised defaults; D19 human-authorised to Vazirmatn (text face) and discharged, its monospace half still `PENDING AUTHORISATION` | 2026-09-08 |
+| GATE 3 — Domain implementation | `DOMAIN_IMPLEMENTATION_LOCKED` — [merged PR #2](https://github.com/soroushkarahrodi79-oss/JOB/pull/2), implementation commit [`c0fd88b`](https://github.com/soroushkarahrodi79-oss/JOB/commit/c0fd88b51f1c3c499dd42873c51096e894138d43), with green PR CI | 2026-09-09 |
 
 GATE 1 first returned `PROTOTYPE_EXPERIENCE_NOT_READY` because the gate rule and the decision
 register contradicted each other. The contradiction was resolved by
@@ -196,10 +199,36 @@ verdict is valid.
 Domain model and eligibility/classification rules, behind ports, with tests. Simulated adapters
 implement full port contracts including failure paths.
 
+**Exit criteria**
+
+1. The documented domain entities, invariants and lifecycle guards are implemented as domain code;
+   invalid transitions reject deterministically.
+2. Eligibility is deterministic, binary and explainable. Classification is an explainable,
+   recomputable `HYPOTHESIS` signal with recorded factors, never a legal verdict or publication
+   gate.
+3. Ports use domain vocabulary, have no provider dependency, and declare domain-level failure
+   outcomes. Simulated and mock adapters exercise deterministic success and failure paths without
+   contacting a real service.
+4. Synthetic demo data is reproducible and contains no real personal, registry, bank or phone
+   identifiers. Its skills taxonomy and location representation use D5 and D6's authorised
+   prototype-provisional defaults, while both decisions remain open.
+5. [demo-truth-matrix.md](demo-truth-matrix.md)'s `Actual` values match the observable domain and
+   adapter implementation; no real integration or product screen is introduced.
+6. No decision that blocks a later gate is silently authorised. D16, D17 and D18 remain in the
+   status recorded in [open-decisions.md](open-decisions.md).
+
+**Verdict vocabulary:** `DOMAIN_IMPLEMENTATION_LOCKED` or `DOMAIN_IMPLEMENTATION_NOT_READY`. No
+other verdict is valid.
+
 ## GATE 4 — Prototype surface
 
 Persian-first, RTL-native UI over the domain. Every non-`FUNCTIONAL` capability carries its
 truth label at the point of use.
+
+**Blocked on:** every entry in [open-decisions.md](open-decisions.md) whose *Blocks* column names
+GATE 4, unless it has an `AUTHORISED` prototype-provisional default under
+[ADR-0010](adr/0010-prototype-provisional-defaults.md). On 2026-09-09, D16 and D18 are the only
+such entries still `PENDING AUTHORISATION`; the register is canonical for their choices.
 
 **Exit criterion:** the truth matrix `Actual` column matches observable behaviour, verified by
 walking each demo scenario.

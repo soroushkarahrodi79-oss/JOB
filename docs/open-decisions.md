@@ -67,6 +67,13 @@ the gate named in their *Blocks* column. None of D16, D17, D18 or D19 blocked GA
 **D18 is the consequential one** — it decides whether a worker is paid when an employer stays silent
 — and it requires human authorisation before GATE 4. D16 and D17 remain `PENDING AUTHORISATION`.
 
+**GATE 4 entry reconciliation — 2026-09-09:** D16 and D18 are the only `PENDING AUTHORISATION`
+entries whose *Blocks* field includes GATE 4, and both require an explicit human choice before a UI
+can represent their behaviour. D7 has an `AUTHORISED` prototype-provisional default and does not
+block entry. D17 blocks **any real pilot**, not GATE 4: the structured-fields-only prototype may
+proceed without authorising media, while D17 remains pending and no storage port or media handling
+is introduced.
+
 D19's **text face** was human-authorised at GATE 2, which is the gate that ships a font file. The
 human named Vazirmatn; an agent then verified the SIL OFL 1.1 licence against the licence text — the
 agent applied a human-approved value, it did not select the face or assert the licence unprompted.
