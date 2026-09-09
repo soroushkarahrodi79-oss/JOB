@@ -6,19 +6,21 @@ file is the defect.
 
 ## 1. Current state
 
-**GATE 2 — ENGINEERING SKELETON, closed `ENGINEERING_SKELETON_LOCKED`.** GATE 0 closed
+**GATE 3 — DOMAIN IMPLEMENTATION, closed `DOMAIN_IMPLEMENTATION_LOCKED`.** GATE 0 closed
 `FOUNDATION_LOCKED`; GATE 0.1 `FOUNDATION_RECONCILED`; GATE 1 `PROTOTYPE_EXPERIENCE_LOCKED`;
-GATE 1.5 `DESIGN_SYSTEM_LOCKED`. The next gate is **GATE 3 — domain implementation**.
+GATE 1.5 `DESIGN_SYSTEM_LOCKED`; GATE 2 `ENGINEERING_SKELETON_LOCKED`. The next gate is
+**GATE 4 — prototype surface**, and its entry is blocked pending explicit human authorisation of
+D16 and D18 in [docs/open-decisions.md](docs/open-decisions.md).
 
 The repository now has a pnpm workspace, strict TypeScript, linting, test runners, a self-hosted
-font, the token layer and the design-system primitives — but **no domain rules, no provider
-adapters, no database, and no product screens**. That is the gate boundary, not an omission.
+font, the token layer, design-system primitives, domain rules, provider ports, deterministic
+simulated/mock adapters and synthetic demo data — but **no database, real integration, or product
+screens**. The GATE 4 boundary remains closed until D16 and D18 are human-authorised.
 
-**Do not**, before their gate: implement product screens or the screen inventory (GATE 4);
-implement domain rules, eligibility/classification logic, provider ports with failure contracts,
-or simulated adapters, or generate the demo dataset (GATE 3); author a database schema (GATE 3);
-connect any real external service (never in the prototype). Primitives compose into screens at
-GATE 4; the domain and its ports are GATE 3 ([ADR-0011](docs/adr/0011-design-system-gate.md)).
+**Do not**, while GATE 4 entry is blocked: implement product screens or the screen inventory;
+author a database schema without an authorised gate scope; or connect any real external service
+(never in the prototype). Primitives compose into screens only at GATE 4; the domain and its ports
+were completed in GATE 3 ([ADR-0011](docs/adr/0011-design-system-gate.md)).
 
 Gate definitions, exit criteria and the current gate: [docs/acceptance-gates.md](docs/acceptance-gates.md).
 
