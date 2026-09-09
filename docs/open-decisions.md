@@ -55,6 +55,12 @@ and does not remove the entry from the table above. Scope is **prototype only** 
 | **D18** | A stated response window, with release on elapse recorded as `ApprovedByNonResponse` and never rendered as an approval. | [domain/state-transitions.md](domain/state-transitions.md) | Proof resolution needs a terminal path when the employer is silent. | Entry to GATE 4. | **Prohibited without review** | `PENDING AUTHORISATION` — agent-proposed at GATE 1 |
 | **D19** | **Text face: Vazirmatn** — self-hosted and subset to woff2 (weights 400/600/700), human-authorised at GATE 2. Its licence was verified against the licence text as SIL OFL 1.1 (2026-09-08); the notice ships beside the fonts. The **monospace** face is still unselected and falls back to a system monospace. | [design/typography.md](design/typography.md); [engineering/dependency-budget.md](engineering/dependency-budget.md) | The type scale, the numeric alignment and the whole visual system depend on a face with Persian tabular figures and usable weight separation. | Any change of the text face; selection of a self-hosted monospace face. | **Prohibited without review** — redistribution relies on the OFL, whose notice must ship with the fonts | `AUTHORISED` (text face) 2026-09-08 · monospace half `PENDING AUTHORISATION` |
 
+**GATE 3 entry reconciliation — 2026-09-09:** D5 remains sufficient: the shared demo world
+requires only the documented, small curated scenario taxonomy. D6 remains sufficient: every
+implemented location rule operates on city and neighbourhood, with the fixed synthetic distance
+table behind `GeolocationPort`; no rule requires coordinates. Neither decision is resolved or
+expanded by this assessment.
+
 `PENDING AUTHORISATION` entries were proposed by an agent and are **not** authorised. Per
 [ADR-0010](adr/0010-prototype-provisional-defaults.md) safeguard 8 they may not be relied upon past
 the gate named in their *Blocks* column. None of D16, D17, D18 or D19 blocked GATE 1 or GATE 1.5.
