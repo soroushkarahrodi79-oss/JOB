@@ -70,10 +70,10 @@ the evidence the dispute case depends on.
 
 ### ۴ — «آیا به گزارش پایان کار پاسخ می‌دهد؟»
 
-Proof decisions, split three ways and **never summed**: approved, contested, and resolved by
-non-response.
+Proof decisions, split three ways and **never summed**: approved, contested, and awaiting employer
+action.
 
-The third is kept visually separate and carries the `warning` role
+The third is kept visually separate and carries the `attention` role
 ([../state-vocabulary.md](../state-vocabulary.md)). An employer who never responds is a different
 counterparty from one who approves promptly, and a combined "resolved" figure would erase precisely
 the difference a worker needs.
@@ -128,7 +128,7 @@ Nothing employer-identifying beyond what the opportunity already discloses is ad
 | --- | --- |
 | A composite employer score, rating or "trusted" badge | Symmetric with the worker-side refusal, and for the same reasons |
 | Amendments or cancellations styled as warnings or flags | The Platform does not judge; and it would suppress the recording the dispute model depends on |
-| Approved and resolved-by-non-response summed into one "resolved" figure | Erases the distinction that matters most to a worker |
+| Approved and unresolved proof summed into one "resolved" figure | Falsely implies an employer decision or payment outcome |
 | Settlement shown as confirmed rather than reported | The Platform does not know money arrived |
 | Payment reliability visible only to the employer | Reciprocity as decoration |
 | A gentler denominator rule than the worker side gets | The asymmetry the model exists to prevent |
@@ -138,7 +138,7 @@ Nothing employer-identifying beyond what the opportunity already discloses is ad
 ## The commercial tension, stated
 
 An employer might reasonably prefer a product that does not record amendments, does not publish
-settlement times, and does not count non-responses. That preference is real, it is the commercial
+settlement times, and does not count unresolved proof. That preference is real, it is the commercial
 tension at the centre of the thesis, and it is recorded rather than designed around
 ([../../product/experience/trust-profiles.md](../../product/experience/trust-profiles.md)).
 

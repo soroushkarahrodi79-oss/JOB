@@ -76,7 +76,8 @@ declarative.
 
 1. Worker records arrival, progress or completion.
 2. Employer confirms, disputes, or does not respond.
-3. Non-response is an explicit outcome with its own rule, not an undefined state.
+3. Employer non-response leaves proof explicitly unresolved, awaiting employer action or case
+   handling; it is neither approval nor a payment-release trigger.
 
 **Constraint:** any attestation stronger than mutual confirmation (device, location, biometric)
 is a privacy and consent question before it is a technical one. Tracked in

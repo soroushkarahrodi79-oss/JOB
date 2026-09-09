@@ -8,19 +8,20 @@ file is the defect.
 
 **GATE 3 — DOMAIN IMPLEMENTATION, closed `DOMAIN_IMPLEMENTATION_LOCKED`.** GATE 0 closed
 `FOUNDATION_LOCKED`; GATE 0.1 `FOUNDATION_RECONCILED`; GATE 1 `PROTOTYPE_EXPERIENCE_LOCKED`;
-GATE 1.5 `DESIGN_SYSTEM_LOCKED`; GATE 2 `ENGINEERING_SKELETON_LOCKED`. The next gate is
-**GATE 4 — prototype surface**, and its entry is blocked pending explicit human authorisation of
-D16 and D18 in [docs/open-decisions.md](docs/open-decisions.md).
+GATE 1.5 `DESIGN_SYSTEM_LOCKED`; GATE 2 `ENGINEERING_SKELETON_LOCKED`. The current gate is
+**GATE 4 — prototype surface**. Its entry is ready on the explicitly human-authorised,
+prototype-only defaults for D16 and D18; both decisions remain OPEN in
+[docs/open-decisions.md](docs/open-decisions.md).
 
 The repository now has a pnpm workspace, strict TypeScript, linting, test runners, a self-hosted
 font, the token layer, design-system primitives, domain rules, provider ports, deterministic
 simulated/mock adapters and synthetic demo data — but **no database, real integration, or product
-screens**. The GATE 4 boundary remains closed until D16 and D18 are human-authorised.
+screens**. GATE 4 may now implement only the authorised prototype scope; D16 and D18 do not
+establish production, pilot, legal or payment policy.
 
-**Do not**, while GATE 4 entry is blocked: implement product screens or the screen inventory;
-author a database schema without an authorised gate scope; or connect any real external service
-(never in the prototype). Primitives compose into screens only at GATE 4; the domain and its ports
-were completed in GATE 3 ([ADR-0011](docs/adr/0011-design-system-gate.md)).
+**Do not** author a database schema without an authorised gate scope, or connect any real external
+service (never in the prototype). Primitives may compose into screens only in GATE 4; the domain
+and its ports were completed in GATE 3 ([ADR-0011](docs/adr/0011-design-system-gate.md)).
 
 Gate definitions, exit criteria and the current gate: [docs/acceptance-gates.md](docs/acceptance-gates.md).
 

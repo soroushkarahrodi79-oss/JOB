@@ -182,8 +182,8 @@ evidence.*
 ### 8 · PROOF — W-06 · 0:30
 
 **Shown.** Completion proof as structured fields plus a note. No photograph, and the demo says that
-is a decision rather than a gap. The response window and the non-response rule are stated *before*
-submission.
+is a decision rather than a gap. Before submission, the demo states that employer non-response
+leaves proof unresolved; it does not approve proof or release payment.
 
 **Proves.** Proof is captured as evidence, not asserted after the fact.
 

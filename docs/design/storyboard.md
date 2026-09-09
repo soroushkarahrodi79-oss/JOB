@@ -126,9 +126,10 @@ argument the amendment block makes visually. It must not look like a message.*
 - **Dominant.** The employer's completion fields, and the note.
 - **Primary action.** Submit.
 - **Thesis.** Proof is captured, not asserted after the fact.
-- **Patterns.** Structured fields; the response-window statement.
-- **Without interaction.** **The response window and the non-response rule, before the submit
-  action.** No upload control anywhere on the screen, including a disabled one.
+- **Patterns.** Structured fields; the no-automatic-outcome statement.
+- **Without interaction.** **Employer non-response leaves proof unresolved and does not release
+  payment, before the submit action.** No upload control anywhere on the screen, including a
+  disabled one.
 
 ### 9 · PROOF — E-07 Proof Review: approve, rehire, then contest
 
@@ -239,7 +240,7 @@ check below is what confirms it rather than asserts it.
 | W-01 Opportunity Feed and My Work | Opportunity card list; eligibility markers down the margin; the excluded count with its route | None |
 | W-04 Offer Acceptance | The terms block from W-02, unchanged — that identity is the point | None |
 | W-09 Worker Case Response | Chronology in **selection mode** | *Addition:* selection state on the chronology entry |
-| E-01 Employer Home | Work-item rows with response windows in `attention` | None |
+| E-01 Employer Home | Submitted-proof work-item rows in `attention`, with no timer | None |
 | E-05 Candidate Detail | Worker Passport, identical; the ladder expanded | None |
 | E-06 Engagement Monitoring | Chronology; the amendment composer | *Addition:* the composer, which authors the diff the block renders |
 | E-08 Employer Trust Profile | The four questions; the one permitted chart | None |
