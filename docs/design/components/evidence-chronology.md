@@ -95,9 +95,9 @@ The employer's screen shows the code; the worker enters it on arrival.
 Structured fields defined by the employer, plus a free note. No media, no upload control, not even a
 disabled one ([../visual-language.md](../visual-language.md)).
 
-**The response window and the non-response rule are stated before the submit action**, in the flow,
-at `type.body` — not after it, not in a confirmation, not in help. A worker should never learn the
-non-response rule by experiencing it.
+**The no-automatic-outcome rule is stated before the submit action**, in the flow, at `type.body` —
+not after it, not in a confirmation, not in help. A worker should never learn by experiencing it
+that employer non-response leaves proof unresolved and does not release payment.
 
 Field count is capped by what can be answered honestly in under a minute by someone who wants to go
 home. A long checklist gets straight-lined, and a straight-lined checklist is worse than none because

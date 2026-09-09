@@ -277,7 +277,8 @@ remain rendered without interaction:
 - every provenance mark and label;
 - every truth chip that applies to a rendered claim;
 - the statement that the Platform does not hold funds, wherever a commitment is shown;
-- the response window and the non-response rule, before proof is submitted;
+- the statement that employer non-response leaves proof unresolved and does not release payment,
+  before proof is submitted;
 - the `HYPOTHESIS` qualification on the classification signal;
 - the obligation-survives sentence beside `SettlementFailed`;
 - the denominator on every derived figure.

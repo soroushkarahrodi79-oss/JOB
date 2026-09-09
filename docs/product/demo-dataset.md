@@ -102,7 +102,7 @@ mind.
 | `EMP-01` | Café, verified, good payment record, **records amendments frequently** | Stories A, B and C. The amendment pattern is the point (beat C4). |
 | `EMP-02` | Warehouse/distribution, verified, high volume, prompt settlement | Background history that makes workers' records substantial. |
 | `EMP-03` | Event services, verified, seasonal bursts, some cancellations | Cancellation behaviour with lead-time variation. |
-| `EMP-04` | Small shop, **unverified**, slow settlement, several non-responses to proof | Makes the employer trust profile discriminating. Without a poor counterparty, reciprocal trust is untested decoration. |
+| `EMP-04` | Small shop, **unverified**, slow settlement, several contested proofs | Makes the employer trust profile discriminating. Without a poor counterparty, reciprocal trust is untested decoration. |
 
 `EMP-04` is load-bearing. An employer set in which every employer is good proves nothing about
 employer reputation.
@@ -115,7 +115,7 @@ employer reputation.
 | `OPP-02` | `EMP-01` | Created at beat B12, **open acceptance**. Exists only so its candidate list can show `WKR-01` ranked on the prior relationship built during `OPP-01`. Not filled during the demo. |
 | `OPP-03` | `EMP-02` | Historical, filled, settled. Background. |
 | `OPP-04` | `EMP-03` | Historical, partly cancelled by the employer. Feeds `EMP-03`'s cancellation record. |
-| `OPP-05` | `EMP-04` | Historical, settled late after non-response. Feeds `EMP-04`'s record. |
+| `OPP-05` | `EMP-04` | Historical, settled late after a case outcome. Feeds `EMP-04`'s record. |
 | `OPP-06` | `EMP-02` | Published, unfilled, expired. Shows expiry as an ordinary outcome. |
 
 `OPP-01` and `OPP-02` differ in acceptance mode on purpose: both paths into `Accepted` exist in the
@@ -133,7 +133,8 @@ variation across them:
 
 - completions with on-time arrival, and completions with late arrival;
 - cancellations by workers and by employers, at short and long lead times;
-- at least two `ApprovedByNonResponse` outcomes, concentrated on `EMP-04`;
+- at least two submitted proofs awaiting employer action, concentrated on `EMP-04`, with no
+  automatic approval or release;
 - at least one `SettlementFailed` followed by a successful retry, in the history as well as live;
 - at least one expired offer and two declined offers;
 - one historical resolved dispute (`WKR-09`), with a recorded finding.

@@ -127,9 +127,9 @@ stored or shown. `HYPOTHESIS` · Registry access model is unknown; Q3 applies he
 Opportunities published and filled. Engagements completed. Payment commitments recorded and their
 settlement outcomes, with elapsed time from proof approval to reported settlement. Cancellations
 after acceptance, with lead time. Amendments recorded mid-engagement, and how many were
-acknowledged. Proof decisions, split into approved, contested, and **resolved by non-response** —
-kept separate, because an employer who never responds is a different counterparty from one who
-approves promptly. Disputes and their outcomes. Worker feedback attestations. Repeat-worker
+acknowledged. Proof decisions, split into approved, contested, and **awaiting employer action** —
+kept separate, because an unresolved submission is not approval or a payment outcome. Disputes and
+their outcomes. Worker feedback attestations. Repeat-worker
 relationships.
 
 ### Layer 4 — Derived metrics

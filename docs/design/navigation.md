@@ -69,7 +69,7 @@ engagement; a candidate list with no opportunity is not a screen.
 been waiting. Design principle 3 rules out dashboards as a default, and the concrete consequence is
 that E-01 has no KPI row, no charts, no counts strip, and no "welcome back".
 
-`attention` is applied **only to items whose response window is running** — chiefly proof decisions —
+`attention` is applied **only to submitted proof decisions awaiting explicit employer action** —
 and not to every open item. An employer home in which everything is ochre is an employer home in
 which nothing is, and it also misrepresents a live engagement proceeding normally as something
 demanding a response.

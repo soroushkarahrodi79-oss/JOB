@@ -9,9 +9,10 @@ Work belonging to a later gate is not started early, even when it looks cheap.
 
 ## Current gate
 
-**GATE 4 — PROTOTYPE SURFACE (ENTRY BLOCKED).** GATE 3 closed
-`DOMAIN_IMPLEMENTATION_LOCKED` on 2026-09-09. Entry is blocked by the human authorisations for
-D16 and D18 recorded in [open-decisions.md](open-decisions.md); no GATE 4 work has started.
+**GATE 4 — PROTOTYPE SURFACE.** GATE 3 closed `DOMAIN_IMPLEMENTATION_LOCKED` on 2026-09-09.
+Entry is ready on D16 and D18's explicitly human-authorised, prototype-provisional defaults in
+[open-decisions.md](open-decisions.md). Both decisions remain OPEN; neither authorisation applies
+to production or a pilot.
 
 ## Gate history
 
@@ -227,8 +228,8 @@ truth label at the point of use.
 
 **Blocked on:** every entry in [open-decisions.md](open-decisions.md) whose *Blocks* column names
 GATE 4, unless it has an `AUTHORISED` prototype-provisional default under
-[ADR-0010](adr/0010-prototype-provisional-defaults.md). On 2026-09-09, D16 and D18 are the only
-such entries still `PENDING AUTHORISATION`; the register is canonical for their choices.
+[ADR-0010](adr/0010-prototype-provisional-defaults.md). On 2026-09-09, D7, D16 and D18 have such
+defaults; no GATE 4 entry blocker remains. The register is canonical for their choices.
 
 **Exit criterion:** the truth matrix `Actual` column matches observable behaviour, verified by
 walking each demo scenario.

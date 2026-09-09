@@ -57,8 +57,9 @@ is worse than no checklist because it looks like evidence.
 
 ### 4 — Employer decision
 
-At E-07 the employer approves or contests. Non-response for the stated window produces
-`ApprovedByNonResponse` — an explicitly named outcome, never rendered as approval.
+At E-07 the employer approves or contests. Under D18's authorised prototype-only value, employer
+non-response leaves proof `Submitted`: it awaits an explicit employer action or case handling and
+does not approve proof or authorise payment. There is no response window, countdown or timer.
 `FUNCTIONAL` (rows 10, 13).
 
 The distinction matters in both directions: a worker's record should not credit them with an
@@ -106,8 +107,9 @@ The demo fails unless:
    accepts the demo's happy path is `MOCK` and must be labelled `MOCK`;
 2. the simulated portion of the arrival attestation is labelled where its strength is shown, not in
    a footer;
-3. `ApprovedByNonResponse` appears somewhere in the demo world, distinctly rendered from `Approved`;
-4. the worker sees the response window and the non-response rule **before** submitting (W-06);
+3. a submitted proof with no employer action remains visibly unresolved and offers no automatic
+   approval or release;
+4. no response-window duration, countdown or timer is rendered at W-06 or elsewhere;
 5. no screen offers a photograph upload as a disabled control. Prefer absence over a dead
    affordance ([../../demo-truth-matrix.md](../../demo-truth-matrix.md), `PLANNED`).
 
@@ -118,4 +120,4 @@ The demo fails unless:
 | 1 | Any real device or location attestation | Q4 `UNKNOWN`. Until answered, mutual confirmation is the ceiling. |
 | 2 | Evidence media of any kind | Q4, Q7, and D17 — plus a new port, requiring an ADR. |
 | 3 | Retention of arrival and completion events | Q7 `UNKNOWN`. These are the Passport's evidential basis, so retention rules and deletion rules interact directly ([../../architecture/data-model.md](../../architecture/data-model.md)). |
-| 4 | The non-response window's length and direction | D18. A window that authorises payment on employer silence is a defensible default and an unvalidated one. |
+| 4 | Any pilot or production treatment of employer non-response | D18 remains OPEN. The authorised prototype value creates no automatic approval, release or time-based outcome. |

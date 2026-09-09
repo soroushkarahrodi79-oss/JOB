@@ -198,9 +198,9 @@ verification unlocks rather than by what is missing.
 Standing: E-08 has equal rigour to W-08 with a different structure, and the structural difference is
 justified by the reader's question rather than by the subject's status; OPS-02 gives both parties
 equal area, which is a layout rule rather than an intention; W-02 renders three employer trust
-questions inline rather than behind a link; employer non-response is its own state, named on the
-employer's record; there is no employer-facing control that suppresses, softens or contextualises any
-element of the profile.
+questions inline rather than behind a link; submitted proof awaiting employer action is explicit and
+does not imply approval or release; there is no employer-facing control that suppresses, softens or
+contextualises any element of the profile.
 
 The commercial tension — that an employer might prefer a product that records none of this — is
 recorded rather than designed around

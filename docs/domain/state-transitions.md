@@ -67,7 +67,7 @@ specific opportunity, and offer/acceptance are stages of that record, not a diff
 | `Offered` | An employer has invited a specific worker. Invite-only path (B8). |
 | `Accepted` | The worker has confirmed the terms. Reached either by accepting an offer, or directly where the Opportunity permits open acceptance (A5). |
 | `InProgress` | An arrival event has been recorded. |
-| `Completed` | Completion proof has been submitted **and** resolved — approved, approved by non-response, or resolved through a case. |
+| `Completed` | Completion proof has been submitted **and** resolved — by employer approval or through a case. |
 | `Settled` | The payment intent has reached a terminal reported state and the engagement is closed. |
 | `Declined` | The worker declined an offer. Not a reliability signal; declining is legitimate. |
 | `Expired` | An offer was not answered within its window. Not a reliability signal. |
@@ -95,7 +95,6 @@ One per Engagement, holding the attestations for that engagement (arrival, compl
 
 ```
 Awaited ──worker submits completion──▶ Submitted ──┬── employer approves ──▶ Approved
-                                                   ├── window elapses ─────▶ ApprovedByNonResponse
                                                    └── employer contests ──▶ Contested ──case closes──▶ ResolvedByCase
    │
    └── engagement cancelled ──▶ NotRequired
@@ -103,21 +102,21 @@ Awaited ──worker submits completion──▶ Submitted ──┬── emplo
 
 | Transition | Trigger | Guard |
 | --- | --- | --- |
-| `Awaited → Submitted` | Worker submits completion evidence | Engagement is `InProgress`. Starts the employer response window. |
+| `Awaited → Submitted` | Worker submits completion evidence | Engagement is `InProgress`. No response window, countdown or automatic transition starts. |
 | `Submitted → Approved` | Employer approves | Affirmative act. Authorises payment release. |
-| `Submitted → ApprovedByNonResponse` | Response window elapses | An explicit outcome with its own name, per F5 step 3. It authorises release **and is never rendered as an approval** — the distinction between "the employer approved" and "the employer did not respond" is exactly the kind of fact a reputation record must not blur. |
 | `Submitted → Contested` | Employer contests with a stated reason | Opens a Dispute. Freezes release. |
 | `Contested → ResolvedByCase` | Case closes | Payment consequence follows the recorded outcome, not the state name. |
 
-> **Prototype-provisional default — `PENDING AUTHORISATION`.** D18 (the length of the response
-> window, and whether non-response should authorise release at all) is open. The prototype uses a
-> stated window with release on elapse, because the alternative — non-response withholding a
-> worker's pay indefinitely — puts the cost of employer inattention on the party least able to carry
-> it. D18 stays OPEN. This default was proposed by an agent and is **not yet human-authorised**; per
-> [ADR-0010](../adr/0010-prototype-provisional-defaults.md) safeguard 8 it must be authorised before
-> GATE 4. It is the most consequential provisional default in the repository, because it decides
-> whether a worker is paid when an employer stays silent. Recorded in
+> **Prototype-provisional default — `AUTHORISED`.** Under D18, employer non-response does not
+> approve Proof of Work or authorise payment release. The submission remains `Submitted`, awaiting
+> an explicit employer action or case handling. There is no response-window duration, countdown or
+> timer, and this prototype-only value establishes no production payment policy, legal entitlement,
+> employer obligation or real-world dispute rule. D18 remains OPEN; its full register entry is in
 > [../open-decisions.md](../open-decisions.md).
+
+`ApprovedByNonResponse` remains in the pre-existing GATE 3 type vocabulary, but is **not a valid
+prototype transition** under D18 and must not be created or rendered by GATE 4 work. Removing that
+unused type-level state is outside this governance-only change.
 
 ---
 

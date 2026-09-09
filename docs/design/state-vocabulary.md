@@ -129,18 +129,17 @@ one anyway. This is a case where the domain's intent survives only if the interf
 | State | Persian | Role | Notes |
 | --- | --- | --- | --- |
 | `Awaited` | «در انتظار گزارش پایان کار» | `neutral` | |
-| `Submitted` | «گزارش پایان کار ثبت شد» | `attention` | On the employer's surface; carries the remaining window |
+| `Submitted` | «گزارش پایان کار ثبت شد» | `attention` | On the employer's surface; awaits explicit action and carries no timer |
 | `Approved` | «کارفرما تأیید کرد» | `positive` | |
 | `ApprovedByNonResponse` | «بدون پاسخ کارفرما تأیید شد» | **`warning`** on the employer's record, **`neutral`** on the worker's | See below |
 | `Contested` | «کارفرما اعتراض کرد» | `attention` | Carries the stated reason |
 | `ResolvedByCase` | «با نتیجهٔ پرونده تعیین شد» | `info` | Links to the recorded finding |
 | `NotRequired` | «لازم نیست» | `neutral` | |
 
-`ApprovedByNonResponse` is the most carefully specified state in this document, because it is the one
-most likely to be quietly softened. It is `warning`, not `positive`; its label names the
-non-response; and it may never be rendered with the `Approved` mark, in any form, at any density, on
-either party's record. The distinction between "the employer approved" and "the employer did not
-respond" is exactly the fact a reputation record must not blur.
+`ApprovedByNonResponse` remains mapped only because it is in the pre-existing GATE 3 type
+vocabulary. Under D18's authorised prototype value it is not a valid transition and must not be
+created or rendered. If a later authorised domain change makes it reachable, it must never be
+rendered with the `Approved` mark.
 
 It also renders on the *employer's* record with the same weight it has on the worker's. An employer
 who does not respond has done something visible.
@@ -256,7 +255,7 @@ is canonical, and the differences are recorded here rather than silently reconci
 | "invited" | `Offered` | Same state, domain name |
 | "active" | `InProgress` | Same state, domain name |
 | "proof submitted" | proof `Submitted` | Belongs to the proof family, not the engagement family |
-| "approved" | proof `Approved` **and** `ApprovedByNonResponse` | One rendering for both would erase the distinction the domain exists to keep |
+| "approved" | proof `Approved` | Employer approval requires an affirmative act |
 | "completed" | `Completed` and `Settled` | Two distinct states; work done is not money reported |
 | "pending" | — | Not a domain state. What it names is `AuthorizationSimulated` or `ReleaseAuthorized` |
 | "retrying" | — | Not a state. A retry is an event producing a second `ReleaseAuthorized` |

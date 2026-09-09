@@ -233,15 +233,15 @@ a workplace.
 | **Path** | Primary path |
 | **Demo purpose** | Show that proof is structured evidence, not a photograph and not a message. |
 | **Principal decision** | What to submit as evidence of completion. |
-| **System response** | Records the completion attestation and transitions ProofOfWork to `Submitted`, starting the employer response window. |
+| **System response** | Records the completion attestation and transitions ProofOfWork to `Submitted`. No response window, countdown or automatic outcome starts. |
 | **In** | W-05 |
 | **Out** | W-07 |
 | **Domain concepts** | ProofOfWork, Engagement |
 | **Truth states** | `FUNCTIONAL` submission, `SIMULATED` attestation strength (row 10) |
 | **Beats** | A8 |
 
-States the response window and what happens if the employer does not respond, **before** submission.
-A worker should never learn the non-response rule by experiencing it.
+States before submission that employer non-response leaves proof unresolved, awaiting explicit
+employer action or case handling. A worker should never learn that rule by experiencing it.
 
 ### W-07 — Payment and Receipt
 
@@ -316,7 +316,7 @@ assembled, not re-entered (F7).
 | **Path** | Supporting |
 | **Demo purpose** | Establish that the employer's default state is "what needs my attention", not a dashboard. |
 | **Principal decision** | Create an opportunity, or act on something in progress. |
-| **System response** | Lists open opportunities, live engagements, and items awaiting the employer — chiefly proof decisions with their remaining response window. |
+| **System response** | Lists open opportunities, live engagements, and items awaiting the employer — chiefly submitted proof decisions. |
 | **In** | SH-01, SH-03 |
 | **Out** | E-02, E-04, E-06, E-07, E-08, SH-03 |
 | **Domain concepts** | Opportunity, Engagement, ProofOfWork |
@@ -324,7 +324,7 @@ assembled, not re-entered (F7).
 | **Beats** | entry to B1, B9, B10, B11, B12 |
 
 Design principle 3 rules out dashboards as a default. This is a queue, not a dashboard: it shows
-what is waiting on this employer and how long it has been waiting.
+what is waiting on this employer without a response-window countdown.
 
 ### E-02 — Opportunity Creation
 
@@ -348,11 +348,10 @@ become a wish list — and the product's central rule is that a requirement excl
 The escrow-absence statement is placed at the commitment step: the moment the employer might
 otherwise assume the Platform is holding the money.
 
-> **Prototype-provisional default — D16, `PENDING AUTHORISATION`.** Both acceptance modes exist
-> because the state machine needs both entry paths; the pre-selected mode is invite-only. D16 stays
-> OPEN, and this default was proposed by an agent rather than human-authorised — per
-> [ADR-0010](../adr/0010-prototype-provisional-defaults.md) safeguard 8 it must be authorised before
-> GATE 4. Recorded in [open-decisions.md](../open-decisions.md).
+> **Prototype-provisional default — D16, `AUTHORISED`.** Both acceptance modes exist and the
+> employer chooses per opportunity; invite-only is pre-selected. This value is prototype-only and
+> D16 remains OPEN; it establishes no production or pilot policy. Recorded in
+> [open-decisions.md](../open-decisions.md).
 
 ### E-03 — Engagement Factors and Classification Signal
 
@@ -454,7 +453,7 @@ does not understand that has been given a trap, not a tool.
 | **Path** | Primary path |
 | **Demo purpose** | The employer's highest-consequence decision, and the entry point to Story C. |
 | **Principal decision** | Approve the submitted proof, or contest it. |
-| **System response** | On approval, transitions ProofOfWork to `Approved` and authorises release. On contest, opens a case and freezes release. Both are recorded events with the response-window state visible. |
+| **System response** | On approval, transitions ProofOfWork to `Approved` and authorises release. On contest, opens a case and freezes release. With no employer action, proof remains `Submitted` and unresolved; it neither approves nor releases payment. |
 | **In** | E-01, E-06 |
 | **Out** | E-08, E-09, E-01 |
 | **Domain concepts** | ProofOfWork, PaymentIntent, Dispute, Preferred Crew |
