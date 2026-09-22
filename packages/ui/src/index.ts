@@ -5,6 +5,11 @@ export { VisuallyHidden } from './VisuallyHidden';
 export { Mark } from './marks';
 export { toPersianDigits, formatToman, formatJalali, formatTimeWindow } from './format';
 export {
+  CAPABILITY_LEDGER,
+  TRUTH_LEVEL_GLOSS,
+  type CapabilityLedgerRow,
+} from './capability-ledger';
+export {
   RENDERINGS,
   isNotRendered,
   resolveRole,

@@ -1,0 +1,102 @@
+.shell {
+  min-block-size: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The demo bar. "Visually not product chrome: different ground, different edge" (navigation.md):
+   a recessed ground and an emphasis edge on the block end set it apart from the product canvas.
+   It deliberately does NOT use the hatch texture, which color.md rule 5 reserves for the truth
+   chip alone (see the navigation.md ↔ color.md contradiction raised in the PR notes). */
+.demoBar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  background: var(--color-surface-recessed);
+  border-block-end: var(--border-width-emphasis) solid var(--color-border-emphasis);
+}
+
+.demoBarLabel {
+  color: var(--color-fg-default);
+}
+
+.demoBarLink {
+  color: var(--color-fg-accent);
+}
+
+.page {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 44rem;
+  margin-inline: auto;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.actorList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.actor {
+  inline-size: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: var(--space-1);
+  min-block-size: var(--target-comfortable);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  text-align: start;
+  background: var(--color-surface-raised);
+  color: var(--color-fg-default);
+  border: var(--border-width-hairline) solid var(--color-border-hairline);
+  border-radius: var(--radius-surface);
+  cursor: pointer;
+}
+
+.actor[aria-pressed='true'] {
+  border-color: var(--color-border-emphasis);
+  border-inline-start-width: var(--border-width-emphasis);
+}
+
+.selection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-surface-raised);
+  border: var(--border-width-hairline) solid var(--color-border-hairline);
+  border-radius: var(--radius-surface);
+}
+
+.primaryLink {
+  align-self: start;
+  color: var(--color-fg-accent);
+  min-block-size: var(--target-minimum);
+}
