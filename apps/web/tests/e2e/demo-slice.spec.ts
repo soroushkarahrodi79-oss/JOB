@@ -8,6 +8,18 @@ import AxeBuilder from '@axe-core/playwright';
 const DEMO = '/demo';
 const TRUTH = '/truth';
 
+/**
+ * Navigate to SH-01, then wait until this tab's demo session has been read.
+ *
+ * SH-01 is server-rendered with no active actor and swaps in the tab's own session once the
+ * client mounts, so a click that lands before that is a click on markup about to be replaced.
+ * The page publishes `data-session-restored` for exactly this.
+ */
+async function openDemo(page: import('@playwright/test').Page) {
+  await page.goto(DEMO);
+  await page.locator('[data-session-restored="true"]').waitFor();
+}
+
 test.describe('Persian-first RTL foundation (ADR-0005)', () => {
   for (const path of [DEMO, TRUTH]) {
     test(`${path} document root is Persian-first and RTL`, async ({ page }) => {
@@ -36,22 +48,41 @@ test.describe('SH-01 — Demo Entry and Actor Switch', () => {
     await expect(page.getByTestId('actor-operations')).toContainText('عملیات');
   });
 
-  test('selecting an actor states its home is PLANNED and renders no link to the unbuilt home', async ({
+  test('states plainly that an unbuilt home is PLANNED and renders no link to it', async ({
     page,
   }) => {
-    await page.goto(DEMO);
-    await page.getByTestId('actor-employer').click();
-    const planned = page.getByTestId('home-planned');
-    await expect(planned).toContainText('PLANNED');
-    await expect(planned).toContainText('E-01');
-    // The unbuilt home must not be a live destination — no link claims it exists.
-    await expect(page.getByRole('link', { name: /خانهٔ کارفرما/ })).toHaveCount(0);
+    // W-01 and OPS-01 are not built in this slice. Selecting either must say so and must not
+    // render a live destination — "prefer absence over a dead affordance" (color.md).
+    for (const [actor, screenId] of [
+      ['actor-worker', 'W-01'],
+      ['actor-operations', 'OPS-01'],
+    ] as const) {
+      await openDemo(page);
+      await page.getByTestId(actor).click();
+      const planned = page.getByTestId('home-planned');
+      await expect(planned).toContainText('PLANNED');
+      await expect(planned).toContainText(screenId);
+      await expect(page.getByTestId('go-home')).toHaveCount(0);
+    }
   });
 
-  test('the only built destination from the actor switch is the Truth Ledger (SH-02)', async ({
-    page,
-  }) => {
+  test('declares that choosing an actor is not signing in', async ({ page }) => {
     await page.goto(DEMO);
+    const statement = page.getByTestId('not-authentication');
+    await expect(statement).toContainText('حساب کاربری نیست');
+    // Nothing on the screen asks for a credential of any kind.
+    await expect(page.locator('input[type="password"]')).toHaveCount(0);
+  });
+
+  test('states what the demo session actually is, on the demo bar', async ({ page }) => {
+    await page.goto(DEMO);
+    const detail = page.getByTestId('demo-bar-detail');
+    await expect(detail).toContainText('همین زبانهٔ مرورگر');
+    await expect(detail).toContainText('ذخیره یا ارسال نمی‌شود');
+  });
+
+  test('the Truth Ledger (SH-02) is reachable from the actor switch', async ({ page }) => {
+    await openDemo(page);
     await page.getByTestId('actor-worker').click();
     await page
       .getByTestId('active-actor')

@@ -12,6 +12,13 @@ export interface OpportunityLifecycle {
   readonly headcount: number;
   readonly acceptedEngagementCount: number;
   readonly hasPaymentCommitment: boolean;
+  /**
+   * state-transitions.md's first `Draft → Published` guard: "Every requirement is a binary
+   * evaluable condition." A requirement the employer cannot state concretely may be recorded as a
+   * note, but it must never become an eligibility gate — a gate nothing can evaluate excludes
+   * people for a reason the domain cannot explain, which is domain invariant 4 inverted.
+   */
+  readonly requirementsAreBinaryEvaluable: boolean;
   readonly classificationComputed: boolean;
   readonly classificationShown: boolean;
 }
@@ -26,6 +33,9 @@ export function transitionOpportunity(
   switch (command) {
     case 'Publish':
       if (opportunity.state !== 'Draft') return fail('only drafts may be published');
+      if (!opportunity.requirementsAreBinaryEvaluable) {
+        return fail('every requirement must be a binary evaluable condition');
+      }
       if (!opportunity.hasPaymentCommitment) return fail('a payment commitment is required');
       if (!opportunity.classificationComputed || !opportunity.classificationShown) {
         return fail('the classification signal must be computed and shown');

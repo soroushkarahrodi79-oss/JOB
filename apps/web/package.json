@@ -2,7 +2,7 @@
   "name": "@platform/web",
   "version": "0.0.0",
   "private": true,
-  "description": "Next.js application host (GATE 2). Hosts the token layer, the self-hosted font, and the verification harness. Product screens are GATE 4.",
+  "description": "Next.js application host. Composes the application layer and renders the GATE 4 prototype surfaces.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@platform/adapters": "workspace:*",
+    "@platform/application": "workspace:*",
     "@platform/domain": "workspace:*",
     "@platform/tokens": "workspace:*",
     "@platform/ui": "workspace:*",

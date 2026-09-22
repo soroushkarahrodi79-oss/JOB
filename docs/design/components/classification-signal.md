@@ -67,9 +67,19 @@ provenance, using the same margin as everywhere else:
 | Derived from what the employer already entered | derived bracket | the value, and **which field it came from** |
 | Answered at E-03 | self-declared hollow | the value as answered |
 | Answered «هنوز مشخص نیست» | self-declared hollow | recorded as undecided, not as a negative |
+| Asked, and no answer recorded | **none** | that it was asked and nothing came back |
+| Not asked by the prototype at all | **none** | that the mechanism does not collect it |
 
-The factor set is owned by
-[../../domain/engagement-classification.md](../../domain/engagement-classification.md) and is not
+**The last two carry no provenance mark, and that is the rule rather than an omission.** A
+provenance mark attributes a claim to someone. Nobody has made one in either case — the employer
+did not answer, or was never asked — so marking the row would attribute a statement that does not
+exist. A mark never sits on an absence. Both rows are rendered at full weight in the «ثبت‌نشده»
+sub-list below, with the content column aligned to the marked rows beside them.
+
+The source set these rows render is owned by
+[../../product/experience/classification.md](../../product/experience/classification.md), *Storage*;
+the factor set itself by
+[../../domain/engagement-classification.md](../../domain/engagement-classification.md). Neither is
 listed here.
 
 ## Uncaptured factors

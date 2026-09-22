@@ -1,4 +1,4 @@
-import type { Money } from '@platform/domain';
+import type { Money, PayBasis } from '@platform/domain';
 
 // Presentation of numerals, money, and dates (typography.md "Numerals", "Money", "Dates and
 // times"). These convert at the boundary: storage stays ASCII/Rial/UTC; presentation is Persian
@@ -36,14 +36,27 @@ export function formatToman(money: Money): string {
   return `${sign}${toPersianDigits(groupThousands(Math.abs(toman)))}${NBSP}تومان`;
 }
 
+// Storage is a UTC instant; presentation is Jalali in the originating zone (data-model.md:
+// "UTC instant plus the originating time zone"). The prototype's one market is Tehran
+// (demo-dataset.md "Geography"), so the zone is pinned rather than taken from the renderer's
+// machine: a shift stored as 12:30Z is 16:00 in Tehran and must read as 16:00 wherever the page
+// is rendered, including on a server in another zone. Reading the host zone would also be able to
+// move a shift across a Jalali day boundary, which is a date defect, not a formatting one.
+const TEHRAN = 'Asia/Tehran';
+
 const jalali = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
   weekday: 'long',
   year: 'numeric',
   month: 'long',
   day: 'numeric',
+  timeZone: TEHRAN,
 });
 
-const clock = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { hour: '2-digit', minute: '2-digit' });
+const clock = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: TEHRAN,
+});
 
 /** A Jalali date carrying its weekday (typography.md: "A date carries its weekday"). */
 export function formatJalali(date: Date): string {
@@ -55,4 +68,29 @@ export function formatTimeWindow(start: Date, end: Date): string {
   const hours = Math.round((end.getTime() - start.getTime()) / 3_600_000);
   const duration = `${toPersianDigits(String(hours))}${NBSP}ساعت`;
   return `${clock.format(start)} تا ${clock.format(end)}${NBSP}(${duration})`;
+}
+
+/**
+ * What a pay figure is the price of, in the employer's and the worker's own words.
+ *
+ * design/components/opportunity-card.md requires every rendered pay figure to carry "amount in
+ * Toman, its unit, and its basis (per shift, per hour)". The basis is not a qualifier that a
+ * layout may drop under pressure: without it, ۹۸۰٬۰۰۰ تومان is either the whole obligation for a
+ * shift or the price of one of its hours, and those are different agreements.
+ */
+export const PAY_BASIS_LABEL: Readonly<Record<PayBasis, string>> = {
+  PerShift: 'برای کل شیفت',
+  PerHour: 'به ازای هر ساعت',
+};
+
+/**
+ * An amount bound to its unit and its basis, so a line break can separate neither.
+ *
+ * This renders what was agreed and computes nothing. A `PerHour` figure is NOT multiplied out
+ * into a shift total anywhere in this system: converting a rate into an obligation needs a rule
+ * for rounding, breaks and overruns that this project has not established, and inventing one here
+ * would put a number on the screen that the employer never agreed to pay.
+ */
+export function formatAmountWithBasis(money: Money, basis: PayBasis): string {
+  return `${formatToman(money)}${NBSP}${PAY_BASIS_LABEL[basis]}`;
 }

@@ -100,3 +100,22 @@
   color: var(--color-fg-accent);
   min-block-size: var(--target-minimum);
 }
+
+/* The demo bar's session statement: what the demo session actually is, on the bar itself rather
+   than in a footnote. It wraps rather than truncating (visual-language.md: no truncation). */
+.demoBarDetail {
+  flex-basis: 100%;
+  color: var(--color-fg-muted);
+}
+
+.demoBarLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.secondaryLink {
+  align-self: start;
+  color: var(--color-fg-accent);
+  min-block-size: var(--target-minimum);
+}

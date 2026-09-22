@@ -34,6 +34,7 @@ export {
   type AttestationStrength,
   type EligibilityRequirement,
   type Opportunity,
+  type PayBasis,
   type OpportunityTerms,
   type PaymentCommitment,
   type Worker,
@@ -53,9 +54,11 @@ export {
 } from './engagement-record';
 export {
   CLASSIFICATION_FACTORS,
+  UNRECORDED_FACTOR_SOURCES,
   evaluateClassificationSignal,
   type ClassificationFactor,
   type ClassificationFactorKind,
+  type ClassificationFactorSource,
   type ClassificationFactorValue,
   type ClassificationSignal,
 } from './classification';
@@ -92,4 +95,11 @@ export {
   type EngagementRecord,
   type WorkerTrustProjection,
 } from './projections';
-export { generateSyntheticDemoWorld, type SyntheticDemoWorld } from './demo-data';
+export {
+  DEMO_NOW,
+  FEATURED_OPPORTUNITY_PLAN,
+  REHIRE_OPPORTUNITY_PLAN,
+  generateSyntheticDemoWorld,
+  type PlannedOpportunity,
+  type SyntheticDemoWorld,
+} from './demo-data';
