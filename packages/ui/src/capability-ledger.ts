@@ -7,8 +7,9 @@ import type { TruthLevel } from '@platform/domain';
 // way vocabulary.ts transcribes state-vocabulary.md. It exists because truth-matrix row 22 ("In-
 // product truth ledger") requires the matrix to be rendered inside the prototype and reachable
 // from every truth label. `capability-ledger.test.ts` guards the shape (24 rows, contiguous ids,
-// valid levels); it cannot detect wording drift in the Markdown, so a change to the matrix must be
-// mirrored here in the same pull request (ADR-0006 single source of truth; ADR-0004 truth taxonomy).
+// valid levels), and `capability-ledger.consistency.test.ts` asserts this data matches the
+// Markdown row for row — capability, target, actual and note — so a status or content edit to the
+// matrix that is not mirrored here fails CI (ADR-0006 single source of truth; ADR-0004 truth taxonomy).
 //
 // `id` is the matrix row number and is the stable anchor a truth chip deep-links to
 // (`#truth-row-<id>`), so a reviewer who notices a SIMULATED label lands on the exact row.
@@ -109,7 +110,7 @@ export const CAPABILITY_LEDGER: readonly CapabilityLedgerRow[] = [
     capability: 'Escrow-style assurance affordance',
     target: 'MOCK',
     actual: 'PLANNED',
-    note: 'Deliberately MOCK, and deliberately never FUNCTIONAL. The Platform does not hold third-party funds — a charter non-goal and a regulated activity (Q5). This row exists only so the demo can show the absence honestly.',
+    note: 'Deliberately MOCK, and deliberately never FUNCTIONAL. The Platform does not hold third-party funds — that is a charter non-goal, and holding them is a regulated activity (Q5). This row exists only so the demo can show the absence honestly.',
   },
   {
     id: 13,
@@ -158,7 +159,7 @@ export const CAPABILITY_LEDGER: readonly CapabilityLedgerRow[] = [
     capability: 'Trust and safety controls',
     target: 'PLANNED',
     actual: 'PLANNED',
-    note: 'Beyond dispute casework (row 13). Account suspension, abuse reporting, fraud handling, moderation, and worker appeal against exclusion are all out of scope and unbuilt.',
+    note: "Beyond dispute casework, which is row 13. Account suspension, abuse reporting, fraud handling, moderation, and worker appeal against exclusion are all out of scope and unbuilt. The prototype's minimum scope is defined in product/experience/disputes.md on D7's recorded default; that definition scopes the gap, it does not close it.",
   },
   {
     id: 20,
@@ -172,7 +173,7 @@ export const CAPABILITY_LEDGER: readonly CapabilityLedgerRow[] = [
     capability: 'Demo scaffolding — actor switch, demo reset',
     target: 'FUNCTIONAL',
     actual: 'FUNCTIONAL',
-    note: 'Real logic, and it exists only in the prototype. Must declare itself a demo mechanism, not a product feature. Actor-switch mechanism built in SH-01; the actor home destinations (W-01, E-01, OPS-01) remain PLANNED.',
+    note: 'FUNCTIONAL covers only the implemented actor-selection mechanism (SH-01): choosing an actor sets the active actor. Navigation into the actor home screens (W-01, E-01, OPS-01) and demo reset are not built and remain PLANNED. Real logic that exists only in the prototype; it declares itself a demo mechanism, not a product feature.',
   },
   {
     id: 22,
@@ -186,7 +187,7 @@ export const CAPABILITY_LEDGER: readonly CapabilityLedgerRow[] = [
     capability: 'Work Graph accumulation',
     target: 'FUNCTIONAL',
     actual: 'PLANNED',
-    note: 'A projection over engagement events, Preferred Crew and reputation — not a stored structure and not a visualised feature.',
+    note: 'A projection over engagement events, Preferred Crew and reputation — not a stored structure and not a visualised feature. See domain/domain-model.md.',
   },
   {
     id: 24,

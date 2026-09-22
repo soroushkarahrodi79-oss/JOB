@@ -103,10 +103,11 @@ is a trail, not a menu. Nothing in operations is reachable except through a case
 Actor switching is demo scaffolding, not a product feature (truth-matrix row 21), and the chrome has
 to say so without being told.
 
-It renders as a **distinct bar pinned to the block start**, using the hatched treatment reserved for
-truth labelling ([color.md](color.md)). It is visually not product chrome: different ground,
-different edge, and a standing label naming it as a demo mechanism that does not exist in a real
-deployment.
+It renders as a **distinct bar pinned to the block start**. It is visually not product chrome:
+a different ground, a different edge, and a standing label naming it as a demo mechanism that does
+not exist in a real deployment. It does **not** use the hatched treatment: [color.md](color.md)
+rule 5 reserves the hatch for the truth chip alone, so the bar's distinction comes from ground and
+edge, not from that texture.
 
 It is the one place internal identifiers appear outside operations, because it is the one place they
 are the working reference.

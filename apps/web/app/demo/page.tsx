@@ -8,14 +8,14 @@ import styles from './demo.module.css';
 // SH-01 — Demo Entry and Actor Switch (docs/product/screen-inventory.md).
 //
 // Actor switching is demo scaffolding, not a product feature (truth-matrix row 21), and the chrome
-// has to say so without being told (docs/design/navigation.md). Row 21 is FUNCTIONAL, so it carries
-// no truth chip (color.md: FUNCTIONAL is unmarked); the honesty is carried by the demo bar's
-// standing label instead.
+// has to say so without being told (docs/design/navigation.md).
 //
-// SLICE SCOPE: only SH-01 and SH-02 exist. The actor homes (W-01, E-01, OPS-01) are out of scope
-// and remain PLANNED (truth matrix), so selecting an actor sets the active actor and states plainly
-// that its home is not yet built — it never renders a live link to an unbuilt screen. The one built
-// destination is SH-02, the Truth Ledger.
+// SCOPE OF "FUNCTIONAL" (row 21): only the actor-SELECTION mechanism is built — choosing an actor
+// sets the active actor. Navigation into the actor homes (W-01, E-01, OPS-01) and demo reset are
+// not built and remain PLANNED. Selecting an actor therefore states plainly that its home is not
+// yet built and never renders a live link to an unbuilt screen; the one built destination is SH-02.
+// FUNCTIONAL carries no truth chip (color.md: FUNCTIONAL is unmarked); the honesty is the demo
+// bar's standing label plus the PLANNED notice below.
 
 export default function DemoEntryPage() {
   const [active, setActive] = useState<DemoActor | null>(null);
