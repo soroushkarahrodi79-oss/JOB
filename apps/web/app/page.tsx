@@ -19,6 +19,12 @@ export default function HomePage() {
           صفحهٔ راستی‌آزمایی گیت ۲
         </Link>
       </p>
+      <p className="type-body">
+        {/* GATE 4 prototype surface, in progress: only the SH-01 → SH-02 slice is built so far. */}
+        <Link className="type-body-strong" href="/demo" style={{ color: 'var(--color-fg-accent)' }}>
+          ورود به نمایش (گیت ۴ — برش SH-01 و SH-02)
+        </Link>
+      </p>
     </main>
   );
 }
