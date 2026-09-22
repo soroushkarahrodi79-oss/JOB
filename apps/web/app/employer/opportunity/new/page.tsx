@@ -546,8 +546,12 @@ export default function OpportunityCreationPage() {
         <fieldset className={styles.fieldset} id={FIELD_ANCHOR.paymentCommitmentRecorded}>
           <legend className="type-title">تعهد پرداخت</legend>
 
-          {/* Always rendered, with or without a parseable figure — see CommitmentBlock. */}
-          <CommitmentBlock amount={parsedAmount.ok ? parsedAmount.money : null} />
+          {/* Always rendered, with or without a parseable figure — see CommitmentBlock. The
+              basis travels with it, so the block can say WHICH amount is being committed to. */}
+          <CommitmentBlock
+            amount={parsedAmount.ok ? parsedAmount.money : null}
+            basis={values.payBasis}
+          />
 
           <label className={`type-body ${styles.choice}`}>
             <input

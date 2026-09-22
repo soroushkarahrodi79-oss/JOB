@@ -1,4 +1,4 @@
-import type { Money } from '@platform/domain';
+import type { Money, PayBasis } from '@platform/domain';
 
 // Presentation of numerals, money, and dates (typography.md "Numerals", "Money", "Dates and
 // times"). These convert at the boundary: storage stays ASCII/Rial/UTC; presentation is Persian
@@ -68,4 +68,29 @@ export function formatTimeWindow(start: Date, end: Date): string {
   const hours = Math.round((end.getTime() - start.getTime()) / 3_600_000);
   const duration = `${toPersianDigits(String(hours))}${NBSP}ساعت`;
   return `${clock.format(start)} تا ${clock.format(end)}${NBSP}(${duration})`;
+}
+
+/**
+ * What a pay figure is the price of, in the employer's and the worker's own words.
+ *
+ * design/components/opportunity-card.md requires every rendered pay figure to carry "amount in
+ * Toman, its unit, and its basis (per shift, per hour)". The basis is not a qualifier that a
+ * layout may drop under pressure: without it, ۹۸۰٬۰۰۰ تومان is either the whole obligation for a
+ * shift or the price of one of its hours, and those are different agreements.
+ */
+export const PAY_BASIS_LABEL: Readonly<Record<PayBasis, string>> = {
+  PerShift: 'برای کل شیفت',
+  PerHour: 'به ازای هر ساعت',
+};
+
+/**
+ * An amount bound to its unit and its basis, so a line break can separate neither.
+ *
+ * This renders what was agreed and computes nothing. A `PerHour` figure is NOT multiplied out
+ * into a shift total anywhere in this system: converting a rate into an obligation needs a rule
+ * for rounding, breaks and overruns that this project has not established, and inventing one here
+ * would put a number on the screen that the employer never agreed to pay.
+ */
+export function formatAmountWithBasis(money: Money, basis: PayBasis): string {
+  return `${formatToman(money)}${NBSP}${PAY_BASIS_LABEL[basis]}`;
 }

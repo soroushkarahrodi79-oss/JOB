@@ -1,6 +1,6 @@
 import { rial } from './money';
 import type { EngagementRecord } from './projections';
-import type { AdministrativeLocation, EligibilityRequirement, Worker } from './core';
+import type { AdministrativeLocation, EligibilityRequirement, PayBasis, Worker } from './core';
 import type { Money } from './money';
 
 /**
@@ -23,8 +23,8 @@ export interface PlannedOpportunity {
   readonly title: string;
   readonly acceptanceMode: 'InviteOnly' | 'OpenAcceptance';
   readonly amount: Money;
-  /** Whether the amount is agreed for the whole shift or per hour. Presentation converts to Toman. */
-  readonly payBasis: 'PerShift' | 'PerHour';
+  /** What the amount prices. Never inferred from the figure — see PayBasis. */
+  readonly payBasis: PayBasis;
   /** UTC instants. Jalali is presentation only (data-model.md). */
   readonly workStartsAt: string;
   readonly workEndsAt: string;

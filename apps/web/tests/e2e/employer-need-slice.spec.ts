@@ -119,7 +119,8 @@ test.describe('E-01 — Employer Home', () => {
     await answerAndPublish(page);
     await open(page, HOME);
     await expect(page.getByTestId('opportunity-OPP-DEMO-01')).toBeVisible();
-    await expect(page.getByTestId('row-amount')).toHaveText('۹۸۰٬۰۰۰ تومان');
+    // The figure carries its basis (opportunity-card.md item 6) — a bare amount is ambiguous.
+    await expect(page.getByTestId('row-amount')).toHaveText('۹۸۰٬۰۰۰ تومان برای کل شیفت');
     await expect(page.getByTestId('row-positions')).toHaveText('۰ از ۲ پر شده');
     // E-04 is not built, and the row says so rather than offering a dead invite control.
     await expect(page.getByTestId('candidates-planned')).toContainText('PLANNED');
@@ -164,7 +165,43 @@ test.describe('E-02 — Opportunity Creation', () => {
   test('accepts Persian digits for the amount', async ({ page }) => {
     await open(page, CREATE);
     await page.getByTestId('input-amount').fill('۹۸۰۰۰۰');
-    await expect(page.getByTestId('commitment-amount')).toHaveText('۹۸۰٬۰۰۰ تومان');
+    await expect(page.getByTestId('commitment-amount')).toHaveText('۹۸۰٬۰۰۰ تومان');
+  });
+
+  test('says which amount is being committed to, per shift', async ({ page }) => {
+    await open(page, CREATE);
+    const block = page.getByTestId('commitment-block');
+    await expect(block).toHaveAttribute('data-basis', 'PerShift');
+    await expect(page.getByTestId('commitment-basis')).toHaveText('برای کل شیفت');
+    await expect(page.getByTestId('commitment-scope')).toContainText('کل تعهد پرداخت شما');
+  });
+
+  test('never presents an hourly rate as the whole shift obligation', async ({ page }) => {
+    await open(page, CREATE);
+    await page.getByTestId('input-amount').fill('۹۸۰۰۰۰');
+    await page.locator('input[name="payBasis"][value="PerHour"]').check();
+
+    const block = page.getByTestId('commitment-block');
+    await expect(block).toHaveAttribute('data-basis', 'PerHour');
+    await expect(page.getByTestId('commitment-basis')).toHaveText('به ازای هر ساعت');
+
+    const scope = page.getByTestId('commitment-scope');
+    await expect(scope).toContainText('برای هر ساعت کارکرد');
+    await expect(scope).toContainText('اینجا محاسبه نمی‌شود');
+    await expect(scope).not.toContainText('کل تعهد');
+
+    // No invented total: the six-hour shift must not produce ۵٬۸۸۰٬۰۰۰ anywhere on the screen.
+    await expect(page.getByTestId('commitment-amount')).toHaveText('۹۸۰٬۰۰۰ تومان');
+    await expect(page.locator('body')).not.toContainText('۵٬۸۸۰٬۰۰۰');
+  });
+
+  test('carries an hourly basis through creation to E-03', async ({ page }) => {
+    await open(page, CREATE);
+    await page.locator('input[name="payBasis"][value="PerHour"]').check();
+    await page.getByTestId('record-commitment').check();
+    await page.getByTestId('continue').click();
+    await page.waitForURL(`**${FACTORS}`);
+    await expect(page.getByTestId('summary-amount')).toHaveText('۹۸۰٬۰۰۰ تومان به ازای هر ساعت');
   });
 
   test('records a commitment and never implies the Platform holds the money', async ({ page }) => {
@@ -217,7 +254,7 @@ test.describe('E-02 — Opportunity Creation', () => {
   test('carries the canonical featured transaction through to E-03', async ({ page }) => {
     await fillAndContinue(page);
     const summary = page.getByTestId('terms-summary');
-    await expect(page.getByTestId('summary-amount')).toHaveText('۹۸۰٬۰۰۰ تومان');
+    await expect(page.getByTestId('summary-amount')).toHaveText('۹۸۰٬۰۰۰ تومان برای کل شیفت');
     await expect(page.getByTestId('summary-headcount')).toHaveText('۲ جایگاه');
     await expect(summary).toContainText('کارت سلامت معتبر');
     await expect(summary).toContainText('فقط کسانی که دعوت می‌کنید');
@@ -252,6 +289,21 @@ test.describe('E-03 — Factors and Classification Signal', () => {
     const uncaptured = page.getByTestId('uncaptured-factors');
     await expect(uncaptured).toContainText('پرسیده شد؛ پاسخ «هنوز مشخص نیست»');
     await expect(page.getByTestId('never-asked').first()).toContainText('نه «بله» و نه «خیر»');
+    // And the third state: asked, nothing back. Distinct from both of the above.
+    await expect(page.getByTestId('asked-not-answered').first()).toContainText(
+      'هنوز پاسخی ثبت نشده',
+    );
+  });
+
+  test('renders all three unrecorded states differently before anything is answered', async ({
+    page,
+  }) => {
+    await fillAndContinue(page);
+    // Nothing answered yet: the three asked factors are AskedNotAnswered, and Exclusivity is
+    // NotAsked. The screen must not tell the employer that a question it just put is never asked.
+    await expect(page.getByTestId('asked-not-answered')).toHaveCount(3);
+    await expect(page.getByTestId('never-asked')).toHaveCount(1);
+    await expect(page.getByTestId('never-asked')).toContainText('انحصار');
   });
 
   test('states no legal status and offers no score, percentage or recommendation', async ({

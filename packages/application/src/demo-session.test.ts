@@ -103,7 +103,11 @@ describe('the shared demo session', () => {
 
   it('records the commitment as a commitment, with no state able to express custody', () => {
     const record = opportunityById(created(), FEATURED);
-    expect(record?.commitment).toEqual({ amount: rial(9_800_000), platformHoldsFunds: false });
+    expect(record?.commitment).toEqual({
+      amount: rial(9_800_000),
+      basis: 'PerShift',
+      platformHoldsFunds: false,
+    });
     expect(record?.paymentState).toBe('CommitmentRecorded');
     // Nothing in the record is a balance, a held amount, or an escrow state.
     expect(JSON.stringify(record)).not.toMatch(/escrow|balance|wallet|held|custod/i);
@@ -199,5 +203,78 @@ describe('actor selection', () => {
     const session = selectActor(initialDemoSession(), 'employer');
     expect(session.activeActor).toBe('employer');
     expect(JSON.stringify(session)).not.toMatch(/token|password|credential|session-?id/i);
+  });
+});
+
+describe('pay basis travels with the money', () => {
+  const createdWith = (payBasis: 'PerShift' | 'PerHour') => {
+    const session = created(initialDemoSession(), { ...form, payBasis });
+    const record = opportunityById(session, FEATURED);
+    if (record === undefined) throw new Error('missing record');
+    return record;
+  };
+
+  it('preserves the basis on the terms and on the commitment, for both modes', () => {
+    for (const payBasis of ['PerShift', 'PerHour'] as const) {
+      const record = createdWith(payBasis);
+      expect(record.terms.payBasis, payBasis).toBe(payBasis);
+      expect(record.commitment.basis, payBasis).toBe(payBasis);
+      // The domain entity projected from the record carries it too.
+      expect(toOpportunity(record).terms.payBasis, payBasis).toBe(payBasis);
+    }
+  });
+
+  it('records an hourly rate as a rate, never as the shift obligation', () => {
+    // A rate and a total are different commitments. The amount is identical in both records, so
+    // the ONLY thing distinguishing them is the basis — which is why it may never be dropped.
+    const perHour = createdWith('PerHour');
+    const perShift = createdWith('PerShift');
+    expect(perHour.commitment.amount).toEqual(perShift.commitment.amount);
+    expect(perHour.commitment.basis).not.toBe(perShift.commitment.basis);
+  });
+
+  it('never derives a shift total from an hourly rate', () => {
+    // No authorised rule exists for rounding, breaks or overruns, so nothing in the record may
+    // hold a computed total. The commitment holds exactly what the employer entered.
+    const record = createdWith('PerHour');
+    const hours =
+      (new Date(record.terms.workEndsAt).getTime() -
+        new Date(record.terms.workStartsAt).getTime()) /
+      3_600_000;
+    expect(hours).toBe(6);
+    expect(record.commitment.amount).toEqual(rial(9_800_000));
+    expect(record.commitment.amount.rialAmount).not.toBe(9_800_000 * hours);
+    expect(Object.keys(record.commitment).sort()).toEqual([
+      'amount',
+      'basis',
+      'platformHoldsFunds',
+    ]);
+  });
+
+  it('keeps the commitment free of custody in both modes', () => {
+    for (const payBasis of ['PerShift', 'PerHour'] as const) {
+      const record = createdWith(payBasis);
+      expect(record.commitment.platformHoldsFunds).toBe(false);
+      expect(JSON.stringify(record.commitment)).not.toMatch(/escrow|balance|wallet|held|custod/i);
+    }
+  });
+
+  it('reads the hourly basis as an employment-like economic structure, and says which field', () => {
+    const perHour = createdWith('PerHour').classificationFactors.find(
+      (factor) => factor.kind === 'EconomicStructure',
+    );
+    const perShift = createdWith('PerShift').classificationFactors.find(
+      (factor) => factor.kind === 'EconomicStructure',
+    );
+    expect(perHour?.value).toBe('EmploymentLike');
+    expect(perShift?.value).toBe('IndependentLike');
+    expect(perHour?.source).toBe('Derived');
+    expect(perHour?.sourceReference).toBe('مبلغ و مبنای پرداخت');
+  });
+
+  it('keeps the canonical featured scenario on the per-shift basis', () => {
+    // demo-dataset.md fixes OPP-01's shape; the investor walkthrough must not change basis.
+    expect(FEATURED_OPPORTUNITY_PLAN.payBasis).toBe('PerShift');
+    expect(publishedSession().opportunities[0]?.terms.payBasis).toBe('PerShift');
   });
 });

@@ -30,8 +30,25 @@ export interface EligibilityRequirement {
   readonly label: string;
 }
 
+/**
+ * What an `amount` is the price of.
+ *
+ * An amount without its basis is ambiguous, and the ambiguity is not cosmetic: 980,000 Toman is
+ * either the whole obligation for a shift or the price of one of its hours. demo-dataset.md fixes
+ * "a pay basis per opportunity" as part of the dataset's structure, and
+ * design/components/opportunity-card.md requires every rendered pay figure to carry it, so the
+ * basis travels with the money rather than being inferred by whoever reads it.
+ *
+ * `PerHour` deliberately implies NO total. Converting a rate into a shift obligation needs a rule
+ * for rounding, breaks and overruns that this project has not established, and inventing one would
+ * state an obligation the employer never agreed to.
+ */
+export type PayBasis = 'PerShift' | 'PerHour';
+
 export interface OpportunityTerms {
   readonly amount: Money;
+  /** What `amount` prices. Never omitted — see `PayBasis`. */
+  readonly payBasis: PayBasis;
   readonly workStartsAt: string;
   readonly workEndsAt: string;
   readonly location: AdministrativeLocation;
@@ -50,6 +67,15 @@ export interface Opportunity {
 
 export interface PaymentCommitment {
   readonly amount: Money;
+  /**
+   * What `amount` prices, carried so the record cannot be read as an obligation it is not.
+   *
+   * On `PerShift` the amount IS the whole obligation. On `PerHour` it is a rate the employer has
+   * committed to, and the total remains unknown until hours are recorded — the Platform does not
+   * compute it (see `PayBasis`). Storing the amount alone would make those two commitments
+   * indistinguishable in the record that a later payment, dispute or settlement reads.
+   */
+  readonly basis: PayBasis;
   /** A record of the employer's commitment, never Platform-held money. */
   readonly platformHoldsFunds: false;
 }

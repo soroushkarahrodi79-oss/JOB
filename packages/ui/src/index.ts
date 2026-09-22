@@ -3,7 +3,14 @@ export { TruthChip, type TruthChipProps } from './TruthChip';
 export { EvidenceRow, type EvidenceRowProps } from './EvidenceRow';
 export { VisuallyHidden } from './VisuallyHidden';
 export { Mark } from './marks';
-export { toPersianDigits, formatToman, formatJalali, formatTimeWindow } from './format';
+export {
+  toPersianDigits,
+  formatToman,
+  formatAmountWithBasis,
+  formatJalali,
+  formatTimeWindow,
+  PAY_BASIS_LABEL,
+} from './format';
 export {
   CAPABILITY_LEDGER,
   TRUTH_LEVEL_GLOSS,

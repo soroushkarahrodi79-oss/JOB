@@ -7,7 +7,7 @@ import {
   StateMark,
   formatJalali,
   formatTimeWindow,
-  formatToman,
+  formatAmountWithBasis,
   toPersianDigits,
 } from '@platform/ui';
 import { useDemoSession } from '../demo/session';
@@ -49,8 +49,9 @@ function OpportunityRow({ record }: { record: DemoOpportunityRecord }) {
         </div>
         <div>
           <dt className="type-label">دستمزد</dt>
+          {/* Amount, unit and basis together (opportunity-card.md item 6). */}
           <dd className="type-body type-numeric" data-testid="row-amount">
-            {formatToman(record.terms.amount)}
+            {formatAmountWithBasis(record.terms.amount, record.terms.payBasis)}
           </dd>
         </div>
         <div>

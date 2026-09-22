@@ -18,7 +18,7 @@ import {
   type FactorAnswers,
 } from './classification-capture';
 import { areRequirementsBinaryEvaluable } from './requirement-catalogue';
-import type { PayBasis, ValidatedOpportunityInput } from './opportunity-input';
+import type { ValidatedOpportunityInput } from './opportunity-input';
 
 // The prototype's shared demo world, and the only place its state lives.
 //
@@ -50,7 +50,6 @@ export interface DemoOpportunityRecord {
   readonly employerId: string;
   readonly title: string;
   readonly terms: OpportunityTerms;
-  readonly payBasis: PayBasis;
   readonly requirements: readonly EligibilityRequirement[];
   /** Free text from the employer. Never an eligibility gate — see `OpportunityFormValues`. */
   readonly employerNote: string;
@@ -160,6 +159,9 @@ export function createOpportunity(
 
   const terms: OpportunityTerms = {
     amount: input.amount,
+    // The basis is part of the terms, not a presentation choice: it is what makes `amount` mean
+    // something. A record that lost it could not tell a shift total from an hourly rate.
+    payBasis: input.payBasis,
     workStartsAt: input.workStartsAt,
     workEndsAt: input.workEndsAt,
     location: input.location,
@@ -172,16 +174,14 @@ export function createOpportunity(
     employerId: options.employerId,
     title: input.title,
     terms,
-    payBasis: input.payBasis,
     requirements: input.requirements,
     employerNote: input.employerNote,
     classificationFactors: captureClassificationFactors({
       terms,
-      payBasis: input.payBasis,
       answers: {},
       recordedAt: options.recordedAt,
     }),
-    commitment: { amount: input.amount, platformHoldsFunds: false },
+    commitment: { amount: input.amount, basis: input.payBasis, platformHoldsFunds: false },
     paymentState: 'CommitmentRecorded',
     lifecycle: {
       state: 'Draft',
@@ -228,7 +228,6 @@ export function answerFactor(
             ...record,
             classificationFactors: captureClassificationFactors({
               terms: record.terms,
-              payBasis: record.payBasis,
               answers,
               recordedAt,
             }),

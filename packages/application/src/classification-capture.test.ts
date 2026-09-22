@@ -15,6 +15,7 @@ import {
 
 const terms: OpportunityTerms = {
   amount: FEATURED_OPPORTUNITY_PLAN.amount,
+  payBasis: FEATURED_OPPORTUNITY_PLAN.payBasis,
   workStartsAt: FEATURED_OPPORTUNITY_PLAN.workStartsAt,
   workEndsAt: FEATURED_OPPORTUNITY_PLAN.workEndsAt,
   location: FEATURED_OPPORTUNITY_PLAN.location,
@@ -23,7 +24,7 @@ const terms: OpportunityTerms = {
 };
 
 const capture = (answers: Parameters<typeof captureClassificationFactors>[0]['answers']) =>
-  captureClassificationFactors({ terms, payBasis: 'PerShift', answers, recordedAt: DEMO_NOW });
+  captureClassificationFactors({ terms, answers, recordedAt: DEMO_NOW });
 
 describe('classification factor capture', () => {
   it('records every factor in the set, never leaving one absent', () => {
@@ -40,7 +41,7 @@ describe('classification factor capture', () => {
     // experience/classification.md demonstration requirement 2: at least one factor is visibly
     // derived, with the field it came from.
     expect(derived.map((factor) => factor.kind)).toContain('ScheduleControl');
-    expect(derivedFactorReadings(terms, 'PerShift').map((reading) => reading.fieldLabel)).toContain(
+    expect(derivedFactorReadings(terms).map((reading) => reading.fieldLabel)).toContain(
       'زمان شیفت',
     );
   });
@@ -75,19 +76,19 @@ describe('classification factor capture', () => {
     expect(neverAsked?.value).toBe('Uncaptured');
     // Same value, different source — which is the whole distinction the surface has to keep.
     expect(askedUndecided?.source).toBe('EmployerAnswered');
-    expect(neverAsked?.source).toBe('NotCaptured');
+    expect(neverAsked?.source).toBe('NotAsked');
   });
 
   it('never fills in a missing answer with a negative', () => {
     const unanswered = capture({}).find((factor) => factor.kind === 'DirectionAndControl');
     expect(unanswered?.value).toBe('Uncaptured');
-    expect(unanswered?.source).toBe('NotCaptured');
+    // Asked and unanswered — NOT the same as never asked, and not attributed to the employer.
+    expect(unanswered?.source).toBe('AskedNotAnswered');
   });
 
   it('reads the pay basis as the factor it is, and says so in the employer s words', () => {
     const perHour = captureClassificationFactors({
-      terms,
-      payBasis: 'PerHour',
+      terms: { ...terms, payBasis: 'PerHour' },
       answers: {},
       recordedAt: DEMO_NOW,
     }).find((factor) => factor.kind === 'EconomicStructure');

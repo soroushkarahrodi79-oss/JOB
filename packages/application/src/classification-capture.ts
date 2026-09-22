@@ -5,7 +5,6 @@ import {
   type ClassificationFactorValue,
   type OpportunityTerms,
 } from '@platform/domain';
-import type { PayBasis } from './opportunity-input';
 
 // Where the classification factors come from.
 //
@@ -28,9 +27,9 @@ interface DerivedFactorSpec {
   readonly kind: ClassificationFactorKind;
   /** The E-02 field the value was read from. Shown to the employer, so it is the field's name. */
   readonly fieldLabel: string;
-  readonly value: (terms: OpportunityTerms, payBasis: PayBasis) => ClassificationFactorValue;
+  readonly value: (terms: OpportunityTerms) => ClassificationFactorValue;
   /** Why this reading follows from that field. Rendered beside the factor. */
-  readonly reading: (terms: OpportunityTerms, payBasis: PayBasis) => string;
+  readonly reading: (terms: OpportunityTerms) => string;
 }
 
 const DERIVED: readonly DerivedFactorSpec[] = [
@@ -49,9 +48,9 @@ const DERIVED: readonly DerivedFactorSpec[] = [
   {
     kind: 'EconomicStructure',
     fieldLabel: 'مبلغ و مبنای پرداخت',
-    value: (_terms, payBasis) => (payBasis === 'PerHour' ? 'EmploymentLike' : 'IndependentLike'),
-    reading: (_terms, payBasis) =>
-      payBasis === 'PerHour'
+    value: (terms) => (terms.payBasis === 'PerHour' ? 'EmploymentLike' : 'IndependentLike'),
+    reading: (terms) =>
+      terms.payBasis === 'PerHour'
         ? 'پرداخت بر مبنای ساعت است، یعنی بر مبنای زمانِ در اختیار گذاشته‌شده.'
         : 'پرداخت مبلغی مقطوع برای یک کار مشخص است، نه بر مبنای ساعت.',
   },
@@ -132,26 +131,22 @@ export interface DerivedFactorReading {
   readonly reading: string;
 }
 
-export function derivedFactorReadings(
-  terms: OpportunityTerms,
-  payBasis: PayBasis,
-): readonly DerivedFactorReading[] {
+export function derivedFactorReadings(terms: OpportunityTerms): readonly DerivedFactorReading[] {
   return DERIVED.map((spec) => ({
     kind: spec.kind,
     fieldLabel: spec.fieldLabel,
-    reading: spec.reading(terms, payBasis),
+    reading: spec.reading(terms),
   }));
 }
 
 /** The factors readable from E-02 alone. Available before the employer answers anything. */
 export function deriveFactorsFromTerms(
   terms: OpportunityTerms,
-  payBasis: PayBasis,
   recordedAt: string,
 ): readonly ClassificationFactor[] {
   return DERIVED.map((spec) => ({
     kind: spec.kind,
-    value: spec.value(terms, payBasis),
+    value: spec.value(terms),
     source: 'Derived' as const,
     sourceReference: spec.fieldLabel,
     recordedAt,
@@ -163,35 +158,40 @@ export type FactorAnswers = Readonly<Partial<Record<ClassificationFactorKind, Fa
 /**
  * Every factor in the set, recorded with its true source.
  *
- * Four cases, and keeping them apart is the point of the function:
- *   derived        — read from an E-02 field, which is named.
- *   answered       — the employer chose one of the two substantive answers at E-03.
- *   answered, undecided — the employer chose «هنوز مشخص نیست». Recorded as answered, value Uncaptured.
- *   never asked    — source `NotCaptured`. Recorded, never absent, never a negative.
+ * Five cases, and keeping them apart is the whole point of the function:
  *
- * The last two both carry `value: 'Uncaptured'` and must never be rendered identically
- * (experience/classification.md). The source is what tells them apart, here and on the screen.
+ *   Derived           — read from an E-02 field, which is named.
+ *   EmployerAnswered  — the employer chose one of the two substantive answers at E-03. This is
+ *                       also where an answer that reads as "no" lands: the questions have no
+ *                       yes/no form, so a negative is a substantive value and never a gap.
+ *   EmployerAnswered  — with value `Uncaptured`, when the employer chose «هنوز مشخص نیست». They
+ *                       told us they have not decided, which is a statement BY them.
+ *   AskedNotAnswered  — the question was put and no answer came back. Nobody stated anything.
+ *   NotAsked          — outside the prototype's question set. Nobody was asked at all.
+ *
+ * The last three all carry `value: 'Uncaptured'` and must never be stored or rendered identically
+ * (experience/classification.md, *Storage*). They are three different facts about the record, and
+ * a later legal analysis that merged them could not tell them apart afterwards.
  */
 export function captureClassificationFactors(input: {
   readonly terms: OpportunityTerms;
-  readonly payBasis: PayBasis;
   readonly answers: FactorAnswers;
   readonly recordedAt: string;
 }): readonly ClassificationFactor[] {
-  const { terms, payBasis, answers, recordedAt } = input;
-  const derived = deriveFactorsFromTerms(terms, payBasis, recordedAt);
+  const { terms, answers, recordedAt } = input;
+  const derived = deriveFactorsFromTerms(terms, recordedAt);
 
   const asked = FACTOR_QUESTIONS.map((question): ClassificationFactor => {
     const chosen = answers[question.kind];
     const answer = question.answers.find((option) => option.key === chosen);
     if (answer === undefined) {
-      // Not yet answered is not the same as answered-undecided: nobody has been asked and
-      // answered, so it is recorded as uncaptured with no employer attribution.
+      // Asked, nothing back. NOT the same as the employer saying they have not decided — that is
+      // a statement by them and carries their attribution; this carries none.
       return {
         kind: question.kind,
         value: 'Uncaptured',
-        source: 'NotCaptured',
-        sourceReference: 'E-03: پرسیده شد و هنوز پاسخی ثبت نشده است',
+        source: 'AskedNotAnswered',
+        sourceReference: `E-03: ${question.question}`,
         recordedAt,
       };
     }
@@ -204,19 +204,19 @@ export function captureClassificationFactors(input: {
     };
   });
 
-  const neverCaptured = NEVER_CAPTURED_FACTORS.map(
+  const neverAsked = NEVER_CAPTURED_FACTORS.map(
     (kind): ClassificationFactor => ({
       kind,
       value: 'Uncaptured',
-      source: 'NotCaptured',
-      sourceReference: 'این عامل در نمونهٔ اولیه پرسیده نمی‌شود',
+      source: 'NotAsked',
+      sourceReference: 'خارج از مجموعه‌پرسش‌های نمونهٔ اولیه',
       recordedAt,
     }),
   );
 
   // Canonical order, so the panel reads the same way every time and a diff is legible.
   const byKind = new Map(
-    [...derived, ...asked, ...neverCaptured].map((factor) => [factor.kind, factor]),
+    [...derived, ...asked, ...neverAsked].map((factor) => [factor.kind, factor]),
   );
   return CLASSIFICATION_FACTORS.map((kind) => {
     const factor = byKind.get(kind);

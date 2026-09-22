@@ -34,6 +34,7 @@ export {
   type AttestationStrength,
   type EligibilityRequirement,
   type Opportunity,
+  type PayBasis,
   type OpportunityTerms,
   type PaymentCommitment,
   type Worker,
@@ -53,6 +54,7 @@ export {
 } from './engagement-record';
 export {
   CLASSIFICATION_FACTORS,
+  UNRECORDED_FACTOR_SOURCES,
   evaluateClassificationSignal,
   type ClassificationFactor,
   type ClassificationFactorKind,

@@ -17,7 +17,7 @@ import {
   StateMark,
   formatJalali,
   formatTimeWindow,
-  formatToman,
+  formatAmountWithBasis,
   toPersianDigits,
 } from '@platform/ui';
 import { useDemoSession } from '../../../../demo/session';
@@ -85,7 +85,9 @@ function FactorRow({ factor }: { factor: ClassificationFactor }) {
           ? `از «${factor.sourceReference}»`
           : factor.source === 'EmployerAnswered'
             ? 'پاسخ شما در همین صفحه'
-            : 'پرسیده نشده'
+            : factor.source === 'ObservedEvent'
+              ? 'از رویداد ثبت‌شده'
+              : 'ثبت نشده'
       }
     >
       <p className="type-body-strong">{label}</p>
@@ -114,7 +116,7 @@ function TermsSummary({ record }: { record: DemoOpportunityRecord }) {
       <div>
         <dt className="type-label">دستمزد</dt>
         <dd className="type-body type-numeric" data-testid="summary-amount">
-          {formatToman(record.terms.amount)}
+          {formatAmountWithBasis(record.terms.amount, record.terms.payBasis)}
         </dd>
       </div>
       <div>
@@ -197,9 +199,7 @@ export default function FactorsPage() {
   // The E-02 fields the derived factors were read from, each named once however many factors
   // came from it.
   const derivedFields = [
-    ...new Set(
-      derivedFactorReadings(record.terms, record.payBasis).map((reading) => reading.fieldLabel),
-    ),
+    ...new Set(derivedFactorReadings(record.terms).map((reading) => reading.fieldLabel)),
   ];
 
   const onPublish = () => {
@@ -381,36 +381,59 @@ export default function FactorsPage() {
             exists to avoid (classification-signal.md; demonstration requirement 3). */}
         <h3 className="type-subtitle">ثبت‌نشده</h3>
         <div className={styles.factorList} data-testid="uncaptured-factors">
-          {uncaptured.map((factor) =>
-            // Two different facts, rendered differently and at the same weight.
-            //
-            // An answered «هنوز مشخص نیست» IS a claim the employer made, so it carries the
-            // self-declared mark the canon assigns it (classification-signal.md, *Factors*).
-            // A factor nobody asked about is NOT a claim by anyone: giving it a provenance mark
-            // would attribute to the employer something they never said, and "a mark never sits
-            // on a mark" has a companion rule — a mark never sits on an absence. It is named
-            // without one, at the same size, in the same list.
-            factor.source === 'EmployerAnswered' ? (
-              <EvidenceRow
-                key={factor.kind}
-                provenance="SelfDeclared"
-                detail="پرسیده شد؛ پاسخ «هنوز مشخص نیست»"
-              >
-                <p className="type-body-strong">{FACTOR_LABELS[factor.kind] ?? factor.kind}</p>
-                <p className="type-body">
-                  شما گفتید هنوز مشخص نیست. این با «خیر» یکی نیست و همین‌طور ثبت شده است.
-                </p>
-              </EvidenceRow>
-            ) : (
+          {/* Three different facts, rendered differently and all at the same weight.
+              experience/classification.md, *Storage*: they are stored apart because a later legal
+              analysis that merged them could not tell them apart afterwards, and the surface has
+              to keep the same distinction it stores.
+
+              Only the first is a statement BY the employer, so only it carries the self-declared
+              mark the canon assigns an answer (classification-signal.md, *Factors*). Giving a
+              mark to the other two would attribute to someone a claim they never made — a mark
+              never sits on an absence. */}
+          {uncaptured.map((factor) => {
+            const label = FACTOR_LABELS[factor.kind] ?? factor.kind;
+
+            if (factor.source === 'EmployerAnswered') {
+              return (
+                <EvidenceRow
+                  key={factor.kind}
+                  provenance="SelfDeclared"
+                  detail="پرسیده شد؛ پاسخ «هنوز مشخص نیست»"
+                >
+                  <p className="type-body-strong">{label}</p>
+                  <p className="type-body">
+                    شما گفتید هنوز مشخص نیست. این با «خیر» یکی نیست و همین‌طور ثبت شده است.
+                  </p>
+                </EvidenceRow>
+              );
+            }
+
+            if (factor.source === 'AskedNotAnswered') {
+              return (
+                <div
+                  key={factor.kind}
+                  className={styles.uncapturedRow}
+                  data-testid="asked-not-answered"
+                >
+                  <p className="type-body-strong">{label}</p>
+                  <p className="type-body">
+                    این را بالاتر پرسیده‌ایم و هنوز پاسخی ثبت نشده است. می‌توانید پاسخ دهید یا
+                    همین‌طور رها کنید؛ بدون پاسخ، چیزی از طرف شما ثبت نمی‌شود.
+                  </p>
+                </div>
+              );
+            }
+
+            return (
               <div key={factor.kind} className={styles.uncapturedRow} data-testid="never-asked">
-                <p className="type-body-strong">{FACTOR_LABELS[factor.kind] ?? factor.kind}</p>
+                <p className="type-body-strong">{label}</p>
                 <p className="type-body">
-                  این مورد در نمونهٔ اولیه پرسیده نمی‌شود، پس دربارهٔ آن چیزی ثبت نشده است — نه
-                  «بله» و نه «خیر».
+                  این مورد در نمونهٔ اولیه اصلاً پرسیده نمی‌شود، پس دربارهٔ آن چیزی ثبت نشده است —
+                  نه «بله» و نه «خیر».
                 </p>
               </div>
-            ),
-          )}
+            );
+          })}
         </div>
 
         {derivedFields.length > 0 ? (

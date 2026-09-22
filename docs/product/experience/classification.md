@@ -82,8 +82,38 @@ At E-03, and nowhere else in the employer flow.
 
 ## Storage
 
-Factors are persisted with their values, their source (derived or answered), and their time. The
-signal is **not** persisted as a verdict — it is recomputed from the factors. Domain invariant 5.
+Factors are persisted with their value, their **source**, and their time. The signal is **not**
+persisted as a verdict — it is recomputed from the factors. Domain invariant 5.
+
+### The source set
+
+"Derived or answered" is not enough to satisfy the two consequences below, because three different
+situations all produce *no value*. The source is what keeps them apart.
+
+| Source | Means | Value |
+| --- | --- | --- |
+| `Derived` | Read from a field the employer already filled in, naming that field | substantive |
+| `ObservedEvent` | Taken from an event recorded during the engagement | substantive |
+| `EmployerAnswered` | The employer answered at E-03 | substantive, **or** `Uncaptured` where they answered «هنوز مشخص نیست» |
+| `AskedNotAnswered` | The question was put and no answer came back | `Uncaptured` |
+| `NotAsked` | Outside the prototype's question set — nobody was asked | `Uncaptured` |
+
+Three distinctions this set exists to hold, and each is load-bearing:
+
+1. **"I have not decided" is a statement by the employer.** It is attributed to them and rendered
+   with the self-declared mark. "We asked and got nothing back" and "we never asked" are statements
+   about the *record* and are attributed to nobody, so neither carries a provenance mark — a mark
+   never sits on an absence.
+2. **A negative answer is never a gap.** The questions at E-03 have no yes/no form: both
+   substantive answers are positive statements about how the work is organised. So "answered no"
+   is stored as `EmployerAnswered` with a substantive value and can never be confused with
+   `Uncaptured`. This is what the rule below means by "answered no" and «پاسخ: خیر».
+3. **`NotAsked` is a property of the prototype, not of this engagement.** It names a factor the
+   mechanism does not collect at all, which is the gap demonstration requirement 3 exists to keep
+   visible.
+
+None of this changes what the signal may say. The source set records *how well the record is
+evidenced*; it adds no value to the spectrum, no weighting, and no verdict.
 
 ## The limit, stated plainly
 
@@ -98,7 +128,9 @@ containment limit stated in
 Two consequences the prototype must honour:
 
 1. **Uncaptured factors are recorded as uncaptured**, not as absent or as negative. "Not asked" and
-   "answered no" must never be stored or displayed as the same thing.
+   "answered no" must never be stored or displayed as the same thing. The source set above is how
+   this is held: see *The source set* for the three ways a factor can be uncaptured and why
+   collapsing them is the failure this rule names.
 2. **The exposure grows with accumulated history.** Every month of engagements recorded against the
    wrong factor set is a month that cannot be re-analysed. This makes Q2 more urgent than its
    severity rating suggests in isolation, and it is the strongest argument in the repository for

@@ -1,4 +1,9 @@
-import type { AdministrativeLocation, EligibilityRequirement, Money } from '@platform/domain';
+import type {
+  AdministrativeLocation,
+  EligibilityRequirement,
+  Money,
+  PayBasis,
+} from '@platform/domain';
 import { parseTomanInput } from './money-input';
 import { areRequirementsBinaryEvaluable, requirementById } from './requirement-catalogue';
 import { parseCivilDateKey, tehranInstant } from './shift-window';
@@ -9,7 +14,9 @@ import { parseCivilDateKey, tehranInstant } from './shift-window';
 // place, pay and headcount, and nothing else mandatory." Nothing is added to it here. The
 // employer's note is optional and is deliberately NOT a requirement — see `employerNote`.
 
-export type PayBasis = 'PerShift' | 'PerHour';
+// PayBasis is the domain's: it is a term of the opportunity and travels with the money, so the
+// application does not get to hold a second definition of it (ADR-0006).
+export type { PayBasis };
 export type AcceptanceMode = 'InviteOnly' | 'OpenAcceptance';
 
 /** The demo's neighbourhoods (D6: administrative hierarchy, coordinates deferred). */
