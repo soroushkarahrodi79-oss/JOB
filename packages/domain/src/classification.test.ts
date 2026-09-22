@@ -27,4 +27,28 @@ describe('classification signal', () => {
     });
     expect('legalStatus' in signal).toBe(false);
   });
+
+  it('keeps "never asked" and "asked, not decided yet" apart in storage', () => {
+    // experience/classification.md: "'Not asked' and 'answered no' must never be stored or
+    // displayed as the same thing", and uncaptured factors are recorded as uncaptured rather than
+    // left absent. Both land on value 'Uncaptured', so the SOURCE carries the distinction.
+    const neverAsked = {
+      kind: 'Exclusivity',
+      value: 'Uncaptured',
+      source: 'NotCaptured',
+      sourceReference: 'not asked by the prototype',
+      recordedAt: '2026-09-22T06:00:00.000Z',
+    } as const;
+    const askedUndecided = {
+      kind: 'ToolsAndMaterials',
+      value: 'Uncaptured',
+      source: 'EmployerAnswered',
+      sourceReference: 'E-03: tools-and-materials',
+      recordedAt: '2026-09-22T06:00:00.000Z',
+    } as const;
+
+    const signal = evaluateClassificationSignal([neverAsked, askedUndecided]);
+    expect(signal.uncapturedFactors).toEqual(['Exclusivity', 'ToolsAndMaterials']);
+    expect(neverAsked.source).not.toBe(askedUndecided.source);
+  });
 });

@@ -45,3 +45,4 @@ determined by an accepted ADR.
 | [0010](0010-prototype-provisional-defaults.md) | Prototype-provisional defaults | Accepted |
 | [0011](0011-design-system-gate.md) | A design gate between product definition and engineering | Accepted |
 | [0012](0012-visual-product-language.md) | Visual product language: the Evidence Margin | Accepted |
+| [0013](0013-application-layer-package.md) | Realise the application layer as a workspace package | Accepted |

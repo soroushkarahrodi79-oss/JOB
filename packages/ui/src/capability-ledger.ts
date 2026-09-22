@@ -61,7 +61,7 @@ export const CAPABILITY_LEDGER: readonly CapabilityLedgerRow[] = [
     capability: 'Opportunity creation and publication',
     target: 'FUNCTIONAL',
     actual: 'FUNCTIONAL',
-    note: '',
+    note: 'Domain rules, and the employer surfaces that exercise them: E-02 creates the Opportunity in Draft with a recorded payment commitment, and E-03 publishes it through the lifecycle guards. Candidate listing and invitation are E-04 and are not built.',
   },
   {
     id: 6,
@@ -110,7 +110,7 @@ export const CAPABILITY_LEDGER: readonly CapabilityLedgerRow[] = [
     capability: 'Escrow-style assurance affordance',
     target: 'MOCK',
     actual: 'PLANNED',
-    note: 'Deliberately MOCK, and deliberately never FUNCTIONAL. The Platform does not hold third-party funds — that is a charter non-goal, and holding them is a regulated activity (Q5). This row exists only so the demo can show the absence honestly.',
+    note: 'Deliberately MOCK, and deliberately never FUNCTIONAL. The Platform does not hold third-party funds — that is a charter non-goal, and holding them is a regulated activity (Q5). This row exists only so the demo can show the absence honestly. The employer half is built: E-02 commitment step states that the Platform records a commitment and holds no money, and links here. Actual stays PLANNED because product/experience/payment.md requires the statement on both sides and the worker half (W-02) is unbuilt. Whether an absence shown honestly is MOCK at all is raised for human review, not decided here.',
   },
   {
     id: 13,
@@ -173,7 +173,7 @@ export const CAPABILITY_LEDGER: readonly CapabilityLedgerRow[] = [
     capability: 'Demo scaffolding — actor switch, demo reset',
     target: 'FUNCTIONAL',
     actual: 'FUNCTIONAL',
-    note: 'FUNCTIONAL covers only the implemented actor-selection mechanism (SH-01): choosing an actor sets the active actor. Navigation into the actor home screens (W-01, E-01, OPS-01) and demo reset are not built and remain PLANNED. Real logic that exists only in the prototype; it declares itself a demo mechanism, not a product feature.',
+    note: 'FUNCTIONAL covers the actor-selection mechanism (SH-01) and navigation into the one actor home that exists: choosing the employer opens E-01. W-01 and OPS-01 are not built and remain PLANNED, and SH-01 renders no link to either. Demo reset is not built. The demo session lasts for one browser tab, is not shared between tabs, devices or people, and reaches no server; the demo bar says so at the point of use. Real logic that exists only in the prototype; it declares itself a demo mechanism, not a product feature.',
   },
   {
     id: 22,

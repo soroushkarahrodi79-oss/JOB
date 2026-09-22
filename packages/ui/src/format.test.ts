@@ -35,6 +35,13 @@ describe('formatJalali', () => {
     expect(ASCII_DIGIT.test(out)).toBe(false);
     expect(/[۰-۹]/.test(out)).toBe(true);
   });
+
+  it('reads the date in Tehran, not in the renderer machine s zone', () => {
+    // 2026-09-23T20:30Z is already چهارشنبه ۲ مهر in Tehran (UTC+03:30) and would still be
+    // سه‌شنبه ۱ مهر in UTC. The date a shift falls on must not depend on where it is rendered.
+    expect(formatJalali(new Date('2026-09-23T20:30:00Z'))).toContain('۲');
+    expect(formatJalali(new Date('2026-09-23T12:30:00Z'))).toContain('چهارشنبه');
+  });
 });
 
 describe('formatTimeWindow', () => {
@@ -46,5 +53,16 @@ describe('formatTimeWindow', () => {
     expect(out).toContain('تا');
     expect(out).toContain('ساعت');
     expect(ASCII_DIGIT.test(out)).toBe(false);
+  });
+
+  it('renders the clock in Tehran', () => {
+    // The featured shift is 16:00–22:00 Tehran, stored as 12:30Z–18:30Z.
+    const out = formatTimeWindow(
+      new Date('2026-09-23T12:30:00Z'),
+      new Date('2026-09-23T18:30:00Z'),
+    );
+    expect(out).toContain('۱۶:۰۰');
+    expect(out).toContain('۲۲:۰۰');
+    expect(out).toContain('۶');
   });
 });

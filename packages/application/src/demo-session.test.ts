@@ -1,0 +1,203 @@
+import { describe, expect, it } from 'vitest';
+import { DEMO_NOW, DomainTransitionError, FEATURED_OPPORTUNITY_PLAN, rial } from '@platform/domain';
+import {
+  DemoSessionConflictError,
+  answerFactor,
+  classificationSignalFor,
+  createOpportunity,
+  discardDraft,
+  draftOpportunity,
+  initialDemoSession,
+  markClassificationShown,
+  opportunityById,
+  publishOpportunity,
+  publishedOpportunities,
+  selectActor,
+  toOpportunity,
+  type DemoSession,
+} from './demo-session';
+import { employerHomeModel } from './employer-home';
+import { validateOpportunityForm, type OpportunityFormValues } from './opportunity-input';
+
+const EMPLOYER = FEATURED_OPPORTUNITY_PLAN.employerId;
+const FEATURED = FEATURED_OPPORTUNITY_PLAN.id;
+
+const form: OpportunityFormValues = {
+  title: FEATURED_OPPORTUNITY_PLAN.title,
+  shiftDateKey: '2026-09-23',
+  startMinutes: 16 * 60,
+  endMinutes: 22 * 60,
+  neighbourhood: 'Demo-Centre',
+  tomanAmount: '980000',
+  payBasis: 'PerShift',
+  headcount: 2,
+  requirementIds: ['cafe-service', 'food-handling-certificate'],
+  acceptanceMode: 'InviteOnly',
+  employerNote: '',
+  paymentCommitmentRecorded: true,
+};
+
+function created(session = initialDemoSession(), values = form): DemoSession {
+  const validation = validateOpportunityForm(values);
+  if (!validation.ok) throw new Error(`fixture is invalid: ${JSON.stringify(validation.errors)}`);
+  return createOpportunity(session, validation.input, {
+    id: FEATURED,
+    employerId: EMPLOYER,
+    recordedAt: DEMO_NOW,
+  });
+}
+
+function publishedSession(): DemoSession {
+  let session = created();
+  session = answerFactor(session, FEATURED, 'DirectionAndControl', 'employmentLike', DEMO_NOW);
+  session = markClassificationShown(session, FEATURED);
+  return publishOpportunity(session, FEATURED, DEMO_NOW);
+}
+
+describe('the shared demo session', () => {
+  it('starts with no opportunities — the featured one is created, not seeded', () => {
+    const session = initialDemoSession();
+    expect(session.opportunities).toEqual([]);
+    expect(opportunityById(session, FEATURED)).toBeUndefined();
+    expect(session.now).toBe(DEMO_NOW);
+  });
+
+  it('creates the authoritative OPP-DEMO-01 with the canonical identity and terms', () => {
+    const session = created();
+    const record = opportunityById(session, FEATURED);
+    expect(record?.employerId).toBe(EMPLOYER);
+    expect(record?.terms.headcount).toBe(2);
+    expect(record?.terms.acceptanceMode).toBe('InviteOnly');
+    expect(record?.terms.amount).toEqual(rial(9_800_000));
+    expect(record?.terms.workStartsAt).toBe(FEATURED_OPPORTUNITY_PLAN.workStartsAt);
+    expect(record?.lifecycle.state).toBe('Draft');
+    // The domain entity is projected from the record, so there is one authoritative state.
+    expect(record && toOpportunity(record).state).toBe('Draft');
+  });
+
+  it('refuses a second OPP-DEMO-01 rather than creating a duplicate featured transaction', () => {
+    const session = publishedSession();
+    const validation = validateOpportunityForm(form);
+    if (!validation.ok) throw new Error('fixture is invalid');
+    expect(() =>
+      createOpportunity(session, validation.input, {
+        id: FEATURED,
+        employerId: EMPLOYER,
+        recordedAt: DEMO_NOW,
+      }),
+    ).toThrow(DemoSessionConflictError);
+    expect(session.opportunities.filter((record) => record.id === FEATURED)).toHaveLength(1);
+  });
+
+  it('replays deterministically: the same walkthrough produces the same world', () => {
+    expect(publishedSession()).toEqual(publishedSession());
+    expect(initialDemoSession()).toEqual(initialDemoSession());
+  });
+
+  it('leaves no record when a creation flow is abandoned', () => {
+    // state-transitions.md: "`Draft` is not persisted as an abandoned artifact in the prototype."
+    const session = discardDraft(created());
+    expect(session.opportunities).toEqual([]);
+    expect(draftOpportunity(session)).toBeUndefined();
+  });
+
+  it('records the commitment as a commitment, with no state able to express custody', () => {
+    const record = opportunityById(created(), FEATURED);
+    expect(record?.commitment).toEqual({ amount: rial(9_800_000), platformHoldsFunds: false });
+    expect(record?.paymentState).toBe('CommitmentRecorded');
+    // Nothing in the record is a balance, a held amount, or an escrow state.
+    expect(JSON.stringify(record)).not.toMatch(/escrow|balance|wallet|held|custod/i);
+  });
+});
+
+describe('publication goes through the domain lifecycle', () => {
+  it('publishes once every canonical guard is satisfied', () => {
+    const session = publishedSession();
+    expect(opportunityById(session, FEATURED)?.lifecycle.state).toBe('Published');
+    expect(publishedOpportunities(session, EMPLOYER)).toHaveLength(1);
+  });
+
+  it('refuses to publish before the classification signal has been shown', () => {
+    expect(() => publishOpportunity(created(), FEATURED, DEMO_NOW)).toThrow(DomainTransitionError);
+  });
+
+  it('publishes regardless of what the signal says — the signal informs and never blocks (D3)', () => {
+    let employmentLike = created();
+    for (const kind of ['DirectionAndControl', 'ToolsAndMaterials', 'Integration'] as const) {
+      employmentLike = answerFactor(employmentLike, FEATURED, kind, 'employmentLike', DEMO_NOW);
+    }
+    employmentLike = markClassificationShown(employmentLike, FEATURED);
+    const published = publishOpportunity(employmentLike, FEATURED, DEMO_NOW);
+    const record = opportunityById(published, FEATURED);
+
+    expect(record?.lifecycle.state).toBe('Published');
+    expect(record && classificationSignalFor(record).employmentLikeFactors.length).toBeGreaterThan(
+      1,
+    );
+  });
+
+  it('refuses publication when a requirement is not evaluable', () => {
+    // Guard inputs come from the application; the domain does the refusing.
+    const session = created();
+    const record = opportunityById(session, FEATURED);
+    if (record === undefined) throw new Error('missing record');
+    const tampered: DemoSession = {
+      ...session,
+      opportunities: [
+        {
+          ...record,
+          lifecycle: {
+            ...record.lifecycle,
+            requirementsAreBinaryEvaluable: false,
+            classificationShown: true,
+          },
+        },
+      ],
+    };
+    expect(() => publishOpportunity(tampered, FEATURED, DEMO_NOW)).toThrow(
+      'every requirement must be a binary evaluable condition',
+    );
+  });
+
+  it('refuses to publish an opportunity that is not in the session', () => {
+    expect(() => publishOpportunity(initialDemoSession(), FEATURED, DEMO_NOW)).toThrow(
+      DemoSessionConflictError,
+    );
+  });
+});
+
+describe('E-01 read model', () => {
+  it('is empty and says so, rather than being padded with invented activity', () => {
+    const model = employerHomeModel(initialDemoSession(), EMPLOYER);
+    expect(model.queue).toEqual([]);
+    expect(model.draft).toBeUndefined();
+    expect(model.planned.map((area) => area.screenId)).toContain('E-07');
+  });
+
+  it('surfaces an unfinished creation flow so the employer can resume or discard it', () => {
+    const model = employerHomeModel(created(), EMPLOYER);
+    expect(model.draft?.id).toBe(FEATURED);
+    expect(model.queue).toEqual([]);
+  });
+
+  it('lists the published opportunity once it exists, and nothing else', () => {
+    const model = employerHomeModel(publishedSession(), EMPLOYER);
+    expect(model.queue.map((item) => item.record.id)).toEqual([FEATURED]);
+    expect(model.draft).toBeUndefined();
+    // A queue, not a dashboard: nothing numeric about the employer is exposed.
+    expect(Object.keys(model)).toEqual(['employerId', 'queue', 'draft', 'planned']);
+  });
+
+  it('shows another employer nothing of this employer s work', () => {
+    const model = employerHomeModel(publishedSession(), 'EMP-DEMO-02');
+    expect(model.queue).toEqual([]);
+  });
+});
+
+describe('actor selection', () => {
+  it('records the active actor without pretending to be authentication', () => {
+    const session = selectActor(initialDemoSession(), 'employer');
+    expect(session.activeActor).toBe('employer');
+    expect(JSON.stringify(session)).not.toMatch(/token|password|credential|session-?id/i);
+  });
+});

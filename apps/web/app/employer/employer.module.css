@@ -1,0 +1,418 @@
+/* Employer surfaces. Direction C — Evidence Margin — on Direction A's substrate: ink on warm
+   paper, hairline rules instead of shadows, typographic hierarchy instead of containers. Evidence
+   rows carry no radius, deliberately: a record is not a card. */
+
+.shell {
+  min-block-size: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.frame {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The employer rail. A top bar at `compact`, a slim rail at the inline start from `regular` up
+   (navigation.md). Three destinations and one action, and no room for a fourth. */
+.rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  border-block-end: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+.railList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+}
+
+.railLink {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--target-comfortable);
+  color: var(--color-fg-accent);
+}
+
+.railLink[aria-current='page'] {
+  color: var(--color-fg-default);
+  border-block-end: var(--border-width-emphasis) solid var(--color-border-emphasis);
+}
+
+/* A destination the inventory names and this slice has not built. Not a control, not a disabled
+   button — the name, and what it is (color.md: prefer absence over a dead affordance). */
+.railPlanned {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-fg-muted);
+}
+
+.railAction {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--target-comfortable);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  color: var(--color-fg-on-accent);
+  background: var(--color-fg-accent);
+  border-radius: var(--radius-control);
+  text-decoration: none;
+}
+
+.content {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.page {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 52rem;
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-gutter) var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  /* Measure capped at roughly 65 Persian characters (typography.md rule 6). */
+  max-inline-size: 38rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* A work item. A row in a record, not a floating card: hairline rules, no radius, no shadow. */
+.workItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-row);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+.workItemHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+}
+
+.factGrid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3) var(--space-5);
+}
+
+.factGrid dt {
+  color: var(--color-fg-muted);
+}
+
+.factGrid dd {
+  margin: 0;
+}
+
+.plannedList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.plannedItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-block: var(--space-3);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+  color: var(--color-fg-muted);
+}
+
+.primaryAction,
+.primaryButton {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--target-comfortable);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-5);
+  color: var(--color-fg-on-accent);
+  background: var(--color-fg-accent);
+  border: var(--border-width-hairline) solid var(--color-fg-accent);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* A secondary action is a text control, never a second filled button competing with the first. */
+.secondaryButton {
+  align-self: flex-start;
+  min-block-size: var(--target-minimum);
+  padding: 0;
+  color: var(--color-fg-accent);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.inlineLink {
+  color: var(--color-fg-accent);
+}
+
+/* ── Forms ─────────────────────────────────────────────────────────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fieldset > legend {
+  padding: 0;
+  margin-block-end: var(--space-2);
+}
+
+.field {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+.input {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--target-comfortable);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  color: var(--color-fg-default);
+  background: var(--color-surface-raised);
+  border: var(--border-width-hairline) solid var(--color-border-hairline);
+  border-radius: var(--radius-control);
+  font: inherit;
+}
+
+.input[aria-invalid='true'] {
+  border-width: var(--border-width-emphasis);
+  border-color: var(--color-state-warning-border);
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--target-comfortable);
+  cursor: pointer;
+}
+
+.requirementGroup {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.requirementGroup > legend {
+  padding: 0;
+  color: var(--color-fg-muted);
+}
+
+.errorSummary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  color: var(--color-state-warning-fg);
+  background: var(--color-state-warning-bg);
+  border: var(--border-width-emphasis) solid var(--color-state-warning-border);
+}
+
+.errorSummary ul {
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── The commitment block ──────────────────────────────────────────────────────────────── */
+
+/* Three things in one block, and the third is not separable from the other two. There is no
+   primitive here capable of expressing custody: no balance, no held figure, no progress bar. */
+.commitment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-surface-raised);
+  border: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+.commitmentAmount {
+  margin: 0;
+}
+
+/* ── The epistemic panel (E-03) ────────────────────────────────────────────────────────── */
+
+/* `border.doubled` — reserved SYSTEM-WIDE for epistemically qualified content and used here and
+   nowhere else in the prototype (color.md). A reader learns one thing from it: the Platform is
+   telling you it does not know. Drawn as two hairlines with a gap, per foundations.md. */
+.epistemicPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-surface-raised);
+  border: var(--border-width-hairline) solid var(--color-border-emphasis);
+  outline: var(--border-width-hairline) solid var(--color-border-emphasis);
+  outline-offset: 3px;
+}
+
+.epistemicHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 38rem;
+}
+
+/* A named position on a named spectrum. Segments are `neutral` throughout — no segment is
+   coloured as good or bad, because neither end is (classification-signal.md). The words are the
+   content; the segments are an aid to reading them. */
+.spectrum {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-1);
+}
+
+.spectrumSegment {
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  color: var(--color-state-neutral-fg);
+  background: var(--color-state-neutral-bg);
+  border: var(--border-width-hairline) solid var(--color-state-neutral-border);
+}
+
+.spectrumSegment[data-current='true'] {
+  border-width: var(--border-width-emphasis);
+  border-color: var(--color-border-emphasis);
+  font-weight: var(--type-body-strong-weight);
+}
+
+.factorList {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 640px) {
+  .fieldRow {
+    grid-template-columns: 1fr 1fr;
+    align-items: flex-start;
+  }
+
+  .factGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .spectrum {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .frame {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .rail {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: var(--space-5);
+    inline-size: 14rem;
+    flex: none;
+    padding-block: var(--space-5);
+    border-block-end: 0;
+    border-inline-end: var(--border-width-hairline) solid var(--color-border-hairline);
+  }
+
+  .railList {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .page {
+    margin-inline: 0;
+    padding-inline: var(--space-6);
+  }
+}
+
+/* A factor nobody asked about. Same padding, same rules and the same type roles as an evidence
+   row beside it — not dimmed, not smaller, not collapsed (classification-signal.md). It differs
+   only by having no provenance margin, because nobody made a claim to attribute. */
+.uncapturedRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block: var(--space-row);
+
+  /* Matches EvidenceRow's rhythm and edge exactly, so a list that mixes the two reads as one
+     record rather than as two kinds of thing. */
+  border-block-end: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+@media (min-width: 640px) {
+  /* Aligned with EvidenceRow's content column (a 12rem rail plus its gap), so the claim text
+     lines up down the list whether or not the row has a provenance margin. */
+  .uncapturedRow {
+    padding-inline-start: calc(12rem + var(--space-4));
+  }
+}

@@ -36,14 +36,27 @@ export function formatToman(money: Money): string {
   return `${sign}${toPersianDigits(groupThousands(Math.abs(toman)))}${NBSP}تومان`;
 }
 
+// Storage is a UTC instant; presentation is Jalali in the originating zone (data-model.md:
+// "UTC instant plus the originating time zone"). The prototype's one market is Tehran
+// (demo-dataset.md "Geography"), so the zone is pinned rather than taken from the renderer's
+// machine: a shift stored as 12:30Z is 16:00 in Tehran and must read as 16:00 wherever the page
+// is rendered, including on a server in another zone. Reading the host zone would also be able to
+// move a shift across a Jalali day boundary, which is a date defect, not a formatting one.
+const TEHRAN = 'Asia/Tehran';
+
 const jalali = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
   weekday: 'long',
   year: 'numeric',
   month: 'long',
   day: 'numeric',
+  timeZone: TEHRAN,
 });
 
-const clock = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { hour: '2-digit', minute: '2-digit' });
+const clock = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: TEHRAN,
+});
 
 /** A Jalali date carrying its weekday (typography.md: "A date carries its weekday"). */
 export function formatJalali(date: Date): string {

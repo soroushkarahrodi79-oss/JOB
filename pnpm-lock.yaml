@@ -83,6 +83,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@platform/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
+      '@platform/application':
+        specifier: workspace:*
+        version: link:../../packages/application
       '@platform/domain':
         specifier: workspace:*
         version: link:../../packages/domain
@@ -104,6 +110,15 @@ importers:
 
   packages/adapters:
     dependencies:
+      '@platform/domain':
+        specifier: workspace:*
+        version: link:../domain
+
+  packages/application:
+    dependencies:
+      '@platform/adapters':
+        specifier: workspace:*
+        version: link:../adapters
       '@platform/domain':
         specifier: workspace:*
         version: link:../domain

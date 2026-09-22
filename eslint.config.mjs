@@ -118,6 +118,36 @@ export default tseslint.config(
     },
   },
 
+  // --- Layer boundary: APPLICATION composes the domain, never the presentation (ADR-0013). ---
+  {
+    files: ['packages/application/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                'react',
+                'react-dom',
+                'next',
+                'next/*',
+                '@platform/ui',
+                '@platform/ui/*',
+                '@platform/tokens',
+                '@platform/tokens/*',
+                '@platform/web',
+                '@platform/web/*',
+              ],
+              message:
+                'The application layer holds use cases, not presentation: no framework, UI or token import (ADR-0013 decision 2).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // --- Layer boundary: UI may use tokens + domain + React, never the Next app host. ---
   {
     files: ['packages/ui/**/*.{ts,tsx}'],

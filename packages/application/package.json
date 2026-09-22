@@ -1,0 +1,17 @@
+{
+  "name": "@platform/application",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Application layer: use cases, read models and the prototype demo session (ADR-0013). Depends on the domain and its adapters; never on React, Next, tokens or UI.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@platform/adapters": "workspace:*",
+    "@platform/domain": "workspace:*"
+  }
+}
