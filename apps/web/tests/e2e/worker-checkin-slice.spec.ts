@@ -65,7 +65,9 @@ test.describe('W-05A — engagement detail and arrival check-in', () => {
     await page.getByTestId('arrival-code-input').fill(code ?? '');
     await page.getByTestId('checkin-submit').click();
     await expect(page.getByTestId('checkin-recorded')).toContainText('InProgress');
-    await expect(page.getByTestId('checkin-recorded').locator('[data-level="SIMULATED"]')).toBeVisible();
+    await expect(
+      page.getByTestId('checkin-recorded').locator('[data-level="SIMULATED"]'),
+    ).toBeVisible();
 
     await page.reload();
     await page.locator('[data-session-restored="true"]').waitFor();

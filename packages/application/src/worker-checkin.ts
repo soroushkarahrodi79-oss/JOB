@@ -21,7 +21,10 @@ function deterministicShortCode(engagementId: string): string {
   return String(1000 + (Math.abs(hash) % 9000));
 }
 
-function engagementById(session: DemoSession, engagementId: string): DemoEngagementRecord | undefined {
+function engagementById(
+  session: DemoSession,
+  engagementId: string,
+): DemoEngagementRecord | undefined {
   return session.engagements.find((item) => item.id === engagementId);
 }
 
@@ -50,7 +53,9 @@ export function issueArrivalCode(
     engagement.employerId !== input.employerId ||
     engagement.state !== 'Accepted'
   ) {
-    throw new DemoSessionConflictError('An Accepted employer engagement is required to issue a code.');
+    throw new DemoSessionConflictError(
+      'An Accepted employer engagement is required to issue a code.',
+    );
   }
 
   if (engagement.arrivalCode !== undefined) return session;
@@ -95,7 +100,9 @@ export function checkInWorker(
     engagement.state !== 'Accepted' ||
     engagement.arrivalCode === undefined
   ) {
-    throw new DemoSessionConflictError('A current Accepted worker engagement with a code is required.');
+    throw new DemoSessionConflictError(
+      'A current Accepted worker engagement with a code is required.',
+    );
   }
 
   const consumed = consumeArrivalCode(

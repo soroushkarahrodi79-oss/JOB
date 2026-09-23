@@ -143,9 +143,8 @@ export default function WorkerEngagementPage() {
                   شده است.
                 </p>
                 <p className="type-detail">
-                  قدرت گواه ورود{' '}
-                  <TruthChip level="SIMULATED" href="/truth#truth-row-10" /> — این نمونه هیچ موقعیت
-                  واقعی دستگاه را جمع‌آوری نکرده است.
+                  قدرت گواه ورود <TruthChip level="SIMULATED" href="/truth#truth-row-10" /> — این
+                  نمونه هیچ موقعیت واقعی دستگاه را جمع‌آوری نکرده است.
                 </p>
               </section>
             )}

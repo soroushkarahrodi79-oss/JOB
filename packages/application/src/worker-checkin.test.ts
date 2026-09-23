@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  DEMO_NOW,
-  DomainTransitionError,
-  FEATURED_OPPORTUNITY_PLAN,
-} from '@platform/domain';
+import { DEMO_NOW, DomainTransitionError, FEATURED_OPPORTUNITY_PLAN } from '@platform/domain';
 import {
   answerFactor,
   createOpportunity,

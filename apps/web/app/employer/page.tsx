@@ -81,8 +81,7 @@ export default function EmployerHomePage() {
   const model = employerHomeModel(session, EMPLOYER_ID);
   const liveEngagements = session.engagements.filter(
     (item) =>
-      item.employerId === EMPLOYER_ID &&
-      (item.state === 'Accepted' || item.state === 'InProgress'),
+      item.employerId === EMPLOYER_ID && (item.state === 'Accepted' || item.state === 'InProgress'),
   );
   const nothingWaiting =
     model.queue.length === 0 && model.draft === undefined && liveEngagements.length === 0;
@@ -159,9 +158,7 @@ export default function EmployerHomePage() {
                   <h3 className="type-subtitle">همکاری با {engagement.workerId}</h3>
                   <span className="type-identifier">{engagement.state}</span>
                 </div>
-                <p className="type-body">
-                  کد ورود، وضعیت رسیدن و ادامهٔ همکاری را در E‑06 ببینید.
-                </p>
+                <p className="type-body">کد ورود، وضعیت رسیدن و ادامهٔ همکاری را در E‑06 ببینید.</p>
                 <Link
                   className={`type-body-strong ${styles.inlineLink}`}
                   href={`/employer/engagement/${engagement.id}`}
