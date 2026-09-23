@@ -7,7 +7,10 @@ import {
   createOpportunity,
   discardDraft,
   draftOpportunity,
+  engagementsForOpportunity,
   initialDemoSession,
+  inviteWorker,
+  isInvited,
   markClassificationShown,
   opportunityById,
   publishOpportunity,
@@ -34,6 +37,7 @@ const form: OpportunityFormValues = {
   requirementIds: ['cafe-service', 'food-handling-certificate'],
   acceptanceMode: 'InviteOnly',
   employerNote: '',
+  travelBoundaryKm: '10',
   paymentCommitmentRecorded: true,
 };
 
@@ -203,6 +207,42 @@ describe('actor selection', () => {
     const session = selectActor(initialDemoSession(), 'employer');
     expect(session.activeActor).toBe('employer');
     expect(JSON.stringify(session)).not.toMatch(/token|password|credential|session-?id/i);
+  });
+});
+
+describe('invitation is a truthful bounded action', () => {
+  const invite = (session: DemoSession, workerId: string) =>
+    inviteWorker(session, {
+      opportunityId: FEATURED,
+      workerId,
+      employerId: EMPLOYER,
+      opportunityTitle: FEATURED_OPPORTUNITY_PLAN.title,
+      recordedAt: DEMO_NOW,
+    });
+
+  it('creates exactly one Offered engagement and records a MOCK notification', () => {
+    const session = invite(publishedSession(), 'WKR-DEMO-01');
+    const engagements = engagementsForOpportunity(session, FEATURED);
+    expect(engagements).toHaveLength(1);
+    expect(engagements[0]?.state).toBe('Offered');
+    expect(engagements[0]?.workerId).toBe('WKR-DEMO-01');
+    // Never advanced to Accepted, and the notification is MOCK — nothing left the system.
+    expect(session.notifications).toHaveLength(1);
+    expect(session.notifications[0]?.truth).toBe('MOCK');
+    expect(isInvited(session, FEATURED, 'WKR-DEMO-01')).toBe(true);
+  });
+
+  it('is idempotent: inviting the same worker twice changes nothing', () => {
+    const once = invite(publishedSession(), 'WKR-DEMO-01');
+    const twice = invite(once, 'WKR-DEMO-01');
+    expect(twice.engagements).toHaveLength(1);
+    expect(twice.notifications).toHaveLength(1);
+  });
+
+  it('never records an acceptance or a delivery', () => {
+    const session = invite(publishedSession(), 'WKR-DEMO-02');
+    expect(JSON.stringify(session.engagements)).not.toMatch(/Accepted|InProgress|Completed/);
+    expect(JSON.stringify(session.notifications)).not.toMatch(/delivered|sent|received/i);
   });
 });
 

@@ -102,9 +102,11 @@ test.describe('E-01 — Employer Home', () => {
   }) => {
     await enterAsEmployer(page);
     const planned = page.getByTestId('planned-areas');
-    for (const screenId of ['E-04', 'E-06', 'E-07', 'E-08', 'SH-03']) {
+    for (const screenId of ['E-06', 'E-07', 'E-08', 'SH-03']) {
       await expect(planned).toContainText(screenId);
     }
+    // E-04 is now built, so it is no longer named as an unbuilt area.
+    await expect(planned).not.toContainText('E-04');
   });
 
   test('leads to E-02', async ({ page }) => {
@@ -122,8 +124,8 @@ test.describe('E-01 — Employer Home', () => {
     // The figure carries its basis (opportunity-card.md item 6) — a bare amount is ambiguous.
     await expect(page.getByTestId('row-amount')).toHaveText('۹۸۰٬۰۰۰ تومان برای کل شیفت');
     await expect(page.getByTestId('row-positions')).toHaveText('۰ از ۲ پر شده');
-    // E-04 is not built, and the row says so rather than offering a dead invite control.
-    await expect(page.getByTestId('candidates-planned')).toContainText('PLANNED');
+    // E-04 is built, and the row links straight into the candidate list.
+    await expect(page.getByTestId('candidates-link')).toContainText('E-04');
   });
 });
 
@@ -337,12 +339,10 @@ test.describe('E-03 — Factors and Classification Signal', () => {
     await expect(page.getByTestId('d3-note')).toContainText('D3');
   });
 
-  test('marks the next step PLANNED rather than offering a dead route to E-04', async ({
-    page,
-  }) => {
+  test('offers the next step into the candidate list once published', async ({ page }) => {
     await answerAndPublish(page);
-    await expect(page.getByTestId('next-planned')).toContainText('E-04');
-    await expect(page.getByTestId('next-planned')).toContainText('PLANNED');
+    await expect(page.getByTestId('next-step')).toContainText('E-04');
+    await expect(page.getByTestId('go-candidates')).toBeVisible();
   });
 
   test('leaves no record when the creation flow is abandoned', async ({ page }) => {

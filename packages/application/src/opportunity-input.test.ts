@@ -15,6 +15,7 @@ const valid: OpportunityFormValues = {
   requirementIds: ['cafe-service', 'food-handling-certificate'],
   acceptanceMode: 'InviteOnly',
   employerNote: 'ورود از در پشتی، ساعت ۱۵:۴۵.',
+  travelBoundaryKm: '10',
   paymentCommitmentRecorded: true,
 };
 
@@ -86,5 +87,24 @@ describe('E-02 opportunity form validation', () => {
 
   it('refuses a location outside the demo geography (D6)', () => {
     expect(errorsFor({ neighbourhood: 'Elsewhere' })).toContain('neighbourhood');
+  });
+
+  it('records the travel boundary as an evaluable term, and accepts Persian digits', () => {
+    const result = validateOpportunityForm({ ...valid, travelBoundaryKm: '۱۰' });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.input.travelBoundary).toEqual({ maxKilometres: 10 });
+  });
+
+  it('treats an empty travel boundary as no boundary, not a boundary of zero', () => {
+    const result = validateOpportunityForm({ ...valid, travelBoundaryKm: '' });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.input.travelBoundary).toBeUndefined();
+  });
+
+  it('refuses a zero or non-numeric travel boundary', () => {
+    expect(errorsFor({ travelBoundaryKm: '0' })).toContain('travelBoundaryKm');
+    expect(errorsFor({ travelBoundaryKm: 'دور' })).toContain('travelBoundaryKm');
   });
 });

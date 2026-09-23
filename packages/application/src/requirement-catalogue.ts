@@ -34,6 +34,44 @@ export const REQUIREMENT_CATALOGUE: readonly RequirementOption[] = [
 
 const BY_ID = new Map(REQUIREMENT_CATALOGUE.map((option) => [option.id, option]));
 
+/**
+ * Which additional skills are *relevant* to a required one, for skill-fit ordering (matching.md
+ * stage 4: "Skills the employer marked as required are stage 1. Remaining relevant skills order the
+ * eligible set.").
+ *
+ * This is a curated adjacency for the demo taxonomy only — D5, `AUTHORISED`, prototype-only, and
+ * explicitly not a general skill graph (docs/open-decisions.md). It never introduces or excludes a
+ * candidate; it only orders among those who already passed every hard gate. A café shift's relevant
+ * neighbours are the other front-of-house skills, so a worker who also serves customers or runs a
+ * till fits a café better than one with the bare required skill — a named, openable fact, never a
+ * score.
+ */
+const RELATED_SKILLS: Readonly<Record<string, readonly string[]>> = {
+  'cafe-service': ['customer-service', 'cash-handling', 'food-preparation', 'barista-certificate'],
+  'food-preparation': ['cafe-service', 'cleaning'],
+  'warehouse-stock': ['event-setup', 'cleaning'],
+  'event-setup': ['warehouse-stock', 'cleaning', 'customer-service'],
+  'customer-service': ['cafe-service', 'cash-handling'],
+};
+
+/**
+ * The skills that order the eligible set for an opportunity: every skill relevant to a required
+ * skill, minus the required skills themselves (those were already the eligibility gate). Certificate
+ * requirements contribute no ordering neighbours of their own.
+ */
+export function orderingSkillIds(
+  requirements: readonly EligibilityRequirement[],
+): readonly string[] {
+  const requiredIds = new Set(requirements.map((requirement) => requirement.id));
+  const relevant = new Set<string>();
+  for (const requirement of requirements) {
+    for (const related of RELATED_SKILLS[requirement.id] ?? []) {
+      if (!requiredIds.has(related)) relevant.add(related);
+    }
+  }
+  return [...relevant];
+}
+
 /** Whether every requirement is one the domain can evaluate — the publication guard's input. */
 export function areRequirementsBinaryEvaluable(
   requirements: readonly EligibilityRequirement[],

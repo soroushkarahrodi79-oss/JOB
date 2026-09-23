@@ -3,6 +3,7 @@ import type {
   EligibilityRequirement,
   Money,
   PayBasis,
+  TravelBoundary,
 } from '@platform/domain';
 import { parseTomanInput } from './money-input';
 import { areRequirementsBinaryEvaluable, requirementById } from './requirement-catalogue';
@@ -44,6 +45,12 @@ export interface OpportunityFormValues {
   readonly requirementIds: readonly string[];
   readonly acceptanceMode: AcceptanceMode;
   /**
+   * The employer's travel boundary in kilometres of the synthetic demo geography, or the empty
+   * string for no boundary. Optional by design: an empty value is the employer declining to filter
+   * on distance (matching.md stage 3), never a boundary of zero.
+   */
+  readonly travelBoundaryKm: string;
+  /**
    * Anything the employer wants to say that is not an evaluable condition.
    *
    * It travels with the opportunity and is shown to workers, and it never reaches the requirement
@@ -64,6 +71,7 @@ export type OpportunityFieldName =
   | 'tomanAmount'
   | 'headcount'
   | 'requirementIds'
+  | 'travelBoundaryKm'
   | 'paymentCommitmentRecorded';
 
 export interface FieldError {
@@ -83,6 +91,8 @@ export interface ValidatedOpportunityInput {
   readonly acceptanceMode: AcceptanceMode;
   readonly requirements: readonly EligibilityRequirement[];
   readonly employerNote: string;
+  /** Present only when the employer recorded a boundary; absent means distance never filters. */
+  readonly travelBoundary?: TravelBoundary;
 }
 
 export type OpportunityValidation =
@@ -90,6 +100,25 @@ export type OpportunityValidation =
   | { readonly ok: false; readonly errors: readonly FieldError[] };
 
 const MAX_HEADCOUNT = 20;
+const MAX_TRAVEL_KM = 100;
+
+/**
+ * Parses an optional travel-boundary distance. The empty string is a valid answer — it means "no
+ * boundary" — and returns `{ ok: true, boundary: undefined }`. A non-empty value must be a whole
+ * number of kilometres greater than zero (Persian or Latin digits); zero is rejected because a
+ * boundary of zero would exclude everyone and is never what an employer means.
+ */
+function parseTravelBoundary(
+  raw: string,
+): { readonly ok: true; readonly boundary: TravelBoundary | undefined } | { readonly ok: false } {
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) return { ok: true, boundary: undefined };
+  const normalized = trimmed.replace(/[۰-۹]/g, (d) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)));
+  if (!/^\d+$/.test(normalized)) return { ok: false };
+  const km = Number(normalized);
+  if (km <= 0 || km > MAX_TRAVEL_KM) return { ok: false };
+  return { ok: true, boundary: { maxKilometres: km } };
+}
 
 const MONEY_MESSAGES: Record<string, string> = {
   Empty: 'مبلغ پرداخت را به تومان وارد کنید.',
@@ -173,7 +202,22 @@ export function validateOpportunityForm(values: OpportunityFormValues): Opportun
     });
   }
 
-  if (errors.length > 0 || date === null || neighbourhood === undefined || !money.ok) {
+  const travel = parseTravelBoundary(values.travelBoundaryKm);
+  if (!travel.ok) {
+    errors.push({
+      field: 'travelBoundaryKm',
+      message:
+        'محدودهٔ مسافت را با یک عدد کیلومتر بزرگ‌تر از صفر وارد کنید، یا برای نبودِ محدودیت آن را خالی بگذارید.',
+    });
+  }
+
+  if (
+    errors.length > 0 ||
+    date === null ||
+    neighbourhood === undefined ||
+    !money.ok ||
+    !travel.ok
+  ) {
     return { ok: false, errors };
   }
 
@@ -190,6 +234,7 @@ export function validateOpportunityForm(values: OpportunityFormValues): Opportun
       acceptanceMode: values.acceptanceMode,
       requirements,
       employerNote: values.employerNote.trim(),
+      ...(travel.boundary === undefined ? {} : { travelBoundary: travel.boundary }),
     },
   };
 }

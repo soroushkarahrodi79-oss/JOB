@@ -46,7 +46,7 @@ and must be labelled `MOCK`.
 | 2 | Worker Passport (aggregated verified record) | `FUNCTIONAL` | `PLANNED` | Functional as an aggregate; the *verification inputs* it aggregates are not (rows 3, 4). |
 | 3 | Worker identity verification | `SIMULATED` | `SIMULATED` | Deterministic in-repo adapter only; real Iranian identity rails are out of scope. See `legal/open-questions.md` Q3. |
 | 4 | Employer business verification | `SIMULATED` | `SIMULATED` | Deterministic in-repo adapter only. |
-| 5 | Opportunity creation and publication | `FUNCTIONAL` | `FUNCTIONAL` | Domain rules, and the employer surfaces that exercise them: E-02 creates the Opportunity in `Draft` with a recorded payment commitment, and E-03 publishes it through the lifecycle guards. Candidate listing and invitation are E-04 and are not built. |
+| 5 | Opportunity creation and publication | `FUNCTIONAL` | `FUNCTIONAL` | Domain rules, and the employer surfaces that exercise them: E-02 creates the Opportunity in `Draft` with a recorded payment commitment and travel boundary, E-03 publishes it through the lifecycle guards, and E-04 lists candidates over the shared world with a per-candidate eligibility, ordering and exclusion explanation. Invitation from E-04 creates an `Offered` engagement and records a `MOCK` notification (row 16). |
 | 6 | Eligibility-first matching | `FUNCTIONAL` | `FUNCTIONAL` | Deterministic rule evaluation over the domain model. No ML. |
 | 7 | Availability-aware matching | `FUNCTIONAL` | `FUNCTIONAL` | |
 | 8 | Location-aware matching | `SIMULATED` | `SIMULATED` | Distance computed in-repo over fixed demo geography; no maps provider. |

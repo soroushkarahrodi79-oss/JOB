@@ -39,6 +39,35 @@ import type { ValidatedOpportunityInput } from './opportunity-input';
 export type ActorKey = 'worker' | 'employer' | 'operations';
 
 /**
+ * An engagement the employer has offered from E-04. It is a real `Offered` engagement in the shared
+ * session — the invite-only entry into the engagement lifecycle (state-transitions.md; beat B8's
+ * first half). It is NOT an acceptance: nothing here advances it to `Accepted`, because the worker's
+ * side (W-02/W-04) is not built, and claiming acceptance would be fiction (truth-matrix row 16).
+ */
+export interface DemoEngagementRecord {
+  readonly id: string;
+  readonly opportunityId: string;
+  readonly workerId: string;
+  readonly employerId: string;
+  readonly state: 'Offered';
+  readonly offeredAt: string;
+}
+
+/**
+ * A notification the invite would have sent. Recorded honestly as `MOCK`: no message leaves the
+ * system, nothing is delivered, and no worker is told anything (truth-matrix row 16; the outbox
+ * screen SH-03 that would display it is itself still `PLANNED`).
+ */
+export interface DemoNotification {
+  readonly id: string;
+  readonly recipientId: string;
+  readonly channel: 'sms';
+  readonly message: string;
+  readonly recordedAt: string;
+  readonly truth: 'MOCK';
+}
+
+/**
  * What the session holds for one opportunity.
  *
  * `lifecycle` carries the single authoritative state; the domain `Opportunity` is projected from
@@ -68,6 +97,10 @@ export interface DemoSession {
   readonly activeActor: ActorKey | null;
   /** Published and draft opportunities, in creation order. */
   readonly opportunities: readonly DemoOpportunityRecord[];
+  /** Offered engagements created by inviting candidates from E-04. */
+  readonly engagements: readonly DemoEngagementRecord[];
+  /** The MOCK notification outbox — messages that would have been sent, none of which leaves the system. */
+  readonly notifications: readonly DemoNotification[];
   /** The answers captured at E-03 for the opportunity currently in creation. */
   readonly factorAnswers: FactorAnswers;
 }
@@ -88,6 +121,8 @@ export function initialDemoSession(): DemoSession {
     now: DEMO_NOW,
     activeActor: null,
     opportunities: [],
+    engagements: [],
+    notifications: [],
     factorAnswers: {},
   };
 }
@@ -167,6 +202,9 @@ export function createOpportunity(
     location: input.location,
     headcount: input.headcount,
     acceptanceMode: input.acceptanceMode,
+    // The recorded travel boundary, when the employer set one. Absent means distance never filters —
+    // E-04 reads exactly what was recorded here, not the featured default (matching.md stage 3).
+    ...(input.travelBoundary === undefined ? {} : { travelBoundary: input.travelBoundary }),
   };
 
   const record: DemoOpportunityRecord = {
@@ -280,4 +318,62 @@ export function publishOpportunity(
 /** The recomputed signal. Never stored as a verdict — domain invariant 5. */
 export function classificationSignalFor(record: DemoOpportunityRecord): ClassificationSignal {
   return evaluateClassificationSignal(record.classificationFactors);
+}
+
+/** The Offered engagements on one opportunity, in the order they were created. */
+export function engagementsForOpportunity(
+  session: DemoSession,
+  opportunityId: string,
+): readonly DemoEngagementRecord[] {
+  return session.engagements.filter((engagement) => engagement.opportunityId === opportunityId);
+}
+
+/** Whether this worker has already been invited to this opportunity. Invitation is idempotent. */
+export function isInvited(session: DemoSession, opportunityId: string, workerId: string): boolean {
+  return session.engagements.some(
+    (engagement) => engagement.opportunityId === opportunityId && engagement.workerId === workerId,
+  );
+}
+
+/**
+ * Beat B8 (first half) — the employer invites a candidate from E-04.
+ *
+ * This creates a real `Offered` engagement in the shared session and records the notification as
+ * `MOCK`. It stops exactly there: it never advances the engagement to `Accepted` and never asserts a
+ * message was delivered, because both would be fiction the prototype refuses (truth-matrix row 16;
+ * state-transitions.md). Idempotent — inviting the same worker twice changes nothing.
+ */
+export function inviteWorker(
+  session: DemoSession,
+  input: {
+    readonly opportunityId: string;
+    readonly workerId: string;
+    readonly employerId: string;
+    readonly opportunityTitle: string;
+    readonly recordedAt: string;
+  },
+): DemoSession {
+  if (isInvited(session, input.opportunityId, input.workerId)) return session;
+
+  const engagement: DemoEngagementRecord = {
+    id: `ENG-DEMO-${input.opportunityId}-${input.workerId}`,
+    opportunityId: input.opportunityId,
+    workerId: input.workerId,
+    employerId: input.employerId,
+    state: 'Offered',
+    offeredAt: input.recordedAt,
+  };
+  const notification: DemoNotification = {
+    id: `NOTE-DEMO-${input.opportunityId}-${input.workerId}`,
+    recipientId: input.workerId,
+    channel: 'sms',
+    message: `دعوت به همکاری در «${input.opportunityTitle}»`,
+    recordedAt: input.recordedAt,
+    truth: 'MOCK',
+  };
+  return {
+    ...session,
+    engagements: [...session.engagements, engagement],
+    notifications: [...session.notifications, notification],
+  };
 }

@@ -14,7 +14,9 @@ import {
   createOpportunity,
   discardDraft,
   initialDemoSession,
+  inviteWorker,
   markClassificationShown,
+  opportunityById,
   publishOpportunity,
   selectActor,
   type ActorKey,
@@ -43,7 +45,7 @@ import { FEATURED_OPPORTUNITY_PLAN, type ClassificationFactorKind } from '@platf
 // It calls the application layer's use cases and stores what they return. No domain rule is
 // re-implemented here; a refused transition throws out of the use case and the screen shows it.
 
-const STORAGE_KEY = 'platform.demo-session.v1';
+const STORAGE_KEY = 'platform.demo-session.v2';
 
 interface DemoSessionContextValue {
   readonly session: DemoSession;
@@ -54,6 +56,7 @@ interface DemoSessionContextValue {
   readonly answer: (kind: ClassificationFactorKind, answer: FactorAnswerKey) => void;
   readonly markShown: (opportunityId: string) => void;
   readonly publish: (opportunityId: string) => void;
+  readonly invite: (opportunityId: string, workerId: string) => void;
   readonly abandonDraft: () => void;
 }
 
@@ -123,6 +126,19 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
       },
       publish: (opportunityId) => {
         apply((current) => publishOpportunity(current, opportunityId, current.now));
+      },
+      invite: (opportunityId, workerId) => {
+        apply((current) => {
+          const opportunity = opportunityById(current, opportunityId);
+          if (opportunity === undefined) return current;
+          return inviteWorker(current, {
+            opportunityId,
+            workerId,
+            employerId: opportunity.employerId,
+            opportunityTitle: opportunity.title,
+            recordedAt: current.now,
+          });
+        });
       },
       abandonDraft: () => {
         apply(discardDraft);

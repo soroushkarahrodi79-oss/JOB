@@ -9,10 +9,11 @@ import { draftOpportunity, publishedOpportunities } from './demo-session';
 // themselves, and nothing that could be rendered as a number about the employer.
 //
 // It also reports what is NOT built. The employer's queue is chiefly submitted proof decisions
-// (screen-inventory.md E-01), and proof, engagements and invitations do not exist in this slice.
-// A screen that omitted that would read as an employer with a quiet day rather than a product with
-// three unbuilt screens, which is the difference between an honest empty state and a flattering
-// one.
+// (screen-inventory.md E-01), and proof review, engagement monitoring and the trust profile do not
+// exist in this slice. Candidate listing and invitation now do (E-04), reached from each published
+// opportunity row rather than from this planned list. A screen that omitted the rest would read as
+// an employer with a quiet day rather than a product with several unbuilt screens, which is the
+// difference between an honest empty state and a flattering one.
 
 /** A queue entry. One work item, with the state that makes it an item. */
 export interface EmployerQueueItem {
@@ -23,7 +24,7 @@ export interface EmployerQueueItem {
 /** A part of the employer's day this slice does not build. Rendered as PLANNED, never as a control. */
 export interface EmployerPlannedArea {
   /** The screen id, so the ledger and the inventory can be traced from the screen. */
-  readonly screenId: 'E-04' | 'E-06' | 'E-07' | 'E-08' | 'SH-03';
+  readonly screenId: 'E-06' | 'E-07' | 'E-08' | 'SH-03';
   readonly label: string;
   readonly whatItWouldShow: string;
 }
@@ -45,12 +46,6 @@ export interface EmployerHomeModel {
  * decisions, and there is no proof in this slice because there are no engagements.
  */
 const PLANNED_AREAS: readonly EmployerPlannedArea[] = [
-  {
-    screenId: 'E-04',
-    label: 'فهرست نامزدها و دعوت',
-    whatItWouldShow:
-      'نامزدهای واجد شرایط با دلیل واجد بودن، و کسانی که کنار گذاشته شده‌اند با شرطِ برآورده‌نشده.',
-  },
   {
     screenId: 'E-06',
     label: 'پیگیری همکاری در جریان',

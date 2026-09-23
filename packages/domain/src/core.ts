@@ -31,6 +31,20 @@ export interface EligibilityRequirement {
 }
 
 /**
+ * An employer-stated limit on how far a worker may be from the workplace.
+ *
+ * matching.md stage 3: distance is a hard constraint *only where someone has said it is*. When an
+ * employer records a boundary it filters like any eligibility requirement; absent one, distance
+ * merely orders. The prototype's distance is fixed synthetic demo geography, `SIMULATED` at the
+ * point of use (truth-matrix row 8) — the boundary is a real recorded term, the distance it is
+ * compared against is not real-world data.
+ */
+export interface TravelBoundary {
+  /** The maximum distance, in kilometres of the synthetic demo geography, an employer will accept. */
+  readonly maxKilometres: number;
+}
+
+/**
  * What an `amount` is the price of.
  *
  * An amount without its basis is ambiguous, and the ambiguity is not cosmetic: 980,000 Toman is
@@ -54,6 +68,12 @@ export interface OpportunityTerms {
   readonly location: AdministrativeLocation;
   readonly headcount: number;
   readonly acceptanceMode: 'InviteOnly' | 'OpenAcceptance';
+  /**
+   * The employer's travel boundary, when one was recorded. Optional by construction: an absent
+   * boundary is not a boundary of zero, it is the employer declining to filter on distance
+   * (matching.md stage 3). A recorded boundary is a hard eligibility constraint; nothing infers one.
+   */
+  readonly travelBoundary?: TravelBoundary;
 }
 
 export interface Opportunity {
