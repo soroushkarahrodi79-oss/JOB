@@ -20,6 +20,7 @@ import {
 import { candidateList } from './candidate-list';
 import { areRequirementsBinaryEvaluable } from './requirement-catalogue';
 import type { ValidatedOpportunityInput } from './opportunity-input';
+import type { DemoIdentityAttempt } from './worker-verification';
 
 // The prototype's shared demo world, and the only place its state lives.
 //
@@ -102,6 +103,8 @@ export interface DemoSession {
   readonly engagements: readonly DemoEngagementRecord[];
   /** The MOCK notification outbox — messages that would have been sent, none of which leaves the system. */
   readonly notifications: readonly DemoNotification[];
+  /** Synthetic verification outcomes for W-03. Never stores an identifier or document. */
+  readonly identityAttempts: readonly DemoIdentityAttempt[];
   /** The answers captured at E-03 for the opportunity currently in creation. */
   readonly factorAnswers: FactorAnswers;
 }
@@ -124,6 +127,7 @@ export function initialDemoSession(): DemoSession {
     opportunities: [],
     engagements: [],
     notifications: [],
+    identityAttempts: [],
     factorAnswers: {},
   };
 }

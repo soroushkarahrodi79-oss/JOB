@@ -3,7 +3,11 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { lastIdentityAttempt, opportunityById, type IdentityDemoOutcome } from '@platform/application';
+import {
+  lastIdentityAttempt,
+  opportunityById,
+  type IdentityDemoOutcome,
+} from '@platform/application';
 import { generateSyntheticDemoWorld } from '@platform/domain';
 import { TruthChip } from '@platform/ui';
 import { DemoBar } from '../../../../demo/DemoBar';
@@ -154,8 +158,8 @@ export default function WorkerVerificationPage() {
                   </p>
                 ) : latest.result === 'TimeoutSimulated' ? (
                   <p className="type-body" data-testid="verification-failure">
-                    مهلت پاسخ ارائه‌دهندهٔ ساختگی پایان یافت. هویت تأیید نشده است و می‌توانید
-                    دوباره تلاش کنید.
+                    مهلت پاسخ ارائه‌دهندهٔ ساختگی پایان یافت. هویت تأیید نشده است و می‌توانید دوباره
+                    تلاش کنید.
                   </p>
                 ) : (
                   <p className="type-body" data-testid="verification-failure">

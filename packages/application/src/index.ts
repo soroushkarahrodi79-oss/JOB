@@ -87,6 +87,12 @@ export {
   type SkillFitFact,
 } from './candidate-list';
 export {
+  lastIdentityAttempt,
+  recordSimulatedIdentityOutcome,
+  type DemoIdentityAttempt,
+  type IdentityDemoOutcome,
+} from './worker-verification';
+export {
   employerHomeModel,
   type EmployerHomeModel,
   type EmployerPlannedArea,

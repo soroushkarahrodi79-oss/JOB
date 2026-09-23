@@ -19,10 +19,17 @@ const success = {
   ok: true as const,
   value: { verifiedAt: DEMO_NOW, source: 'SimulatedIdentityProvider' as const },
 };
-const timeout = { ok: false as const, failure: { kind: 'Timeout' as const, recoverable: true as const } };
+const timeout = {
+  ok: false as const,
+  failure: { kind: 'Timeout' as const, recoverable: true as const },
+};
 const rejected = {
   ok: false as const,
-  failure: { kind: 'Rejected' as const, recoverable: false as const, reason: 'Demo-only rejection' },
+  failure: {
+    kind: 'Rejected' as const,
+    recoverable: false as const,
+    reason: 'Demo-only rejection',
+  },
 };
 
 function withOffer(): DemoSession {
@@ -47,7 +54,13 @@ function withOffer(): DemoSession {
     employerId: FEATURED_OPPORTUNITY_PLAN.employerId,
     recordedAt: DEMO_NOW,
   });
-  session = answerFactor(session, OPPORTUNITY_ID, 'DirectionAndControl', 'employmentLike', DEMO_NOW);
+  session = answerFactor(
+    session,
+    OPPORTUNITY_ID,
+    'DirectionAndControl',
+    'employmentLike',
+    DEMO_NOW,
+  );
   session = markClassificationShown(session, OPPORTUNITY_ID);
   session = publishOpportunity(session, OPPORTUNITY_ID, DEMO_NOW);
   session = inviteWorker(session, {

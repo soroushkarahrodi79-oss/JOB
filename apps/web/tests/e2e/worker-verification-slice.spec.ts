@@ -33,7 +33,9 @@ async function inviteFirstWorker(page: Page) {
 }
 
 test.describe('W-03 — simulated identity verification', () => {
-  test('does not create evidence merely by opening its URL or selecting another role', async ({ page }) => {
+  test('does not create evidence merely by opening its URL or selecting another role', async ({
+    page,
+  }) => {
     await open(page, VERIFY);
     await expect(page.getByTestId('verification-forbidden')).toBeVisible();
     await open(page, DEMO);
@@ -55,7 +57,9 @@ test.describe('W-03 — simulated identity verification', () => {
     await page.getByTestId('verification-timeout').click();
     await expect(page.getByTestId('verification-failure')).toContainText('مهلت');
     await page.getByTestId('verification-success').click();
-    await expect(page.getByTestId('verification-verified')).toContainText('ProviderVerifiedSimulated');
+    await expect(page.getByTestId('verification-verified')).toContainText(
+      'ProviderVerifiedSimulated',
+    );
     await expect(page.getByTestId('verification-scenarios')).toHaveCount(0);
     await page.reload();
     await page.locator('[data-session-restored="true"]').waitFor();

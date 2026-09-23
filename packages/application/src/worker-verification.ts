@@ -1,15 +1,21 @@
-import { generateSyntheticDemoWorld, type Attestation, type ProviderResult } from '@platform/domain';
 import {
-  DemoSessionConflictError,
-  opportunityById,
-  type DemoSession,
-} from './demo-session';
+  generateSyntheticDemoWorld,
+  type Attestation,
+  type ProviderResult,
+} from '@platform/domain';
+import { DemoSessionConflictError, opportunityById, type DemoSession } from './demo-session';
+
+export type IdentityDemoOutcome = 'Success' | 'Rejected' | 'Timeout';
 
 /** Only a fictional provider outcome is stored: never an identity number, document or image. */
 export interface DemoIdentityAttempt {
   readonly opportunityId: string;
   readonly workerId: string;
-  readonly result: 'VerifiedSimulated' | 'RejectedSimulated' | 'TimeoutSimulated' | 'InconclusiveSimulated';
+  readonly result:
+    | 'VerifiedSimulated'
+    | 'RejectedSimulated'
+    | 'TimeoutSimulated'
+    | 'InconclusiveSimulated';
   readonly source: 'SimulatedIdentityProvider';
   readonly recordedAt: string;
   readonly attestation?: Attestation;
@@ -67,7 +73,10 @@ export function recordSimulatedIdentityOutcome(
     throw new DemoSessionConflictError('A current worker invitation is required for W-03.');
   }
 
-  if (lastIdentityAttempt(session, input.opportunityId, input.workerId)?.result === 'VerifiedSimulated') {
+  if (
+    lastIdentityAttempt(session, input.opportunityId, input.workerId)?.result ===
+    'VerifiedSimulated'
+  ) {
     return session;
   }
 
