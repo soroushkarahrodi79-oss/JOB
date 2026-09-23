@@ -36,7 +36,9 @@ async function publishAndInvite(page: Page) {
 }
 
 test.describe('SH-03 — shared-world MOCK invitation outbox', () => {
-  test('empty state is real and opening without an actor does not reveal messages', async ({ page }) => {
+  test('empty state is real and opening without an actor does not reveal messages', async ({
+    page,
+  }) => {
     await open(page, OUTBOX);
     await expect(page.getByTestId('outbox-choose-actor')).toBeVisible();
     await expect(page.getByTestId('outbox-messages')).toHaveCount(0);
@@ -48,15 +50,19 @@ test.describe('SH-03 — shared-world MOCK invitation outbox', () => {
     await expect(page.getByTestId('outbox-messages')).toHaveCount(0);
   });
 
-  test('records one employer invitation and shows it only to its demo recipient after role switch and reload', async ({ page }) => {
+  test('records one employer invitation and shows it only to its demo recipient after role switch and reload', async ({
+    page,
+  }) => {
     await publishAndInvite(page);
     await page.getByTestId('rail-SH-03').click();
     await expect(page).toHaveURL(/\/outbox$/);
     await expect(page.getByTestId('outbox-messages')).toBeVisible();
-    await expect(page.getByTestId('outbox-message-WKR-DEMO-01')).toContainText('WKR-DEMO-01');
-    await expect(page.getByTestId('outbox-message-WKR-DEMO-01')).toContainText('SMS');
-    await expect(page.getByTestId('outbox-message-WKR-DEMO-01')).toContainText('MOCK');
-    await expect(page.getByTestId('outbox-message-WKR-DEMO-01')).toContainText('ارسال نشده');
+    const firstMessage = page.getByTestId('outbox-message-WKR-DEMO-01');
+    await expect(firstMessage).toContainText('WKR-DEMO-01');
+    await expect(firstMessage).toContainText('SMS');
+    await expect(firstMessage).toContainText('ساختگی');
+    await expect(firstMessage.locator('[data-level="MOCK"]')).toHaveCount(2);
+    await expect(firstMessage).toContainText('ارسال نشده');
 
     await open(page, DEMO);
     await page.getByTestId('actor-worker').click();
@@ -85,7 +91,9 @@ test.describe('SH-03 — shared-world MOCK invitation outbox', () => {
     await expect(page.getByTestId('outbox-messages')).toHaveCount(0);
   });
 
-  test('keeps the RTL presentation legible without horizontal overflow or serious accessibility violations', async ({ page }) => {
+  test('keeps the RTL presentation legible without horizontal overflow or serious accessibility violations', async ({
+    page,
+  }) => {
     await publishAndInvite(page);
     await open(page, OUTBOX);
     await expect(page.locator('html')).toHaveAttribute('lang', 'fa');
