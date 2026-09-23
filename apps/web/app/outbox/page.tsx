@@ -10,10 +10,8 @@ import { EmployerChrome } from '../employer/Chrome';
 import { Latin } from '../Latin';
 import styles from './outbox.module.css';
 
-// SH-03 is a view of the SAME browser-tab session as E-04. It does not send SMS, poll a
-// provider, make an offer to a real person, or accept an engagement. An employer sees only
-// copies of invitations it recorded; the demo worker sees only invitations addressed to the
-// single worker selected by SH-01. Operations has no invitation in this bounded story.
+// SH-03 displays only the MOCK notification records in the shared tab. Their associated
+// engagement states may subsequently change through W-04; the notification is never delivered.
 const WORKER_ID = actorByKey('worker').reference;
 const EMPLOYER_ID = actorByKey('employer').reference;
 
@@ -34,6 +32,7 @@ function recordedTime(value: string): string {
 
 function Invitation({ item, employerView }: { item: InvitationView; employerView: boolean }) {
   const { engagement, notification } = item;
+  const isOffered = engagement.state === 'Offered';
   return (
     <article className={styles.message} data-testid={`outbox-message-${notification.recipientId}`}>
       <div className={styles.messageHeading}>
@@ -65,8 +64,8 @@ function Invitation({ item, employerView }: { item: InvitationView; employerView
         {employerView
           ? 'پیش‌نمایش دعوت ثبت‌شده برای کارگر'
           : 'دعوت ثبت‌شده برای این کارگر در نمایش'}
-        ؛ وضعیت همکاری <Latin>{engagement.state}</Latin> است، نه پذیرفته‌شده. هیچ پیامکی ارسال یا
-        تحویل نشده است. <TruthChip level="MOCK" href="/truth#truth-row-16" />
+        ؛ وضعیت همکاری <Latin>{engagement.state}</Latin> است. خود این پیام پذیرش محسوب نمی‌شود و
+        هیچ پیامکی ارسال یا تحویل نشده است. <TruthChip level="MOCK" href="/truth#truth-row-16" />
       </p>
       {!employerView ? (
         <>
@@ -78,9 +77,18 @@ function Invitation({ item, employerView }: { item: InvitationView; employerView
             دیدن شرایط و دلیل واجد شرایط بودن (<Latin>W-02</Latin>)
           </Link>
           <p className="type-detail" data-testid="response-planned">
-            پاسخ‌دادن و پذیرش یا رد دعوت در <Latin>W-04</Latin> هنوز ساخته نشده است —{' '}
-            <Latin>PLANNED</Latin>. این پیام دکمهٔ پذیرش ندارد.
+            {isOffered
+              ? 'دعوت هنوز پاسخ داده نشده است. می‌توانید آن را بپذیرید یا رد کنید.'
+              : 'پاسخ به این دعوت ثبت شده است؛ وضعیت فعلی در بالا دیده می‌شود.'}{' '}
+            خود پیام دکمهٔ پذیرش ندارد.
           </p>
+          <Link
+            className={`type-body-strong ${styles.back}`}
+            href={`/worker/opportunity/${engagement.opportunityId}/respond`}
+            data-testid="outbox-response-link"
+          >
+            {isOffered ? 'رفتن به پذیرش یا رد دعوت' : 'دیدن پاسخ ثبت‌شده'} (<Latin>W-04</Latin>)
+          </Link>
         </>
       ) : null}
     </article>
