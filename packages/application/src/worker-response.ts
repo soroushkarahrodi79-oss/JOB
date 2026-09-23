@@ -4,11 +4,7 @@ import {
   transitionOpportunity,
 } from '@platform/domain';
 import { candidateList } from './candidate-list';
-import {
-  DemoSessionConflictError,
-  opportunityById,
-  type DemoSession,
-} from './demo-session';
+import { DemoSessionConflictError, opportunityById, type DemoSession } from './demo-session';
 import { lastIdentityAttempt } from './worker-verification';
 
 export type WorkerInvitationDecision = 'Accept' | 'Decline';
@@ -16,14 +12,10 @@ export type WorkerInvitationDecision = 'Accept' | 'Decline';
 const DEMO_WORKER_ID = 'WKR-DEMO-01';
 
 /**
- * W-04 — respond to the worker's current invitation.
- *
- * Acceptance is intentionally stricter than display: eligibility is recomputed at the moment of
- * acceptance and W-03 must already hold a successful simulated provider attestation. Declining an
- * offer is always legitimate from Offered and does not create a reliability signal.
- *
- * This changes engagement/opportunity lifecycle only. It does not start work, create proof,
- * authorise payment release, send a real message or persist anything outside the browser-tab demo.
+ * W-04 — respond to an existing worker invitation in the shared demo session.
+ * Acceptance rechecks current eligibility and the W-03 simulated verification threshold.
+ * Declining an Offered invitation never counts against worker reliability.
+ * Neither response starts work, transfers funds or sends an external message.
  */
 export function respondToInvitation(
   session: DemoSession,
@@ -37,8 +29,7 @@ export function respondToInvitation(
   const world = generateSyntheticDemoWorld();
   const opportunity = opportunityById(session, input.opportunityId);
   const engagement = session.engagements.find(
-    (item) =>
-      item.opportunityId === input.opportunityId && item.workerId === input.workerId,
+    (item) => item.opportunityId === input.opportunityId && item.workerId === input.workerId,
   );
 
   if (
@@ -46,7 +37,7 @@ export function respondToInvitation(
     session.seed !== world.seed ||
     input.workerId !== DEMO_WORKER_ID ||
     opportunity === undefined ||
-    opportunity.lifecycle.state !== 'Published' ||
+    (opportunity.lifecycle.state !== 'Published' && opportunity.lifecycle.state !== 'Filled') ||
     engagement === undefined ||
     engagement.state !== 'Offered' ||
     !session.notifications.some(
@@ -80,13 +71,19 @@ export function respondToInvitation(
     };
   }
 
+  if (
+    opportunity.lifecycle.state !== 'Published' ||
+    opportunity.lifecycle.acceptedEngagementCount >= opportunity.lifecycle.headcount
+  ) {
+    throw new DemoSessionConflictError('Cannot accept an offer: no published position remains.');
+  }
+
   const eligibleNow = candidateList(world, opportunity).ranked.some(
     (candidate) => candidate.workerId === input.workerId,
   );
   const verified =
     lastIdentityAttempt(session, input.opportunityId, input.workerId)?.result ===
     'VerifiedSimulated';
-
   const lifecycle = transitionEngagement(
     {
       state: engagement.state,
@@ -104,7 +101,7 @@ export function respondToInvitation(
     acceptedEngagementCount: acceptedCount,
   };
   const opportunityLifecycle =
-    acceptedCount >= opportunity.lifecycle.headcount
+    acceptedCount === opportunity.lifecycle.headcount
       ? transitionOpportunity(opportunityWithAcceptedCount, 'Fill')
       : opportunityWithAcceptedCount;
 
