@@ -61,7 +61,7 @@ export const CAPABILITY_LEDGER: readonly CapabilityLedgerRow[] = [
     capability: 'Opportunity creation and publication',
     target: 'FUNCTIONAL',
     actual: 'FUNCTIONAL',
-    note: 'Domain rules, and the employer surfaces that exercise them: E-02 creates the Opportunity in Draft with a recorded payment commitment, and E-03 publishes it through the lifecycle guards. Candidate listing and invitation are E-04 and are not built.',
+    note: 'Domain rules, and the employer surfaces that exercise them: E-02 creates the Opportunity in Draft with a recorded payment commitment and travel boundary, E-03 publishes it through the lifecycle guards, and E-04 lists candidates over the shared world with a per-candidate eligibility, ordering and exclusion explanation. Invitation from E-04 creates an Offered engagement and records a MOCK notification (row 16).',
   },
   {
     id: 6,

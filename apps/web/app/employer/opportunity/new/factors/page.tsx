@@ -141,6 +141,14 @@ function TermsSummary({ record }: { record: DemoOpportunityRecord }) {
             : record.requirements.map((requirement) => requirement.label).join(' · ')}
         </dd>
       </div>
+      <div>
+        <dt className="type-label">محدودهٔ مسافت</dt>
+        <dd className="type-body type-numeric" data-testid="summary-travel">
+          {record.terms.travelBoundary === undefined
+            ? 'بدون محدودیت'
+            : toPersianDigits(`تا ${String(record.terms.travelBoundary.maxKilometres)} کیلومتر`)}
+        </dd>
+      </div>
     </dl>
   );
 }
@@ -284,14 +292,17 @@ export default function FactorsPage() {
               «{record.title}» منتشر شد. از این پس در همین نمایش، همین فرصت است که در همهٔ صفحه‌های
               بعدی دیده می‌شود.
             </p>
-            <p className="type-detail" data-testid="next-planned">
-              مرحلهٔ بعد، فهرست نامزدها و دعوت از آن‌ها (<Latin>E-04</Latin>)، هنوز ساخته نشده است —{' '}
-              <span className="type-body-strong">
-                برنامه‌ریزی‌شده (<Latin>PLANNED</Latin>)
-              </span>
-              .
+            <p className="type-detail" data-testid="next-step">
+              مرحلهٔ بعد: فهرست نامزدها و دعوت از آن‌ها (<Latin>E-04</Latin>).
             </p>
-            <Link className={`type-body-strong ${styles.primaryAction}`} href="/employer">
+            <Link
+              className={`type-body-strong ${styles.primaryAction}`}
+              href={`/employer/opportunity/${record.id}/candidates`}
+              data-testid="go-candidates"
+            >
+              دیدن نامزدها
+            </Link>
+            <Link className={`type-detail ${styles.inlineLink}`} href="/employer">
               بازگشت به کارها
             </Link>
           </div>

@@ -64,12 +64,13 @@ function OpportunityRow({ record }: { record: DemoOpportunityRecord }) {
           </dd>
         </div>
       </dl>
-      <p className="type-detail" data-testid="candidates-planned">
-        فهرست نامزدها و دعوت از آن‌ها (<Latin>E-04</Latin>) هنوز ساخته نشده است —{' '}
-        <span className="type-body-strong">
-          برنامه‌ریزی‌شده (<Latin>PLANNED</Latin>)
-        </span>
-        . تا آن زمان این فرصت منتشر شده اما هیچ دعوتی از آن ارسال نمی‌شود.
+      <p className="type-detail" data-testid="candidates-link">
+        <Link
+          className={`type-body-strong ${styles.inlineLink}`}
+          href={`/employer/opportunity/${record.id}/candidates`}
+        >
+          دیدن نامزدها و دعوت از آن‌ها (<Latin>E-04</Latin>)
+        </Link>
       </p>
     </article>
   );

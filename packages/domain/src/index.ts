@@ -37,6 +37,7 @@ export {
   type PayBasis,
   type OpportunityTerms,
   type PaymentCommitment,
+  type TravelBoundary,
   type Worker,
 } from './core';
 export {
@@ -44,7 +45,14 @@ export {
   type EligibilityEvaluation,
   type EligibilityReason,
 } from './eligibility';
-export { coversOpportunityWindow, type AvailabilityWindow } from './availability';
+export {
+  coversOpportunityWindow,
+  evaluateAvailability,
+  availabilityExcludes,
+  type AvailabilityWindow,
+  type AvailabilityEvaluation,
+} from './availability';
+export { evaluateTravelBoundary, locationExcludes, type LocationEvaluation } from './location';
 export { consumeArrivalCode, type ArrivalCode } from './proof';
 export {
   acknowledgeAmendment,
@@ -100,6 +108,8 @@ export {
   FEATURED_OPPORTUNITY_PLAN,
   REHIRE_OPPORTUNITY_PLAN,
   generateSyntheticDemoWorld,
+  distanceKey,
   type PlannedOpportunity,
+  type PreferredCrewLink,
   type SyntheticDemoWorld,
 } from './demo-data';

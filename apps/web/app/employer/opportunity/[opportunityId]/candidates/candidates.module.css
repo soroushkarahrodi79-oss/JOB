@@ -1,0 +1,166 @@
+/* E-04 — Candidate List. Evidence Margin on warm paper: ink, hairline rules, no cards, no shadow.
+   The one job of this surface is to make "eligible" and "excluded" instantly distinct, and to make
+   an explanation scannable without hiding anything decision-critical behind hover. */
+
+.count {
+  color: var(--color-fg-muted);
+}
+
+/* A ranked candidate. A row in a record, not a floating card (foundations.md): hairline rule, no
+   radius, no shadow. The eligibility marker sits in the inline-start margin so a column of rows is
+   scannable by eligibility down the right edge in Persian. */
+.candidate {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  padding-block: var(--space-row);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+.margin {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.rank {
+  color: var(--color-fg-muted);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.nameRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+}
+
+.where {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-fg-muted);
+}
+
+/* The always-visible top reason. Never behind the disclosure. */
+.headline {
+  color: var(--color-fg-default);
+}
+
+/* The full seven-rung ladder. Its closed state states a fact (the headline above), so the
+   disclosure hides nothing decision-critical (explanation.md, "Progressive disclosure, done
+   honestly"). */
+.ladder {
+  margin: 0;
+}
+
+.ladderSummary {
+  cursor: pointer;
+  color: var(--color-fg-accent);
+  min-block-size: var(--target-minimum);
+  display: inline-flex;
+  align-items: center;
+}
+
+.rungs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-block-start: var(--space-3);
+}
+
+/* A rung. The rail at the inline start carries the kind: a SOLID rail is a hard filter (stages
+   1–3), a DOTTED rail is ordering (stages 4–7). A reader learns in one screen that solid rails are
+   binary and dotted rails are not — domain invariant 4, made visible (explanation.md, "The
+   ladder"). */
+.rung {
+  padding-inline-start: var(--space-4);
+  border-inline-start: var(--border-width-emphasis) solid var(--color-border-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.filter {
+  border-inline-start-style: solid;
+  border-inline-start-color: var(--color-border-emphasis);
+}
+
+.ordering {
+  border-inline-start-style: dashed;
+  border-inline-start-color: var(--color-border-hairline);
+}
+
+.rungStage {
+  color: var(--color-fg-muted);
+}
+
+/* The invite action and its honest state. */
+.inviteRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mockNote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-fg-muted);
+}
+
+/* ── The excluded group ────────────────────────────────────────────────────────────────────
+   A separate, explicitly NON-RANKED group. Not sorted, not scored, and NOT dimmed — dimming an
+   excluded person is a dignity failure that also breaks contrast (opportunity-card.md, "Not
+   eligible"). It differs from the ranked list only by being a category and by showing exactly one
+   reason. */
+.excludedIntro {
+  color: var(--color-fg-muted);
+  max-inline-size: 38rem;
+}
+
+.excluded {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  padding-block: var(--space-row);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+/* The single reason. The component is structurally incapable of a second one. */
+.excludedReason {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.passed {
+  color: var(--color-fg-muted);
+}
+
+.emptyState {
+  padding-block: var(--space-row);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 38rem;
+}
+
+@media (min-width: 640px) {
+  .candidate,
+  .excluded {
+    grid-template-columns: 3rem 1fr;
+  }
+}

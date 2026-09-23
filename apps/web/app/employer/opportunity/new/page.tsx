@@ -56,6 +56,7 @@ const FIELD_ORDER: readonly OpportunityFieldName[] = [
   'tomanAmount',
   'headcount',
   'requirementIds',
+  'travelBoundaryKm',
   'paymentCommitmentRecorded',
 ];
 
@@ -67,6 +68,7 @@ const FIELD_ANCHOR: Record<OpportunityFieldName, string> = {
   tomanAmount: 'field-amount',
   headcount: 'field-headcount',
   requirementIds: 'field-requirements',
+  travelBoundaryKm: 'field-travel',
   paymentCommitmentRecorded: 'field-commitment',
 };
 
@@ -93,6 +95,8 @@ function initialValues(): OpportunityFormValues {
     requirementIds: PLAN.requirements.map((requirement) => requirement.id),
     acceptanceMode: PLAN.acceptanceMode,
     employerNote: '',
+    travelBoundaryKm:
+      PLAN.travelBoundary === undefined ? '' : String(PLAN.travelBoundary.maxKilometres),
     paymentCommitmentRecorded: false,
   };
 }
@@ -358,6 +362,40 @@ export default function OpportunityCreationPage() {
                 دفتر شفافیت، ردیف ۸
               </Link>
             </p>
+          </div>
+
+          <div className={styles.field}>
+            <label className="type-label" htmlFor={FIELD_ANCHOR.travelBoundaryKm}>
+              حداکثر فاصلهٔ کارگر تا محل کار (کیلومتر، اختیاری)
+            </label>
+            <input
+              id={FIELD_ANCHOR.travelBoundaryKm}
+              className={`type-body type-numeric ${styles.input}`}
+              type="text"
+              inputMode="numeric"
+              dir="ltr"
+              value={values.travelBoundaryKm}
+              onChange={(event) => {
+                setValues((current) => ({ ...current, travelBoundaryKm: event.target.value }));
+              }}
+              onBlur={blur('travelBoundaryKm')}
+              aria-invalid={errorFor('travelBoundaryKm') !== undefined}
+              aria-describedby="travel-hint"
+              data-testid="input-travel"
+            />
+            {/* A recorded boundary is what turns distance into a filter; leaving it empty keeps
+                distance to ordering only (matching.md stage 3). The distance it is compared against
+                is fixed synthetic demo geography — SIMULATED — not a real map. */}
+            {errorFor('travelBoundaryKm') !== undefined ? (
+              <p className="type-detail" id="travel-hint" data-testid="error-travel">
+                {errorFor('travelBoundaryKm')}
+              </p>
+            ) : (
+              <p className="type-detail" id="travel-hint" data-testid="travel-hint">
+                خالی بگذارید تا مسافت کسی را کنار نگذارد. فاصله‌ها{' '}
+                <span className="type-body-strong">شبیه‌سازی‌شده</span> هستند.
+              </p>
+            )}
           </div>
 
           <div className={styles.fieldRow}>

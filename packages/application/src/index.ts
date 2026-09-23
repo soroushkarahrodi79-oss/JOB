@@ -21,6 +21,7 @@ export {
 export {
   REQUIREMENT_CATALOGUE,
   areRequirementsBinaryEvaluable,
+  orderingSkillIds,
   requirementById,
   type RequirementOption,
 } from './requirement-catalogue';
@@ -54,7 +55,10 @@ export {
   createOpportunity,
   discardDraft,
   draftOpportunity,
+  engagementsForOpportunity,
   initialDemoSession,
+  inviteWorker,
+  isInvited,
   markClassificationShown,
   opportunityById,
   publishOpportunity,
@@ -62,9 +66,26 @@ export {
   selectActor,
   toOpportunity,
   type ActorKey,
+  type DemoEngagementRecord,
+  type DemoNotification,
   type DemoOpportunityRecord,
   type DemoSession,
 } from './demo-session';
+export {
+  ORDERING_STAGES,
+  candidateList,
+  provenanceOfStrength,
+  type CandidateListModel,
+  type CandidateOpportunity,
+  type ExcludedCandidate,
+  type ExclusionStage,
+  type OrderingSignal,
+  type OrderingStageId,
+  type PriorRelationshipFact,
+  type RankedCandidate,
+  type ReliabilityFact,
+  type SkillFitFact,
+} from './candidate-list';
 export {
   employerHomeModel,
   type EmployerHomeModel,

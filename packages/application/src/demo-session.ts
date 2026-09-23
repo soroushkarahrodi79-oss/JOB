@@ -17,6 +17,7 @@ import {
   type FactorAnswerKey,
   type FactorAnswers,
 } from './classification-capture';
+import { candidateList } from './candidate-list';
 import { areRequirementsBinaryEvaluable } from './requirement-catalogue';
 import type { ValidatedOpportunityInput } from './opportunity-input';
 
@@ -37,6 +38,35 @@ import type { ValidatedOpportunityInput } from './opportunity-input';
 // requirement 7).
 
 export type ActorKey = 'worker' | 'employer' | 'operations';
+
+/**
+ * An engagement the employer has offered from E-04. It is a real `Offered` engagement in the shared
+ * session — the invite-only entry into the engagement lifecycle (state-transitions.md; beat B8's
+ * first half). It is NOT an acceptance: nothing here advances it to `Accepted`, because the worker's
+ * side (W-02/W-04) is not built, and claiming acceptance would be fiction (truth-matrix row 16).
+ */
+export interface DemoEngagementRecord {
+  readonly id: string;
+  readonly opportunityId: string;
+  readonly workerId: string;
+  readonly employerId: string;
+  readonly state: 'Offered';
+  readonly offeredAt: string;
+}
+
+/**
+ * A notification the invite would have sent. Recorded honestly as `MOCK`: no message leaves the
+ * system, nothing is delivered, and no worker is told anything (truth-matrix row 16; the outbox
+ * screen SH-03 that would display it is itself still `PLANNED`).
+ */
+export interface DemoNotification {
+  readonly id: string;
+  readonly recipientId: string;
+  readonly channel: 'sms';
+  readonly message: string;
+  readonly recordedAt: string;
+  readonly truth: 'MOCK';
+}
 
 /**
  * What the session holds for one opportunity.
@@ -68,6 +98,10 @@ export interface DemoSession {
   readonly activeActor: ActorKey | null;
   /** Published and draft opportunities, in creation order. */
   readonly opportunities: readonly DemoOpportunityRecord[];
+  /** Offered engagements created by inviting candidates from E-04. */
+  readonly engagements: readonly DemoEngagementRecord[];
+  /** The MOCK notification outbox — messages that would have been sent, none of which leaves the system. */
+  readonly notifications: readonly DemoNotification[];
   /** The answers captured at E-03 for the opportunity currently in creation. */
   readonly factorAnswers: FactorAnswers;
 }
@@ -88,6 +122,8 @@ export function initialDemoSession(): DemoSession {
     now: DEMO_NOW,
     activeActor: null,
     opportunities: [],
+    engagements: [],
+    notifications: [],
     factorAnswers: {},
   };
 }
@@ -167,6 +203,9 @@ export function createOpportunity(
     location: input.location,
     headcount: input.headcount,
     acceptanceMode: input.acceptanceMode,
+    // The recorded travel boundary, when the employer set one. Absent means distance never filters —
+    // E-04 reads exactly what was recorded here, not the featured default (matching.md stage 3).
+    ...(input.travelBoundary === undefined ? {} : { travelBoundary: input.travelBoundary }),
   };
 
   const record: DemoOpportunityRecord = {
@@ -280,4 +319,99 @@ export function publishOpportunity(
 /** The recomputed signal. Never stored as a verdict — domain invariant 5. */
 export function classificationSignalFor(record: DemoOpportunityRecord): ClassificationSignal {
   return evaluateClassificationSignal(record.classificationFactors);
+}
+
+/** The Offered engagements on one opportunity, in the order they were created. */
+export function engagementsForOpportunity(
+  session: DemoSession,
+  opportunityId: string,
+): readonly DemoEngagementRecord[] {
+  return session.engagements.filter((engagement) => engagement.opportunityId === opportunityId);
+}
+
+/** Whether this worker has already been invited to this opportunity. Invitation is idempotent. */
+export function isInvited(session: DemoSession, opportunityId: string, workerId: string): boolean {
+  return session.engagements.some(
+    (engagement) => engagement.opportunityId === opportunityId && engagement.workerId === workerId,
+  );
+}
+
+/**
+ * Beat B8 (first half) — the employer invites a candidate from E-04.
+ *
+ * A direct application caller cannot bypass the guards simply because the UI hides its button:
+ * the opportunity must exist, be Published and InviteOnly, the supplied employer/title must match
+ * the authoritative record, and the worker must be eligible for its CURRENT recorded terms.
+ * No limit on outstanding offers is inferred from headcount: the lifecycle counts ACCEPTED work,
+ * not invitations. A repeated valid invitation is idempotent.
+ *
+ * This creates an Offered engagement and a MOCK notification. It never claims external delivery
+ * or acceptance (truth-matrix row 16).
+ */
+export function inviteWorker(
+  session: DemoSession,
+  input: {
+    readonly opportunityId: string;
+    readonly workerId: string;
+    readonly employerId: string;
+    readonly opportunityTitle: string;
+    readonly recordedAt: string;
+  },
+): DemoSession {
+  const opportunity = opportunityById(session, input.opportunityId);
+  if (opportunity === undefined) {
+    throw new DemoSessionConflictError(
+      `Cannot invite: opportunity ${input.opportunityId} does not exist.`,
+    );
+  }
+  if (opportunity.lifecycle.state !== 'Published') {
+    throw new DemoSessionConflictError(
+      `Cannot invite: opportunity ${input.opportunityId} is not Published.`,
+    );
+  }
+  if (opportunity.terms.acceptanceMode !== 'InviteOnly') {
+    throw new DemoSessionConflictError(
+      'Cannot invite: this opportunity does not accept invitations.',
+    );
+  }
+  if (opportunity.employerId !== input.employerId || opportunity.title !== input.opportunityTitle) {
+    throw new DemoSessionConflictError(
+      'Cannot invite: employer or opportunity details no longer match the record.',
+    );
+  }
+
+  const world = generateSyntheticDemoWorld();
+  if (
+    session.seed !== world.seed ||
+    !candidateList(world, opportunity).ranked.some(
+      (candidate) => candidate.workerId === input.workerId,
+    )
+  ) {
+    throw new DemoSessionConflictError(
+      'Cannot invite: worker is not currently eligible for this opportunity.',
+    );
+  }
+  if (isInvited(session, input.opportunityId, input.workerId)) return session;
+
+  const engagement: DemoEngagementRecord = {
+    id: `ENG-DEMO-${input.opportunityId}-${input.workerId}`,
+    opportunityId: input.opportunityId,
+    workerId: input.workerId,
+    employerId: opportunity.employerId,
+    state: 'Offered',
+    offeredAt: input.recordedAt,
+  };
+  const notification: DemoNotification = {
+    id: `NOTE-DEMO-${input.opportunityId}-${input.workerId}`,
+    recipientId: input.workerId,
+    channel: 'sms',
+    message: `دعوت به همکاری در «${opportunity.title}»`,
+    recordedAt: input.recordedAt,
+    truth: 'MOCK',
+  };
+  return {
+    ...session,
+    engagements: [...session.engagements, engagement],
+    notifications: [...session.notifications, notification],
+  };
 }
