@@ -1,0 +1,96 @@
+name: W04 one-time reconciliation
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/zz-w04-one-time.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    if: github.head_ref == 'gate/4-w04-worker-response' && github.event.pull_request.head.repo.full_name == 'soroushkarahrodi79-oss/JOB'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gate/4-w04-worker-response
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable && pnpm install --frozen-lockfile
+      - name: Reconcile W-04 status surfaces and regression test
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def edit(path, old, new):
+              file = Path(path)
+              content = file.read_text(encoding='utf-8')
+              count = content.count(old)
+              if count != 1:
+                  raise ValueError(f'{path}: expected one occurrence, found {count} for {old[:65]!r}')
+              file.write_text(content.replace(old, new), encoding='utf-8')
+
+          worker = 'apps/web/app/worker/page.tsx'
+          edit(worker, "  const offered = session.engagements.filter(\n    (item) => item.workerId === WORKER_ID && item.state === 'Offered',\n  );", "  const myEngagements = session.engagements.filter(\n    (item) => item.workerId === WORKER_ID,\n  );")
+          edit(worker, 'offered.length === 0', 'myEngagements.length === 0')
+          edit(worker, 'offered.map((item) => (', 'myEngagements.map((item) => (')
+          edit(worker, 'data-testid="worker-offered-work"', "data-testid={item.state === 'Offered' ? 'worker-offered-work' : 'worker-recorded-work'}")
+          edit(worker, 'دعوت به همکاری · <Latin>Offered</Latin>', "{item.state === 'Offered' ? 'دعوت به همکاری' : 'پاسخ ثبت‌شده به دعوت'} ·{' '}\n                      <Latin>{item.state}</Latin>")
+          edit(worker, "این دعوت ثبت شده ولی پذیرفته نشده است. هیچ پیامکی ارسال نشده است.{' '}", "{item.state === 'Offered'\n                        ? 'این دعوت ثبت شده ولی هنوز پذیرفته نشده است.'\n                        : item.state === 'Accepted'\n                          ? 'شرایط پذیرفته شده‌اند؛ شروع کار و پرداخت هنوز ثبت نشده‌اند.'\n                          : 'کارگر این دعوت را رد کرده است؛ رد دعوت به‌خودی‌خود سیگنال قابلیت اعتماد نیست.'}{' '}\n                      هیچ پیامکی ارسال نشده است.{' '}")
+          edit(worker, '<Link href="/outbox" className={styles.action}>\n                      دیدن پیام دعوت\n                    </Link>', '<Link href={`/worker/opportunity/${item.opportunityId}/respond`} className={styles.action}>\n                      {item.state === \'Offered\' ? \'پاسخ به دعوت\' : \'دیدن پاسخ ثبت‌شده\'}\n                    </Link>')
+          edit(worker, 'پذیرش، حضور در کار و سابقهٔ تکمیل‌شده هنوز در این برش ساخته نشده‌اند —', 'حضور در کار و سابقهٔ تکمیل‌شده هنوز در این برش ساخته نشده‌اند —')
+
+          detail = 'apps/web/app/worker/opportunity/[opportunityId]/page.tsx'
+          edit(detail, "  const offered = session.engagements.some(\n    (engagement) =>\n      engagement.opportunityId === opportunityId &&\n      engagement.workerId === WORKER_ID &&\n      engagement.state === 'Offered',\n  );", "  const engagement = session.engagements.find(\n    (item) => item.opportunityId === opportunityId && item.workerId === WORKER_ID,\n  );")
+          edit(detail, "    offered &&\n    notified &&\n    record !== undefined &&\n    record.lifecycle.state === 'Published';", "    engagement !== undefined &&\n    notified &&\n    record !== undefined &&\n    (record.lifecycle.state === 'Published' || record.lifecycle.state === 'Filled');")
+          edit(detail, "این دعوت در نمایش ثبت شده و هنوز <Latin>Offered</Latin> است؛ نه تأییدشده، نه\n                پذیرفته‌شده. هیچ پیامکی ارسال نشده است.", "این دعوت در نمایش ثبت شده و وضعیت فعلی همکاری <Latin>{engagement?.state}</Latin> است.\n                خود پیام موجب پذیرش نشده و هیچ پیامکی ارسال نشده است.")
+          edit(detail, "              <Link\n                href={`/worker/opportunity/${opportunityId}/verify`}\n                className={styles.back}\n                data-testid=\"worker-verification-link\"\n              >\n                رفتن به بررسی آزمایشی هویت\n              </Link>", "              {engagement?.state === 'Offered' && record.lifecycle.state === 'Published' ? (\n                <Link\n                  href={`/worker/opportunity/${opportunityId}/verify`}\n                  className={styles.back}\n                  data-testid=\"worker-verification-link\"\n                >\n                  رفتن به بررسی آزمایشی هویت\n                </Link>\n              ) : null}")
+
+          response = 'apps/web/app/worker/opportunity/[opportunityId]/respond/page.tsx'
+          edit(response, "  const offered = engagement?.state === 'Offered';", "  const offered = engagement?.state === 'Offered';\n  const canAccept =\n    verified &&\n    opportunity?.lifecycle.state === 'Published' &&\n    opportunity.lifecycle.acceptedEngagementCount < opportunity.lifecycle.headcount;")
+          edit(response, 'disabled={!verified}', 'disabled={!canAccept}')
+          edit(response, "            <div className={styles.actions}>", "            {verified && !canAccept ? (\n              <p className=\"type-body\" data-testid=\"response-capacity-unavailable\">\n                ظرفیت منتشرشده تکمیل شده است. پذیرش ممکن نیست؛ هنوز می‌توانید دعوت را رد کنید.\n              </p>\n            ) : null}\n            <div className={styles.actions}>")
+
+          outbox_test = 'apps/web/tests/e2e/notification-outbox-slice.spec.ts'
+          edit(outbox_test, "    await expect(page.getByTestId('response-planned')).toContainText('PLANNED');", "    await expect(page.getByTestId('outbox-response-link')).toHaveAttribute(\n      'href',\n      '/worker/opportunity/OPP-DEMO-01/respond',\n    );")
+
+          response_test = 'apps/web/tests/e2e/worker-response-slice.spec.ts'
+          edit(response_test, "    await expect(page.getByTestId('response-accepted')).toContainText('Accepted');\n  });", "    await expect(page.getByTestId('response-accepted')).toContainText('Accepted');\n    await open(page, '/worker');\n    await expect(page.getByTestId('worker-recorded-work')).toContainText('Accepted');\n    await open(page, '/outbox');\n    await expect(page.getByTestId('outbox-offered')).toContainText('Accepted');\n  });")
+          edit(response_test, "    await expect(page.getByTestId('response-declined')).toContainText('Declined');\n  });", "    await expect(page.getByTestId('response-declined')).toContainText('Declined');\n    await open(page, '/worker');\n    await expect(page.getByTestId('worker-recorded-work')).toContainText('Declined');\n  });")
+          PY
+      - name: Format only W-04 related files
+        run: |
+          pnpm exec prettier --write \
+            packages/application/src/demo-session.ts \
+            packages/application/src/index.ts \
+            packages/application/src/worker-response.ts \
+            packages/application/src/worker-response.test.ts \
+            apps/web/app/demo/session.tsx \
+            'apps/web/app/worker/opportunity/[opportunityId]/page.tsx' \
+            'apps/web/app/worker/opportunity/[opportunityId]/verify/page.tsx' \
+            'apps/web/app/worker/opportunity/[opportunityId]/respond/page.tsx' \
+            apps/web/app/worker/page.tsx \
+            apps/web/app/outbox/page.tsx \
+            apps/web/tests/e2e/notification-outbox-slice.spec.ts \
+            apps/web/tests/e2e/worker-response-slice.spec.ts
+          git diff --check
+      - name: Commit limited reconciliation to the same PR branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add packages/application/src/demo-session.ts packages/application/src/index.ts \
+            packages/application/src/worker-response.ts packages/application/src/worker-response.test.ts \
+            apps/web/app/demo/session.tsx apps/web/app/worker/page.tsx apps/web/app/outbox/page.tsx \
+            'apps/web/app/worker/opportunity/[opportunityId]/page.tsx' \
+            'apps/web/app/worker/opportunity/[opportunityId]/verify/page.tsx' \
+            'apps/web/app/worker/opportunity/[opportunityId]/respond/page.tsx' \
+            apps/web/tests/e2e/notification-outbox-slice.spec.ts \
+            apps/web/tests/e2e/worker-response-slice.spec.ts
+          if ! git diff --cached --quiet; then
+            git commit -m 'Reconcile W-04 status surfaces and format slice'
+            git push origin HEAD:gate/4-w04-worker-response
+          fi
