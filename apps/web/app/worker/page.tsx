@@ -175,8 +175,8 @@ export default function WorkerHomePage() {
                         className={`${styles.plannedNote} type-detail`}
                         data-testid="worker-not-invited"
                       >
-                        دعوتی برای این کارگر ثبت نشده است؛ جزئیات کامل فعلاً فقط از دعوت ثبت‌شده
-                        باز می‌شود — <Latin>PLANNED</Latin>.
+                        دعوتی برای این کارگر ثبت نشده است؛ جزئیات کامل فعلاً فقط از دعوت ثبت‌شده باز
+                        می‌شود — <Latin>PLANNED</Latin>.
                       </p>
                     )}
                   </article>
