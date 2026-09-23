@@ -67,25 +67,22 @@ function verified(session: DemoSession): DemoSession {
   });
 }
 
+function respond(session: DemoSession, decision: 'Accept' | 'Decline'): DemoSession {
+  return respondToInvitation(session, {
+    opportunityId: FEATURED,
+    workerId: WORKER,
+    decision,
+    recordedAt: DEMO_NOW,
+  });
+}
+
 describe('W-04 worker invitation response', () => {
   it('refuses acceptance before the W-03 verification threshold is satisfied', () => {
-    expect(() =>
-      respondToInvitation(offered(), {
-        opportunityId: FEATURED,
-        workerId: WORKER,
-        decision: 'Accept',
-        recordedAt: DEMO_NOW,
-      }),
-    ).toThrow(DomainTransitionError);
+    expect(() => respond(offered(), 'Accept')).toThrow(DomainTransitionError);
   });
 
   it('accepts only after verification and increments accepted headcount once', () => {
-    const session = respondToInvitation(verified(offered()), {
-      opportunityId: FEATURED,
-      workerId: WORKER,
-      decision: 'Accept',
-      recordedAt: DEMO_NOW,
-    });
+    const session = respond(verified(offered()), 'Accept');
     expect(session.engagements[0]?.state).toBe('Accepted');
     expect(session.engagements[0]?.acceptedAt).toBe(DEMO_NOW);
     expect(opportunityById(session, FEATURED)?.lifecycle.acceptedEngagementCount).toBe(1);
@@ -93,43 +90,66 @@ describe('W-04 worker invitation response', () => {
   });
 
   it('moves the opportunity to Filled when acceptance reaches headcount', () => {
-    const session = respondToInvitation(verified(offered({ ...form, headcount: 1 })), {
-      opportunityId: FEATURED,
-      workerId: WORKER,
-      decision: 'Accept',
-      recordedAt: DEMO_NOW,
-    });
+    const session = respond(verified(offered({ ...form, headcount: 1 })), 'Accept');
     expect(session.engagements[0]?.state).toBe('Accepted');
     expect(opportunityById(session, FEATURED)?.lifecycle.acceptedEngagementCount).toBe(1);
     expect(opportunityById(session, FEATURED)?.lifecycle.state).toBe('Filled');
   });
 
   it('declines directly from Offered without requiring verification or changing accepted count', () => {
-    const session = respondToInvitation(offered(), {
-      opportunityId: FEATURED,
-      workerId: WORKER,
-      decision: 'Decline',
-      recordedAt: DEMO_NOW,
-    });
+    const session = respond(offered(), 'Decline');
     expect(session.engagements[0]?.state).toBe('Declined');
     expect(session.engagements[0]?.declinedAt).toBe(DEMO_NOW);
     expect(opportunityById(session, FEATURED)?.lifecycle.acceptedEngagementCount).toBe(0);
   });
 
   it('refuses a second response after the offer has left Offered', () => {
-    const accepted = respondToInvitation(verified(offered()), {
-      opportunityId: FEATURED,
-      workerId: WORKER,
-      decision: 'Accept',
-      recordedAt: DEMO_NOW,
-    });
+    const accepted = respond(verified(offered()), 'Accept');
+    expect(() => respond(accepted, 'Decline')).toThrow(
+      'A current worker offer is required for W-04.',
+    );
+    expect(opportunityById(accepted, FEATURED)?.lifecycle.acceptedEngagementCount).toBe(1);
+  });
+
+  it('rejects a forged actor, wrong worker or missing MOCK notice without altering the offer', () => {
+    const session = verified(offered());
+    expect(() => respond(selectActor(session, 'employer'), 'Accept')).toThrow(
+      'A current worker offer is required for W-04.',
+    );
     expect(() =>
-      respondToInvitation(accepted, {
+      respondToInvitation(session, {
         opportunityId: FEATURED,
-        workerId: WORKER,
-        decision: 'Decline',
+        workerId: 'WKR-DEMO-02',
+        decision: 'Accept',
         recordedAt: DEMO_NOW,
       }),
     ).toThrow('A current worker offer is required for W-04.');
+    const withoutNotice = { ...session, notifications: [] };
+    expect(() => respond(withoutNotice, 'Decline')).toThrow(
+      'A current worker offer is required for W-04.',
+    );
+    expect(session.engagements[0]?.state).toBe('Offered');
+    expect(session.notifications).toHaveLength(1);
+  });
+
+  it('blocks acceptance when the position is Filled but permits declining the outstanding offer', () => {
+    const session = verified(offered());
+    const filled = {
+      ...session,
+      opportunities: session.opportunities.map((record) => ({
+        ...record,
+        lifecycle: {
+          ...record.lifecycle,
+          state: 'Filled' as const,
+          acceptedEngagementCount: record.lifecycle.headcount,
+        },
+      })),
+    };
+    expect(() => respond(filled, 'Accept')).toThrow(
+      'Cannot accept an offer: no published position remains.',
+    );
+    const declined = respond(filled, 'Decline');
+    expect(declined.engagements[0]?.state).toBe('Declined');
+    expect(opportunityById(declined, FEATURED)?.lifecycle.state).toBe('Filled');
   });
 });
