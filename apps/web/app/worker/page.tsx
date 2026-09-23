@@ -15,9 +15,8 @@ import { Latin } from '../Latin';
 import shared from '../outbox/outbox.module.css';
 import styles from './worker.module.css';
 
-// W-01 is a read-only projection of the ONE browser-tab demo session. The employer must create
-// and publish OPP-DEMO-01 first. No seeded feed cards, fabricated jobs, new engagement states,
-// authentication, hidden eligibility scores, or acceptance action are introduced here.
+// W-01 projects only the one recorded browser-tab session. Answered invitations remain visible
+// under My Work but must not reappear in the available-opportunity feed as new offers.
 const WORKER_ID = actorByKey('worker').reference;
 
 type FeedEntry = {
@@ -34,6 +33,16 @@ function entryFor(
   notificationIds: ReadonlySet<string>,
 ): FeedEntry | undefined {
   if (record.lifecycle.state !== 'Published') return undefined;
+  if (
+    engagements.some(
+      (item) =>
+        item.opportunityId === record.id &&
+        item.workerId === WORKER_ID &&
+        item.state !== 'Offered',
+    )
+  ) {
+    return undefined;
+  }
   const model = candidateList(world, record);
   const eligible = model.ranked.find((candidate) => candidate.workerId === WORKER_ID);
   const excluded = model.excluded.find((candidate) => candidate.workerId === WORKER_ID);
@@ -120,8 +129,8 @@ export default function WorkerHomePage() {
               </h2>
               {eligible.length === 0 ? (
                 <p className={`${styles.emptyState} type-body`} data-testid="worker-feed-empty">
-                  هنوز فرصت منتشرشدهٔ واجد شرایطی برای این کارگر در این زبانه وجود ندارد. کارفرما
-                  باید ابتدا فرصتی منتشر کند.
+                  فرصت واجد شرایطِ بدون پاسخ در این زبانه وجود ندارد؛ ممکن است هنوز منتشر نشده یا
+                  قبلاً پاسخ داده شده باشد. پاسخ‌های ثبت‌شده را در «کارهای من» ببینید.
                 </p>
               ) : (
                 eligible.map(({ record, reason, invited }) => (
