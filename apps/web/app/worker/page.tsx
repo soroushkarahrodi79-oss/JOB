@@ -36,9 +36,7 @@ function entryFor(
   if (
     engagements.some(
       (item) =>
-        item.opportunityId === record.id &&
-        item.workerId === WORKER_ID &&
-        item.state !== 'Offered',
+        item.opportunityId === record.id && item.workerId === WORKER_ID && item.state !== 'Offered',
     )
   ) {
     return undefined;
