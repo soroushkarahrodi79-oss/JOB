@@ -103,6 +103,58 @@ describe('W-04 worker invitation response', () => {
     expect(opportunityById(session, FEATURED)?.lifecycle.acceptedEngagementCount).toBe(0);
   });
 
+  it('records one append-only invitation and one acceptance with a copied pay-basis-aware terms snapshot', () => {
+    const original = verified(offered());
+    const accepted = respondToInvitation(original, {
+      opportunityId: FEATURED,
+      workerId: WORKER,
+      decision: 'Accept',
+      recordedAt: DEMO_NOW,
+    });
+    expect(original.engagementEvents.map((event) => event.kind)).toEqual(['Invited']);
+    expect(accepted.engagementEvents.map((event) => event.kind)).toEqual(['Invited', 'Accepted']);
+    const event = accepted.engagementEvents[1];
+    if (event?.kind !== 'Accepted') throw new Error('missing acceptance evidence');
+    expect(event.agreedTerms.title).toBe(FEATURED_OPPORTUNITY_PLAN.title);
+    expect(event.agreedTerms.terms.payBasis).toBe('PerShift');
+    expect(event.agreedTerms.terms.amount).toEqual(event.agreedTerms.commitment.amount);
+    expect(event.agreedTerms.commitment.platformHoldsFunds).toBe(false);
+    expect(event.agreedTerms.requirements).toEqual(accepted.opportunities[0]?.requirements);
+    expect(event.verification).toEqual({
+      source: 'SimulatedIdentityProvider',
+      recordedAt: DEMO_NOW,
+    });
+    const updatedOpportunity = {
+      ...accepted.opportunities[0]!,
+      title: 'Changed after acceptance',
+      terms: { ...accepted.opportunities[0]!.terms, workEndsAt: '2026-09-24T09:00:00.000Z' },
+    };
+    const later = { ...accepted, opportunities: [updatedOpportunity] };
+    expect(later.engagementEvents[1]).toEqual(event);
+    expect(event.agreedTerms.title).not.toBe(updatedOpportunity.title);
+    expect(event.agreedTerms.terms.workEndsAt).not.toBe(updatedOpportunity.terms.workEndsAt);
+  });
+
+  it('records a decline without inventing accepted terms, and rejects duplicate events', () => {
+    const declined = respondToInvitation(offered(), {
+      opportunityId: FEATURED,
+      workerId: WORKER,
+      decision: 'Decline',
+      recordedAt: DEMO_NOW,
+    });
+    expect(declined.engagementEvents.map((event) => event.kind)).toEqual(['Invited', 'Declined']);
+    expect('agreedTerms' in declined.engagementEvents[1]!).toBe(false);
+    expect(() =>
+      respondToInvitation(declined, {
+        opportunityId: FEATURED,
+        workerId: WORKER,
+        decision: 'Decline',
+        recordedAt: DEMO_NOW,
+      }),
+    ).toThrow();
+    expect(declined.engagementEvents).toHaveLength(2);
+  });
+
   it('refuses a second response after the offer has left Offered', () => {
     const accepted = respond(verified(offered()), 'Accept');
     expect(() => respond(accepted, 'Decline')).toThrow(

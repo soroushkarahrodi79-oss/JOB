@@ -80,7 +80,11 @@ function read(): DemoSession | null {
     const raw = window.sessionStorage.getItem(STORAGE_KEY);
     if (raw === null) return null;
     const stored = JSON.parse(raw) as DemoSession;
-    return { ...stored, identityAttempts: stored.identityAttempts ?? [] };
+    return {
+      ...stored,
+      identityAttempts: stored.identityAttempts ?? [],
+      engagementEvents: stored.engagementEvents ?? [],
+    };
   } catch {
     // Private mode, blocked storage, or a stale shape. An unrestorable session is a fresh one.
     return null;

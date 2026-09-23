@@ -45,6 +45,35 @@ export type ActorKey = 'worker' | 'employer' | 'operations';
  * It begins as `Offered`; W-04 may move it to `Accepted` or `Declined` only through the canonical
  * domain lifecycle. Later states remain outside this slice.
  */
+/** A value copy of the terms the worker saw and confirmed at W-04. No live Opportunity alias. */
+export interface DemoAgreedTermsSnapshot {
+  readonly title: string;
+  readonly terms: OpportunityTerms;
+  readonly requirements: readonly EligibilityRequirement[];
+  readonly employerNote: string;
+  readonly commitment: PaymentCommitment;
+}
+
+/** Append-only facts. In particular, accepting carries the agreed terms and simulated verification provenance. */
+export type DemoEngagementEvent =
+  | {
+      readonly id: string;
+      readonly engagementId: string;
+      readonly kind: 'Invited' | 'Declined';
+      readonly recordedAt: string;
+    }
+  | {
+      readonly id: string;
+      readonly engagementId: string;
+      readonly kind: 'Accepted';
+      readonly recordedAt: string;
+      readonly agreedTerms: DemoAgreedTermsSnapshot;
+      readonly verification: {
+        readonly source: 'SimulatedIdentityProvider';
+        readonly recordedAt: string;
+      };
+    };
+
 export interface DemoEngagementRecord {
   readonly id: string;
   readonly opportunityId: string;
@@ -102,6 +131,8 @@ export interface DemoSession {
   readonly opportunities: readonly DemoOpportunityRecord[];
   /** Engagements created by E-04 and, when W-04 runs, their accepted/declined outcome. */
   readonly engagements: readonly DemoEngagementRecord[];
+  /** Append-only invitation and response events; no inferred events for legacy browser-tab sessions. */
+  readonly engagementEvents: readonly DemoEngagementEvent[];
   /** The MOCK notification outbox — messages that would have been sent, none of which leaves the system. */
   readonly notifications: readonly DemoNotification[];
   /** Synthetic verification outcomes for W-03. Never stores an identifier or document. */
@@ -127,6 +158,7 @@ export function initialDemoSession(): DemoSession {
     activeActor: null,
     opportunities: [],
     engagements: [],
+    engagementEvents: [],
     notifications: [],
     identityAttempts: [],
     factorAnswers: {},
@@ -417,6 +449,15 @@ export function inviteWorker(
   return {
     ...session,
     engagements: [...session.engagements, engagement],
+    engagementEvents: [
+      ...(session.engagementEvents ?? []),
+      {
+        id: `${engagement.id}:invited`,
+        engagementId: engagement.id,
+        kind: 'Invited',
+        recordedAt: input.recordedAt,
+      },
+    ],
     notifications: [...session.notifications, notification],
   };
 }
