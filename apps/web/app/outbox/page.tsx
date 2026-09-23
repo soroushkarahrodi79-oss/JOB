@@ -69,10 +69,19 @@ function Invitation({ item, employerView }: { item: InvitationView; employerView
         تحویل نشده است. <TruthChip level="MOCK" href="/truth#truth-row-16" />
       </p>
       {!employerView ? (
-        <p className="type-detail" data-testid="response-planned">
-          بازکردن فرصت و پاسخ‌دادن به دعوت در <Latin>W-02</Latin> هنوز ساخته نشده است —{' '}
-          <Latin>PLANNED</Latin>. این پیام دکمهٔ پذیرش ندارد.
-        </p>
+        <>
+          <Link
+            className={`type-body-strong ${styles.back}`}
+            href={`/worker/opportunity/${engagement.opportunityId}`}
+            data-testid="worker-detail-link"
+          >
+            دیدن شرایط و دلیل واجد شرایط بودن (<Latin>W-02</Latin>)
+          </Link>
+          <p className="type-detail" data-testid="response-planned">
+            پاسخ‌دادن و پذیرش یا رد دعوت در <Latin>W-04</Latin> هنوز ساخته نشده است —{' '}
+            <Latin>PLANNED</Latin>. این پیام دکمهٔ پذیرش ندارد.
+          </p>
+        </>
       ) : null}
     </article>
   );
