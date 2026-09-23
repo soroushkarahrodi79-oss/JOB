@@ -360,23 +360,34 @@ export function inviteWorker(
 ): DemoSession {
   const opportunity = opportunityById(session, input.opportunityId);
   if (opportunity === undefined) {
-    throw new DemoSessionConflictError(`Cannot invite: opportunity ${input.opportunityId} does not exist.`);
+    throw new DemoSessionConflictError(
+      `Cannot invite: opportunity ${input.opportunityId} does not exist.`,
+    );
   }
   if (opportunity.lifecycle.state !== 'Published') {
-    throw new DemoSessionConflictError(`Cannot invite: opportunity ${input.opportunityId} is not Published.`);
+    throw new DemoSessionConflictError(
+      `Cannot invite: opportunity ${input.opportunityId} is not Published.`,
+    );
   }
   if (opportunity.terms.acceptanceMode !== 'InviteOnly') {
     throw new DemoSessionConflictError('Cannot invite: this opportunity does not accept invitations.');
   }
   if (opportunity.employerId !== input.employerId || opportunity.title !== input.opportunityTitle) {
-    throw new DemoSessionConflictError('Cannot invite: employer or opportunity details no longer match the record.');
+    throw new DemoSessionConflictError(
+      'Cannot invite: employer or opportunity details no longer match the record.',
+    );
   }
 
   const world = generateSyntheticDemoWorld();
-  if (session.seed !== world.seed || !candidateList(world, opportunity).ranked.some(
-    (candidate) => candidate.workerId === input.workerId,
-  )) {
-    throw new DemoSessionConflictError('Cannot invite: worker is not currently eligible for this opportunity.');
+  if (
+    session.seed !== world.seed ||
+    !candidateList(world, opportunity).ranked.some(
+      (candidate) => candidate.workerId === input.workerId,
+    )
+  ) {
+    throw new DemoSessionConflictError(
+      'Cannot invite: worker is not currently eligible for this opportunity.',
+    );
   }
   if (isInvited(session, input.opportunityId, input.workerId)) return session;
 
