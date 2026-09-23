@@ -57,6 +57,28 @@ test.describe('W-01 — one-world worker home', () => {
     await expect(page.getByTestId('worker-not-invited')).toContainText('PLANNED');
     await expect(page.getByTestId('worker-feed-detail')).toHaveCount(0);
     await expect(page.getByTestId('worker-work-empty')).toBeVisible();
+    const summary = page.getByTestId('worker-opportunity-summary');
+    await expect(summary).toContainText('۹۸۰');
+    await expect(summary).toContainText('Demo-Centre');
+    const headings = await page.locator('main h2').allTextContents();
+    expect(headings[0]).toContain('فرصت‌های واجد شرایط');
+    expect(headings[1]).toContain('کارهای من');
+  });
+
+  test('published opportunity keeps its facts and role labels legible at 320px', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 740 });
+    await publish(page);
+    await enterWorker(page);
+    await expect(page.getByTestId('worker-opportunity-summary')).toBeVisible();
+    await expect(page.getByTestId('worker-inclusion-reason')).toBeVisible();
+    await expect(page.getByTestId('worker-not-invited')).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+      ),
+    ).toBe(true);
   });
 
   test('opens only the existing invitation detail and survives reload', async ({ page }) => {
