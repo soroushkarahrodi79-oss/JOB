@@ -87,15 +87,14 @@ export default function WorkerHomePage() {
   return (
     <div className={shared.shell} data-session-restored={restored ? 'true' : 'false'}>
       <DemoBar detail="این صفحه فقط وضعیت ثبت‌شدهٔ همین زبانه را نشان می‌دهد؛ انتخاب نقش، احراز هویت نیست." />
-      <main className={shared.page}>
-        <header className={shared.header}>
+      <main className={`${shared.page} ${styles.workerPage}`}>
+        <header className={`${shared.header} ${styles.workerHeader}`}>
           <p className="type-label">
             <Latin>W-01</Latin> · کار و فرصت‌ها
           </p>
           <h1 className="type-display">کار و فرصت‌ها</h1>
           <p className="type-body">
-            فقط فرصت‌های منتشرشدهٔ همین نمایش، با توضیح شرط‌های ثبت‌شده. فرصت یا سابقهٔ ساختگیِ
-            اضافه‌ای وارد این فهرست نمی‌شود.
+            فرصت‌های منتشرشده و دعوت‌های ثبت‌شدهٔ همین زبانه؛ بدون فرصت یا سابقهٔ ساختگیِ اضافه.
           </p>
         </header>
         {!restored ? (
@@ -114,7 +113,97 @@ export default function WorkerHomePage() {
         ) : (
           <>
             <section
-              className={shared.section}
+              className={`${shared.section} ${styles.contentSection}`}
+              aria-labelledby="feed-heading"
+              data-testid="worker-feed"
+            >
+              <h2 id="feed-heading" className="type-title">
+                فرصت‌های واجد شرایط
+              </h2>
+              {eligible.length === 0 ? (
+                <p className={`${styles.emptyState} type-body`} data-testid="worker-feed-empty">
+                  هنوز فرصت منتشرشدهٔ واجد شرایطی برای این کارگر در این زبانه وجود ندارد. کارفرما
+                  باید ابتدا فرصتی منتشر کند.
+                </p>
+              ) : (
+                eligible.map(({ record, reason, invited }) => (
+                  <article
+                    className={styles.opportunityRecord}
+                    key={record.id}
+                    data-testid="worker-eligible-opportunity"
+                  >
+                    <div className={styles.recordHeading}>
+                      <h3 className="type-subtitle">{record.title}</h3>
+                      {invited ? (
+                        <p className="type-label">
+                          دعوت ثبت‌شده · <Latin>Offered</Latin>
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className={styles.factGrid} data-testid="worker-opportunity-summary">
+                      <p className={`${styles.amount} type-body-strong type-numeric`}>
+                        {formatAmountWithBasis(record.terms.amount, record.terms.payBasis)}
+                      </p>
+                      <p className={`${styles.fact} type-body`}>
+                        {formatJalali(new Date(record.terms.workStartsAt))} ·{' '}
+                        {formatTimeWindow(
+                          new Date(record.terms.workStartsAt),
+                          new Date(record.terms.workEndsAt),
+                        )}
+                      </p>
+                      <p className={`${styles.fact} type-body`}>
+                        {record.terms.location.neighbourhood} ·{' '}
+                        <TruthChip level="SIMULATED" href="/truth#truth-row-8" />
+                      </p>
+                    </div>
+                    <p
+                      className={`${styles.eligibility} type-body`}
+                      data-testid="worker-inclusion-reason"
+                    >
+                      {reason}
+                    </p>
+                    {invited ? (
+                      <Link
+                        className={styles.primaryAction}
+                        href={`/worker/opportunity/${record.id}`}
+                        data-testid="worker-feed-detail"
+                      >
+                        دیدن شرایط دعوت و دلایل واجد شرایط بودن
+                      </Link>
+                    ) : (
+                      <p
+                        className={`${styles.plannedNote} type-detail`}
+                        data-testid="worker-not-invited"
+                      >
+                        دعوتی برای این کارگر ثبت نشده است؛ جزئیات کامل فعلاً فقط از دعوت ثبت‌شده
+                        باز می‌شود — <Latin>PLANNED</Latin>.
+                      </p>
+                    )}
+                  </article>
+                ))
+              )}
+              {excluded.length > 0 ? (
+                <div className={shared.section} data-testid="worker-excluded-group">
+                  <h3 className="type-subtitle">فرصت‌های خارج از شرایط ثبت‌شده</h3>
+                  {excluded.map(({ record, reason }) => (
+                    <article
+                      className={styles.excludedRecord}
+                      key={record.id}
+                      data-testid="worker-excluded-opportunity"
+                    >
+                      <p className="type-body-strong">{record.title}</p>
+                      <p className="type-body">{reason}</p>
+                      <p className="type-detail">
+                        این فرصت در فهرست واجد شرایط‌ها نیست؛ دلیل فوق از ارزیابی همین فرصت آمده
+                        است.
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              ) : null}
+            </section>
+            <section
+              className={`${shared.section} ${styles.contentSection} ${styles.workSection}`}
               aria-labelledby="work-heading"
               data-testid="worker-my-work"
             >
@@ -128,7 +217,7 @@ export default function WorkerHomePage() {
               ) : (
                 offered.map((item) => (
                   <article
-                    className={shared.message}
+                    className={styles.offerRecord}
                     key={item.id}
                     data-testid="worker-offered-work"
                   >
@@ -145,85 +234,10 @@ export default function WorkerHomePage() {
                   </article>
                 ))
               )}
-              <p className="type-detail">
+              <p className={`${styles.plannedNote} type-detail`}>
                 پذیرش، حضور در کار و سابقهٔ تکمیل‌شده هنوز در این برش ساخته نشده‌اند —{' '}
                 <Latin>PLANNED</Latin>.
               </p>
-            </section>
-            <section
-              className={shared.section}
-              aria-labelledby="feed-heading"
-              data-testid="worker-feed"
-            >
-              <h2 id="feed-heading" className="type-title">
-                فرصت‌های واجد شرایط
-              </h2>
-              {eligible.length === 0 ? (
-                <p className="type-body" data-testid="worker-feed-empty">
-                  هنوز فرصت منتشرشدهٔ واجد شرایطی برای این کارگر در این زبانه وجود ندارد. کارفرما
-                  باید ابتدا فرصتی منتشر کند.
-                </p>
-              ) : (
-                eligible.map(({ record, reason, invited }) => (
-                  <article
-                    className={shared.message}
-                    key={record.id}
-                    data-testid="worker-eligible-opportunity"
-                  >
-                    <h3 className="type-subtitle">{record.title}</h3>
-                    <p className="type-body type-numeric">
-                      {formatAmountWithBasis(record.terms.amount, record.terms.payBasis)}
-                    </p>
-                    <p className="type-body">
-                      {formatJalali(new Date(record.terms.workStartsAt))} ·{' '}
-                      {formatTimeWindow(
-                        new Date(record.terms.workStartsAt),
-                        new Date(record.terms.workEndsAt),
-                      )}
-                    </p>
-                    <p className="type-body">
-                      {record.terms.location.neighbourhood} ·{' '}
-                      <TruthChip level="SIMULATED" href="/truth#truth-row-8" />
-                    </p>
-                    <p className="type-body" data-testid="worker-inclusion-reason">
-                      {reason}
-                    </p>
-                    {invited ? (
-                      <Link
-                        className={styles.action}
-                        href={`/worker/opportunity/${record.id}`}
-                        data-testid="worker-feed-detail"
-                      >
-                        دیدن شرایط دعوت و دلایل واجد شرایط بودن
-                      </Link>
-                    ) : (
-                      <p className="type-detail" data-testid="worker-not-invited">
-                        دعوتی برای این کارگر ثبت نشده است؛ در این برش، جزئیات کامل فقط از دعوت
-                        ثبت‌شده باز می‌شود — <Latin>PLANNED</Latin>.
-                      </p>
-                    )}
-                  </article>
-                ))
-              )}
-              {excluded.length > 0 ? (
-                <div className={shared.section} data-testid="worker-excluded-group">
-                  <h3 className="type-subtitle">فرصت‌های خارج از شرایط ثبت‌شده</h3>
-                  {excluded.map(({ record, reason }) => (
-                    <article
-                      className={shared.message}
-                      key={record.id}
-                      data-testid="worker-excluded-opportunity"
-                    >
-                      <p className="type-body-strong">{record.title}</p>
-                      <p className="type-body">{reason}</p>
-                      <p className="type-detail">
-                        این فرصت در فهرست واجد شرایط‌ها نیست؛ دلیل فوق از ارزیابی همین فرصت آمده
-                        است.
-                      </p>
-                    </article>
-                  ))}
-                </div>
-              ) : null}
             </section>
           </>
         )}
