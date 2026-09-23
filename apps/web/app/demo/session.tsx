@@ -217,14 +217,14 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
         );
       },
       checkIn: (engagementId, suppliedCode) => {
-        apply((current) =>
-          checkInWorker(current, {
-            engagementId,
-            workerId: 'WKR-DEMO-01',
-            suppliedCode,
-            recordedAt: current.now,
-          }),
-        );
+        const updated = checkInWorker(session, {
+          engagementId,
+          workerId: 'WKR-DEMO-01',
+          suppliedCode,
+          recordedAt: session.now,
+        });
+        write(updated);
+        setSession(updated);
       },
       abandonDraft: () => {
         apply(discardDraft);
