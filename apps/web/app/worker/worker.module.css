@@ -1,8 +1,122 @@
+/* W-01: compact page rhythm with generous worker-sized fact rows. A published opportunity is a
+   flat record, not a rounded marketplace card (design/foundations.md). */
+.workerPage {
+  max-inline-size: 46rem;
+  gap: var(--space-5);
+  padding-block: var(--space-4) var(--space-6);
+  scroll-padding-block-end: var(--space-7);
+}
+
+.workerPage p,
+.workerPage h1,
+.workerPage h2,
+.workerPage h3 {
+  margin-block: 0;
+}
+
+.workerHeader {
+  gap: var(--space-2);
+}
+
+.workerHeader > p:last-child {
+  color: var(--color-fg-muted);
+}
+
+.contentSection {
+  gap: var(--space-3);
+}
+
+.emptyState {
+  padding-block: var(--space-3);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+.opportunityRecord {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface-raised);
+  border: var(--border-width-hairline) solid var(--color-border-hairline);
+  border-inline-start: var(--border-width-emphasis) solid var(--color-border-emphasis);
+  overflow-wrap: anywhere;
+}
+
+.recordHeading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.factGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2) var(--space-4);
+}
+
+.amount,
+.fact {
+  min-inline-size: 0;
+  min-block-size: var(--target-comfortable);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-wrap: anywhere;
+}
+
+.amount {
+  color: var(--color-fg-default);
+}
+
+.eligibility {
+  padding-block: var(--space-3);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+.primaryAction {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--target-comfortable);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  background: var(--color-fg-accent);
+  color: var(--color-fg-on-accent);
+  border: var(--border-width-hairline) solid var(--color-fg-accent);
+  border-radius: var(--radius-control);
+  text-align: center;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.plannedNote {
+  color: var(--color-fg-muted);
+}
+
+.workSection {
+  padding-block-start: var(--space-4);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+}
+
+.offerRecord,
+.excludedRecord {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+  overflow-wrap: anywhere;
+}
+
 .action {
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
-  min-block-size: var(--target-minimum);
+  min-block-size: var(--target-comfortable);
   color: var(--color-fg-accent);
   overflow-wrap: anywhere;
 }
@@ -45,4 +159,14 @@
 
 .navPlanned {
   color: var(--color-fg-muted);
+}
+
+@media (min-width: 640px) {
+  .factGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .amount {
+    grid-column: 1 / -1;
+  }
 }
