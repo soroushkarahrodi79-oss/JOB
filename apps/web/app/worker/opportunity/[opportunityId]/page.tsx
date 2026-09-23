@@ -256,9 +256,19 @@ export default function WorkerInvitationDetailPage() {
             <section className={styles.section} data-testid="worker-response-planned">
               <h2 className="type-title">گام بعدی</h2>
               <p className="type-body">
-                بررسی هویت (<Latin>W-03</Latin>) و پذیرش یا رد دعوت (<Latin>W-04</Latin>) هنوز ساخته
-                نشده‌اند — <Latin>PLANNED</Latin>. مشاهدهٔ این صفحه هیچ تغییری در وضعیت همکاری، تعهد
-                پرداخت یا پیام ثبت‌شده نمی‌دهد.
+                بررسی آزمایشی هویت (<Latin>W-03</Latin>) اکنون برای همین دعوت در دسترس است. مشاهدهٔ
+                این صفحه هیچ تغییری در وضعیت همکاری، تعهد پرداخت یا پیام ثبت‌شده نمی‌دهد.
+              </p>
+              <Link
+                href={`/worker/opportunity/${opportunityId}/verify`}
+                className={styles.back}
+                data-testid="worker-verification-link"
+              >
+                رفتن به بررسی آزمایشی هویت
+              </Link>
+              <p className="type-detail">
+                پذیرش یا رد دعوت (<Latin>W-04</Latin>) هنوز ساخته نشده است — <Latin>PLANNED</Latin>.
+                تکمیل بررسی آزمایشی، دعوت را نمی‌پذیرد.
               </p>
             </section>
           </>

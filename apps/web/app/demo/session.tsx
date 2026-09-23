@@ -1,5 +1,6 @@
 'use client';
 
+import { SimulatedIdentityVerificationAdapter } from '@platform/adapters';
 import {
   createContext,
   useCallback,
@@ -18,10 +19,12 @@ import {
   markClassificationShown,
   opportunityById,
   publishOpportunity,
+  recordSimulatedIdentityOutcome,
   selectActor,
   type ActorKey,
   type DemoSession,
   type FactorAnswerKey,
+  type IdentityDemoOutcome,
   type ValidatedOpportunityInput,
 } from '@platform/application';
 import { FEATURED_OPPORTUNITY_PLAN, type ClassificationFactorKind } from '@platform/domain';
@@ -57,6 +60,10 @@ interface DemoSessionContextValue {
   readonly markShown: (opportunityId: string) => void;
   readonly publish: (opportunityId: string) => void;
   readonly invite: (opportunityId: string, workerId: string) => void;
+  readonly simulateIdentityCheck: (
+    opportunityId: string,
+    outcome: IdentityDemoOutcome,
+  ) => Promise<void>;
   readonly abandonDraft: () => void;
 }
 
@@ -65,7 +72,9 @@ const DemoSessionContext = createContext<DemoSessionContextValue | null>(null);
 function read(): DemoSession | null {
   try {
     const raw = window.sessionStorage.getItem(STORAGE_KEY);
-    return raw === null ? null : (JSON.parse(raw) as DemoSession);
+    if (raw === null) return null;
+    const stored = JSON.parse(raw) as DemoSession;
+    return { ...stored, identityAttempts: stored.identityAttempts ?? [] };
   } catch {
     // Private mode, blocked storage, or a stale shape. An unrestorable session is a fresh one.
     return null;
@@ -139,6 +148,41 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
             recordedAt: current.now,
           });
         });
+      },
+      simulateIdentityCheck: async (opportunityId, outcome) => {
+        // The three explicit demo controls configure an existing simulated port, not a real
+        // verification rail. No personal data is entered or transmitted.
+        const response =
+          outcome === 'Success'
+            ? {
+                ok: true as const,
+                value: {
+                  verifiedAt: session.now,
+                  source: 'SimulatedIdentityProvider' as const,
+                },
+              }
+            : outcome === 'Rejected'
+              ? {
+                  ok: false as const,
+                  failure: {
+                    kind: 'Rejected' as const,
+                    recoverable: false as const,
+                    reason: 'Demonstration rejection',
+                  },
+                }
+              : {
+                  ok: false as const,
+                  failure: { kind: 'Timeout' as const, recoverable: true as const },
+                };
+        const adapter = new SimulatedIdentityVerificationAdapter([response]);
+        const result = await adapter.verifyWorker('WKR-DEMO-01');
+        apply((current) =>
+          recordSimulatedIdentityOutcome(current, {
+            opportunityId,
+            workerId: 'WKR-DEMO-01',
+            result,
+          }),
+        );
       },
       abandonDraft: () => {
         apply(discardDraft);
