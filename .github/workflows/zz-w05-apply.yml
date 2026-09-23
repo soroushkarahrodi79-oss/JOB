@@ -1,0 +1,49 @@
+name: W05 apply once
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/zz-w05-apply.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.head_ref == 'gate/4-w05-arrival-checkin' && github.event.pull_request.head.repo.full_name == 'soroushkarahrodi79-oss/JOB'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gate/4-w05-arrival-checkin
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable && pnpm install --frozen-lockfile
+      - name: Apply bounded replacement script from the existing PR helper
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import textwrap
+          workflow = Path('.github/workflows/zz-w05-integration.yml').read_text(encoding='utf-8')
+          code = workflow.split("          python3 - <<'PY'\n", 1)[1].split('\n          PY', 1)[0]
+          exec(compile(textwrap.dedent(code), '<w05-integrate>', 'exec'))
+          PY
+      - name: Format and run canonical local checks
+        run: |
+          pnpm exec prettier --write packages/application/src/demo-session.ts packages/application/src/index.ts packages/application/src/arrival-check-in.ts packages/application/src/arrival-check-in.test.ts apps/web/app/demo/session.tsx apps/web/app/worker/page.tsx apps/web/app/employer/page.tsx 'apps/web/app/worker/opportunity/[opportunityId]/respond/page.tsx' 'apps/web/app/worker/opportunity/[opportunityId]/engagement/page.tsx' 'apps/web/app/employer/opportunity/[opportunityId]/arrival/page.tsx' apps/web/tests/e2e/worker-arrival-slice.spec.ts
+          git diff --check
+          pnpm build:tokens
+          pnpm typecheck
+          pnpm lint
+          pnpm lint:css
+          pnpm test
+      - name: Commit feature files only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add packages/application/src/demo-session.ts packages/application/src/index.ts packages/application/src/arrival-check-in.ts packages/application/src/arrival-check-in.test.ts apps/web/app/demo/session.tsx apps/web/app/worker/page.tsx apps/web/app/employer/page.tsx 'apps/web/app/worker/opportunity/[opportunityId]/respond/page.tsx' 'apps/web/app/worker/opportunity/[opportunityId]/engagement/page.tsx' 'apps/web/app/employer/opportunity/[opportunityId]/arrival/page.tsx' apps/web/tests/e2e/worker-arrival-slice.spec.ts
+          if ! git diff --cached --quiet; then
+            git commit -m 'Wire W-05 check-in and clean source format'
+            git push origin HEAD:gate/4-w05-arrival-checkin
+          fi
