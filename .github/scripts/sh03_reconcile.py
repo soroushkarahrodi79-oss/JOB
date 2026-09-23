@@ -17,6 +17,7 @@ old_block = text[start:end]
 assert old_block.count('rail-planned-SH-03') == 0, 'Expected template-based planned selector'
 assert "['E-08', 'SH-03']" in old_block, 'Expected the old pair of planned destinations'
 assert "name: 'پیام‌ها' })).toHaveCount(0)" in old_block, 'Expected obsolete non-link assertion'
+# The suffix starts with the original `  });` closing the test: preserve that closure once.
 new_block = """  test('keeps E-08 planned but exposes SH-03 as a real MOCK outbox destination', async ({
     page,
   }) => {
@@ -26,7 +27,6 @@ new_block = """  test('keeps E-08 planned but exposes SH-03 as a real MOCK outbo
     await expect(rail.getByRole('link', { name: 'نمایهٔ اعتماد' })).toHaveCount(0);
     await expect(rail.getByTestId('rail-SH-03')).toHaveAttribute('href', '/outbox');
     await expect(rail.getByRole('link', { name: 'پیام‌ها' })).toHaveCount(1);
-  });
 """
 text = text[:start] + new_block + text[end:]
 old_list = "for (const screenId of ['E-06', 'E-07', 'E-08', 'SH-03'])"
