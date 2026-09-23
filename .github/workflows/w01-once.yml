@@ -1,0 +1,38 @@
+name: W01 one-time reconciliation
+on:
+  push:
+    branches: ['gate/4-w01-worker-home']
+    paths: ['.github/workflows/w01-once.yml']
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gate/4-w01-worker-home
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: pnpm install --frozen-lockfile
+      - name: Fix nested navigation link and format bounded files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('apps/web/app/worker/page.tsx')
+          s = p.read_text(encoding='utf-8')
+          old = '<Link href="/outbox" className={styles.navItem}>پیام‌ها <TruthChip level="MOCK" href="/truth#truth-row-16" /></Link>'
+          new = '<Link href="/outbox" className={styles.navItem}>پیام‌ها · <Latin>MOCK</Latin></Link>'
+          assert s.count(old) == 1, 'Expected exactly one nested navigation link'
+          p.write_text(s.replace(old, new), encoding='utf-8')
+          PY
+          pnpm exec prettier --write apps/web/app/worker/page.tsx apps/web/app/worker/worker.module.css apps/web/app/demo/actors.ts apps/web/app/demo/page.tsx apps/web/tests/e2e/demo-slice.spec.ts apps/web/tests/e2e/worker-home-slice.spec.ts
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/web/app/worker/page.tsx apps/web/app/worker/worker.module.css apps/web/app/demo/actors.ts apps/web/app/demo/page.tsx apps/web/tests/e2e/demo-slice.spec.ts apps/web/tests/e2e/worker-home-slice.spec.ts
+          git diff --cached --quiet || git commit -m 'Fix worker bottom-bar markup and apply repository formatting'
+          git push origin HEAD:gate/4-w01-worker-home
