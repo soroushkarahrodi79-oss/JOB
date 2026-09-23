@@ -4,7 +4,12 @@ import {
   transitionOpportunity,
 } from '@platform/domain';
 import { candidateList } from './candidate-list';
-import { DemoSessionConflictError, opportunityById, type DemoSession } from './demo-session';
+import {
+  DemoSessionConflictError,
+  opportunityById,
+  type DemoAgreedTermsSnapshot,
+  type DemoSession,
+} from './demo-session';
 import { lastIdentityAttempt } from './worker-verification';
 
 export type WorkerInvitationDecision = 'Accept' | 'Decline';
@@ -68,6 +73,15 @@ export function respondToInvitation(
           ? { ...item, state: lifecycle.state as 'Declined', declinedAt: input.recordedAt }
           : item,
       ),
+      engagementEvents: [
+        ...(session.engagementEvents ?? []),
+        {
+          id: `${engagement.id}:declined`,
+          engagementId: engagement.id,
+          kind: 'Declined',
+          recordedAt: input.recordedAt,
+        },
+      ],
     };
   }
 
@@ -81,9 +95,8 @@ export function respondToInvitation(
   const eligibleNow = candidateList(world, opportunity).ranked.some(
     (candidate) => candidate.workerId === input.workerId,
   );
-  const verified =
-    lastIdentityAttempt(session, input.opportunityId, input.workerId)?.result ===
-    'VerifiedSimulated';
+  const verificationAttempt = lastIdentityAttempt(session, input.opportunityId, input.workerId);
+  const verified = verificationAttempt?.result === 'VerifiedSimulated';
   const lifecycle = transitionEngagement(
     {
       state: engagement.state,
@@ -94,6 +107,29 @@ export function respondToInvitation(
     },
     'AcceptInvitation',
   );
+
+  if (verificationAttempt?.result !== 'VerifiedSimulated') {
+    throw new DemoSessionConflictError(
+      'Cannot record acceptance without simulated verification evidence.',
+    );
+  }
+  const agreedTerms: DemoAgreedTermsSnapshot = {
+    title: opportunity.title,
+    terms: {
+      ...opportunity.terms,
+      amount: { ...opportunity.terms.amount },
+      location: { ...opportunity.terms.location },
+      ...(opportunity.terms.travelBoundary === undefined
+        ? {}
+        : { travelBoundary: { ...opportunity.terms.travelBoundary } }),
+    },
+    requirements: opportunity.requirements.map((requirement) => ({ ...requirement })),
+    employerNote: opportunity.employerNote,
+    commitment: {
+      ...opportunity.commitment,
+      amount: { ...opportunity.commitment.amount },
+    },
+  };
 
   const acceptedCount = opportunity.lifecycle.acceptedEngagementCount + 1;
   const opportunityWithAcceptedCount = {
@@ -115,5 +151,19 @@ export function respondToInvitation(
     opportunities: session.opportunities.map((item) =>
       item.id === opportunity.id ? { ...item, lifecycle: opportunityLifecycle } : item,
     ),
+    engagementEvents: [
+      ...(session.engagementEvents ?? []),
+      {
+        id: `${engagement.id}:accepted`,
+        engagementId: engagement.id,
+        kind: 'Accepted',
+        recordedAt: input.recordedAt,
+        agreedTerms,
+        verification: {
+          source: verificationAttempt.source,
+          recordedAt: verificationAttempt.recordedAt,
+        },
+      },
+    ],
   };
 }
