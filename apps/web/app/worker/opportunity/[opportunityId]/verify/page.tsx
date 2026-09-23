@@ -71,8 +71,9 @@ export default function WorkerVerificationPage() {
           </p>
           <h1 className="type-display">بررسی هویت برای این دعوت</h1>
           <p className="type-body">
-            در طرح نمایشی، بررسی هویت پیش از پذیرش همکاری لازم است. پذیرش هنوز ساخته نشده و انجام
-            این بررسی، وضعیت دعوت را از <Latin>Offered</Latin> تغییر نمی‌دهد.
+            در طرح نمایشی، بررسی هویت پیش از پذیرش همکاری لازم است. انجام این بررسی به‌تنهایی وضعیت
+            دعوت را از <Latin>Offered</Latin> تغییر نمی‌دهد؛ پاسخ در <Latin>W-04</Latin>
+            ثبت می‌شود.
           </p>
         </header>
         {!restored ? (
@@ -171,9 +172,15 @@ export default function WorkerVerificationPage() {
                   <TruthChip level="SIMULATED" href="/truth#truth-row-3" />
                 </p>
                 <p className="type-detail">
-                  دعوت همچنان <Latin>Offered</Latin> است. پذیرش یا رد دعوت در{' '}
-                  <Latin>W-04 · PLANNED</Latin> انجام خواهد شد؛ این صفحه آن را انجام نمی‌دهد.
+                  دعوت همچنان <Latin>Offered</Latin> است. این صفحه آن را نمی‌پذیرد یا رد نمی‌کند.
                 </p>
+                <Link
+                  href={`/worker/opportunity/${opportunityId}/respond`}
+                  className={shared.back}
+                  data-testid="worker-response-link"
+                >
+                  رفتن به پذیرش یا رد دعوت
+                </Link>
               </section>
             )}
           </>

@@ -69,7 +69,10 @@ test.describe('SH-03 — shared-world MOCK invitation outbox', () => {
     await page.getByTestId('demo-outbox-link').click();
     await expect(page.getByTestId('outbox-message-WKR-DEMO-01')).toBeVisible();
     await expect(page.getByTestId('outbox-offered')).toContainText('Offered');
-    await expect(page.getByTestId('response-planned')).toContainText('PLANNED');
+    await expect(page.getByTestId('outbox-response-link')).toHaveAttribute(
+      'href',
+      '/worker/opportunity/OPP-DEMO-01/respond',
+    );
     await expect(page.getByRole('button', { name: /پذیرش/ })).toHaveCount(0);
     await page.reload();
     await page.locator('[data-session-restored="true"]').waitFor();

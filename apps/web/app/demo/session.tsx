@@ -20,12 +20,14 @@ import {
   opportunityById,
   publishOpportunity,
   recordSimulatedIdentityOutcome,
+  respondToInvitation,
   selectActor,
   type ActorKey,
   type DemoSession,
   type FactorAnswerKey,
   type IdentityDemoOutcome,
   type ValidatedOpportunityInput,
+  type WorkerInvitationDecision,
 } from '@platform/application';
 import { FEATURED_OPPORTUNITY_PLAN, type ClassificationFactorKind } from '@platform/domain';
 
@@ -64,6 +66,10 @@ interface DemoSessionContextValue {
     opportunityId: string,
     outcome: IdentityDemoOutcome,
   ) => Promise<void>;
+  readonly respondToWorkerInvitation: (
+    opportunityId: string,
+    decision: WorkerInvitationDecision,
+  ) => void;
   readonly abandonDraft: () => void;
 }
 
@@ -181,6 +187,16 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
             opportunityId,
             workerId: 'WKR-DEMO-01',
             result,
+          }),
+        );
+      },
+      respondToWorkerInvitation: (opportunityId, decision) => {
+        apply((current) =>
+          respondToInvitation(current, {
+            opportunityId,
+            workerId: 'WKR-DEMO-01',
+            decision,
+            recordedAt: current.now,
           }),
         );
       },
