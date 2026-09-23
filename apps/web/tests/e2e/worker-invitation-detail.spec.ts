@@ -59,9 +59,7 @@ test.describe('W-02 — bounded invitation detail', () => {
     await expect(page).toHaveURL(/\/worker\/opportunity\/OPP-DEMO-01$/);
     await expect(page.getByTestId('worker-invitation-detail')).toContainText('Offered');
     await expect(page.getByTestId('worker-invitation-detail')).toContainText('ساختگی');
-    await expect(page.getByTestId('worker-detail-amount')).toHaveText(
-      '۹۸۰٬۰۰۰ تومان برای کل شیفت',
-    );
+    await expect(page.getByTestId('worker-detail-amount')).toHaveText('۹۸۰٬۰۰۰ تومان برای کل شیفت');
     await expect(page.getByTestId('worker-requirements')).toContainText('کارت سلامت');
     await expect(page.getByTestId('worker-eligibility-result')).toContainText('مانع قطعی');
     await expect(page.getByTestId('worker-no-custody')).toContainText('نگهداری');

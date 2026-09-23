@@ -72,9 +72,9 @@ function WorkerResult({ evaluation }: { evaluation: WorkerEvaluation }) {
         ? 'بازهٔ ثبت‌شدهٔ در دسترس‌بودن، این شیفت را پوشش نمی‌دهد.'
         : 'اطلاعات در دسترس‌بودن ثبت نشده است؛ این به‌معنای عدم دسترسی نیست.';
   const location =
-    evaluation.location.kind === 'OutsideBoundary'
+    evaluation.location.kind === 'Outside'
       ? 'بیرون از محدودهٔ مسافت ثبت‌شدهٔ کارفرما.'
-      : evaluation.location.kind === 'WithinBoundary'
+      : evaluation.location.kind === 'Within'
         ? 'در محدودهٔ مسافت ثبت‌شدهٔ کارفرما.'
         : 'مسافت، مانع قطعی برای این فرصت ثبت نشده است.';
 
@@ -107,8 +107,8 @@ function WorkerResult({ evaluation }: { evaluation: WorkerEvaluation }) {
       </p>
       {excluded ? (
         <p className="type-body" data-testid="worker-exclusion-stage">
-          اولین مانع در ترتیب ارزیابی: <Latin>{evaluation.stage}</Latin>. نبود مدرک، برابر با
-          ردشدن صریح آن شرط نیست.
+          اولین مانع در ترتیب ارزیابی: <Latin>{evaluation.stage}</Latin>. نبود مدرک، برابر با ردشدن
+          صریح آن شرط نیست.
         </p>
       ) : null}
     </section>
@@ -166,8 +166,8 @@ export default function WorkerInvitationDetailPage() {
           <section className={styles.section} data-testid="worker-detail-forbidden">
             <h2 className="type-title">این نمایش برای نقش کارگر است</h2>
             <p className="type-body">
-              انتخاب نقش در این نمونه، احراز هویت نیست. برای دیدن دعوت همین کارگر، نقش کارگر را
-              از صفحهٔ نمایش انتخاب کنید.
+              انتخاب نقش در این نمونه، احراز هویت نیست. برای دیدن دعوت همین کارگر، نقش کارگر را از
+              صفحهٔ نمایش انتخاب کنید.
             </p>
             <Link className={styles.back} href="/demo">
               انتخاب نقش
@@ -177,8 +177,8 @@ export default function WorkerInvitationDetailPage() {
           <section className={styles.section} data-testid="worker-detail-unavailable">
             <h2 className="type-title">دعوتی برای نمایش وجود ندارد</h2>
             <p className="type-body">
-              تنها فرصت منتشرشده‌ای نمایش داده می‌شود که برای همین کارگر در همین زبانه دعوت و
-              پیام نمایشی ثبت کرده باشد. نشانی به‌تنهایی دعوت ایجاد نمی‌کند.
+              تنها فرصت منتشرشده‌ای نمایش داده می‌شود که برای همین کارگر در همین زبانه دعوت و پیام
+              نمایشی ثبت کرده باشد. نشانی به‌تنهایی دعوت ایجاد نمی‌کند.
             </p>
           </section>
         ) : (
@@ -256,9 +256,9 @@ export default function WorkerInvitationDetailPage() {
             <section className={styles.section} data-testid="worker-response-planned">
               <h2 className="type-title">گام بعدی</h2>
               <p className="type-body">
-                بررسی هویت (<Latin>W-03</Latin>) و پذیرش یا رد دعوت (<Latin>W-04</Latin>) هنوز
-                ساخته نشده‌اند — <Latin>PLANNED</Latin>. مشاهدهٔ این صفحه هیچ تغییری در وضعیت
-                همکاری، تعهد پرداخت یا پیام ثبت‌شده نمی‌دهد.
+                بررسی هویت (<Latin>W-03</Latin>) و پذیرش یا رد دعوت (<Latin>W-04</Latin>) هنوز ساخته
+                نشده‌اند — <Latin>PLANNED</Latin>. مشاهدهٔ این صفحه هیچ تغییری در وضعیت همکاری، تعهد
+                پرداخت یا پیام ثبت‌شده نمی‌دهد.
               </p>
             </section>
           </>
