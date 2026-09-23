@@ -121,7 +121,7 @@ export default function EmployerEngagementPage() {
           <section className={shared.section}>
             <h2 className="type-title">تغییر در کار</h2>
             <p className="type-detail">
-              ثبت و تأیید enmienda ساختاریافته در مرحلهٔ بعد ساخته می‌شود — <Latin>PLANNED</Latin>.
+              ثبت و تأیید تغییر ساختاریافته در مرحلهٔ بعد ساخته می‌شود — <Latin>PLANNED</Latin>.
             </p>
           </section>
         </>
