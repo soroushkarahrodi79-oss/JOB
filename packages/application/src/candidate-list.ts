@@ -235,12 +235,12 @@ function signal(candidate: RankedCandidate, stage: OrderingStageId): OrderingSig
 }
 
 /**
- * The ranking comparator. Priority runs prior-relationship → reliability → skill fit → preferences,
- * which is the reverse of the ladder's DISPLAY order and is deliberate: a prior relationship is the
- * strongest ordering signal, so the rehire effect can put a worker first on a later list (beat B12)
- * without any composite score. Absent prior relationships — as on `OPP-01`'s first list, where no
- * worker has yet worked for this employer — reliability decides, which is what orders an established
- * worker ahead of a newcomer at beat B6. Ties fall to a stable worker id so the order is total.
+ * The ranking comparator. Prior relationship, reliability and skill fit are compared as named
+ * facts; where all recorded ordering signals tie, soft distance breaks the tie ONLY if no travel
+ * boundary was set. A recorded travel boundary remains a hard location filter, not an ordering
+ * advantage. Missing distance is never read as zero or used to exclude: candidates with unknown
+ * distance follow known distances at this final soft tie-break and remain explicitly unknown.
+ * Stable worker ID is the final total-order tie-breaker. No composite score is produced.
  */
 function compareCandidates(a: RankedCandidate, b: RankedCandidate): number {
   const priorA = signal(a, 'PriorRelationship')?.priorRelationship;
@@ -263,6 +263,15 @@ function compareCandidates(a: RankedCandidate, b: RankedCandidate): number {
     (signal(b, 'SkillFit')?.skillFit?.length ?? 0) - (signal(a, 'SkillFit')?.skillFit?.length ?? 0);
   if (bySkill !== 0) return bySkill;
 
+  if (a.location.kind === 'NoBoundary' && b.location.kind === 'NoBoundary') {
+    // Unknown stays unknown; it must not acquire a fake 0 km distance or a hard exclusion.
+    if (a.distanceKilometres === undefined && b.distanceKilometres !== undefined) return 1;
+    if (b.distanceKilometres === undefined && a.distanceKilometres !== undefined) return -1;
+    if (a.distanceKilometres !== undefined && b.distanceKilometres !== undefined) {
+      const byDistance = a.distanceKilometres - b.distanceKilometres;
+      if (byDistance !== 0) return byDistance;
+    }
+  }
   return a.workerId.localeCompare(b.workerId);
 }
 
