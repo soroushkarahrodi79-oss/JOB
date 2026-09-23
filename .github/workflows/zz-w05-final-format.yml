@@ -1,0 +1,33 @@
+name: W05 final formatting
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/zz-w05-final-format.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.head_ref == 'gate/4-w05-check-in' && github.event.pull_request.head.repo.full_name == 'soroushkarahrodi79-oss/JOB'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gate/4-w05-check-in
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable && pnpm install --frozen-lockfile
+      - run: |
+          pnpm exec prettier --write             apps/web/app/employer/page.tsx             'apps/web/app/worker/engagement/[engagementId]/page.tsx'             apps/web/tests/e2e/worker-checkin-slice.spec.ts             packages/application/src/worker-checkin.test.ts             packages/application/src/worker-checkin.ts
+          git diff --check
+      - run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/web/app/employer/page.tsx             'apps/web/app/worker/engagement/[engagementId]/page.tsx'             apps/web/tests/e2e/worker-checkin-slice.spec.ts             packages/application/src/worker-checkin.test.ts             packages/application/src/worker-checkin.ts
+          if ! git diff --cached --quiet; then
+            git commit -m 'Format W-05 check-in slice'
+            git push origin HEAD:gate/4-w05-check-in
+          fi
