@@ -1,0 +1,21 @@
+name: PR9 formatting probe (temporary)
+on:
+  push:
+    branches:
+      - gate/4-sh03-notification-outbox
+permissions:
+  contents: read
+jobs:
+  prettier-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Show formatting differences without committing
+        run: |
+          pnpm exec prettier --write apps/web/app/outbox/page.tsx apps/web/tests/e2e/notification-outbox-slice.spec.ts
+          git diff -- apps/web/app/outbox/page.tsx apps/web/tests/e2e/notification-outbox-slice.spec.ts
