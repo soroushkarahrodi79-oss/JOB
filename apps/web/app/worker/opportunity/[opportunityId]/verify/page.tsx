@@ -71,8 +71,8 @@ export default function WorkerVerificationPage() {
           </p>
           <h1 className="type-display">بررسی هویت برای این دعوت</h1>
           <p className="type-body">
-            در طرح نمایشی، بررسی هویت پیش از پذیرش همکاری لازم است. انجام این بررسی به‌تنهایی
-            وضعیت دعوت را از <Latin>Offered</Latin> تغییر نمی‌دهد؛ پاسخ در <Latin>W-04</Latin>
+            در طرح نمایشی، بررسی هویت پیش از پذیرش همکاری لازم است. انجام این بررسی به‌تنهایی وضعیت
+            دعوت را از <Latin>Offered</Latin> تغییر نمی‌دهد؛ پاسخ در <Latin>W-04</Latin>
             ثبت می‌شود.
           </p>
         </header>

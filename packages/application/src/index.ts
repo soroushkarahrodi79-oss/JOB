@@ -99,7 +99,4 @@ export {
   type EmployerQueueItem,
 } from './employer-home';
 
-export {
-  respondToInvitation,
-  type WorkerInvitationDecision,
-} from './worker-response';
+export { respondToInvitation, type WorkerInvitationDecision } from './worker-response';

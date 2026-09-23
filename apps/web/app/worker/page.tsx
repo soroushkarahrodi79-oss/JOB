@@ -80,9 +80,7 @@ export default function WorkerHomePage() {
       : [];
   const eligible = entries.filter((entry) => !entry.excluded);
   const excluded = entries.filter((entry) => entry.excluded);
-  const offered = session.engagements.filter(
-    (item) => item.workerId === WORKER_ID && item.state === 'Offered',
-  );
+  const myEngagements = session.engagements.filter((item) => item.workerId === WORKER_ID);
 
   return (
     <div className={shared.shell} data-session-restored={restored ? 'true' : 'false'}>
@@ -210,32 +208,43 @@ export default function WorkerHomePage() {
               <h2 id="work-heading" className="type-title">
                 کارهای من
               </h2>
-              {offered.length === 0 ? (
+              {myEngagements.length === 0 ? (
                 <p className="type-body" data-testid="worker-work-empty">
                   هنوز همکاری یا دعوتی برای این کارگر در این زبانه ثبت نشده است.
                 </p>
               ) : (
-                offered.map((item) => (
+                myEngagements.map((item) => (
                   <article
                     className={styles.offerRecord}
                     key={item.id}
-                    data-testid="worker-offered-work"
+                    data-testid={
+                      item.state === 'Offered' ? 'worker-offered-work' : 'worker-recorded-work'
+                    }
                   >
                     <p className="type-body-strong">
-                      دعوت به همکاری · <Latin>Offered</Latin>
+                      {item.state === 'Offered' ? 'دعوت به همکاری' : 'پاسخ ثبت‌شده به دعوت'} ·{' '}
+                      <Latin>{item.state}</Latin>
                     </p>
                     <p className="type-body">
-                      این دعوت ثبت شده ولی پذیرفته نشده است. هیچ پیامکی ارسال نشده است.{' '}
+                      {item.state === 'Offered'
+                        ? 'این دعوت ثبت شده ولی هنوز پذیرفته نشده است.'
+                        : item.state === 'Accepted'
+                          ? 'شرایط پذیرفته شده‌اند؛ شروع کار و پرداخت هنوز ثبت نشده‌اند.'
+                          : 'کارگر این دعوت را رد کرده است؛ رد دعوت به‌خودی‌خود سیگنال قابلیت اعتماد نیست.'}{' '}
+                      هیچ پیامکی ارسال نشده است.{' '}
                       <TruthChip level="MOCK" href="/truth#truth-row-16" />
                     </p>
-                    <Link href="/outbox" className={styles.action}>
-                      دیدن پیام دعوت
+                    <Link
+                      href={`/worker/opportunity/${item.opportunityId}/respond`}
+                      className={styles.action}
+                    >
+                      {item.state === 'Offered' ? 'پاسخ به دعوت' : 'دیدن پاسخ ثبت‌شده'}
                     </Link>
                   </article>
                 ))
               )}
               <p className={`${styles.plannedNote} type-detail`}>
-                پذیرش، حضور در کار و سابقهٔ تکمیل‌شده هنوز در این برش ساخته نشده‌اند —{' '}
+                حضور در کار و سابقهٔ تکمیل‌شده هنوز در این برش ساخته نشده‌اند —{' '}
                 <Latin>PLANNED</Latin>.
               </p>
             </section>

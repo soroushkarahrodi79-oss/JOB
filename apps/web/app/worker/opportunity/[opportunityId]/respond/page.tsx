@@ -42,6 +42,10 @@ export default function WorkerResponsePage() {
   const latest = visible ? lastIdentityAttempt(session, opportunityId, WORKER_ID) : undefined;
   const verified = latest?.result === 'VerifiedSimulated';
   const offered = engagement?.state === 'Offered';
+  const canAccept =
+    verified &&
+    opportunity?.lifecycle.state === 'Published' &&
+    opportunity.lifecycle.acceptedEngagementCount < opportunity.lifecycle.headcount;
 
   function decide(decision: 'Accept' | 'Decline') {
     if (!visible || !offered) return;
@@ -70,8 +74,8 @@ export default function WorkerResponsePage() {
           </p>
           <h1 className="type-display">پذیرش یا رد دعوت</h1>
           <p className="type-body">
-            این مرحله فقط پاسخ کارگر به همان دعوت ثبت‌شده است. پذیرش، شروع کار نیست و هیچ پرداختی
-            را آزاد نمی‌کند.
+            این مرحله فقط پاسخ کارگر به همان دعوت ثبت‌شده است. پذیرش، شروع کار نیست و هیچ پرداختی را
+            آزاد نمی‌کند.
           </p>
         </header>
 
@@ -96,8 +100,8 @@ export default function WorkerResponsePage() {
           <section className={shared.section} data-testid="response-accepted">
             <h2 className="type-title">دعوت پذیرفته شد</h2>
             <p className="type-body">
-              وضعیت همکاری اکنون <Latin>Accepted</Latin> است. این فقط تأیید شرایط است؛ کار هنوز
-              شروع نشده و هیچ پرداختی آزاد نشده است.
+              وضعیت همکاری اکنون <Latin>Accepted</Latin> است. این فقط تأیید شرایط است؛ کار هنوز شروع
+              نشده و هیچ پرداختی آزاد نشده است.
             </p>
             <p className="type-detail">
               بررسی هویتِ مبنا <TruthChip level="SIMULATED" href="/truth#truth-row-3" /> · پیام دعوت{' '}
@@ -109,8 +113,8 @@ export default function WorkerResponsePage() {
           <section className={shared.section} data-testid="response-declined">
             <h2 className="type-title">دعوت رد شد</h2>
             <p className="type-body">
-              وضعیت این دعوت اکنون <Latin>Declined</Latin> است. رد دعوت در مدل دامنه یک نتیجهٔ
-              مشروع است و به‌خودی‌خود سیگنال قابلیت اعتماد نیست.
+              وضعیت این دعوت اکنون <Latin>Declined</Latin> است. رد دعوت در مدل دامنه یک نتیجهٔ مشروع
+              است و به‌خودی‌خود سیگنال قابلیت اعتماد نیست.
             </p>
             <Link href="/worker">بازگشت به کارهای من</Link>
           </section>
@@ -136,11 +140,16 @@ export default function WorkerResponsePage() {
               </p>
             )}
 
+            {verified && !canAccept ? (
+              <p className="type-body" data-testid="response-capacity-unavailable">
+                ظرفیت منتشرشده تکمیل شده است. پذیرش ممکن نیست؛ هنوز می‌توانید دعوت را رد کنید.
+              </p>
+            ) : null}
             <div className={styles.actions}>
               <button
                 type="button"
                 className={styles.primaryAction}
-                disabled={!verified}
+                disabled={!canAccept}
                 onClick={() => decide('Accept')}
                 data-testid="response-accept"
               >

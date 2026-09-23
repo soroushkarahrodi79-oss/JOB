@@ -64,8 +64,8 @@ function Invitation({ item, employerView }: { item: InvitationView; employerView
         {employerView
           ? 'پیش‌نمایش دعوت ثبت‌شده برای کارگر'
           : 'دعوت ثبت‌شده برای این کارگر در نمایش'}
-        ؛ وضعیت همکاری <Latin>{engagement.state}</Latin> است. خود این پیام پذیرش محسوب نمی‌شود و
-        هیچ پیامکی ارسال یا تحویل نشده است. <TruthChip level="MOCK" href="/truth#truth-row-16" />
+        ؛ وضعیت همکاری <Latin>{engagement.state}</Latin> است. خود این پیام پذیرش محسوب نمی‌شود و هیچ
+        پیامکی ارسال یا تحویل نشده است. <TruthChip level="MOCK" href="/truth#truth-row-16" />
       </p>
       {!employerView ? (
         <>

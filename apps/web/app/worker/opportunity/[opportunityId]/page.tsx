@@ -121,11 +121,8 @@ export default function WorkerInvitationDetailPage() {
   const isWorker = restored && session.activeActor === 'worker';
   const world = generateSyntheticDemoWorld();
   const record = isWorker ? opportunityById(session, opportunityId) : undefined;
-  const offered = session.engagements.some(
-    (engagement) =>
-      engagement.opportunityId === opportunityId &&
-      engagement.workerId === WORKER_ID &&
-      engagement.state === 'Offered',
+  const engagement = session.engagements.find(
+    (item) => item.opportunityId === opportunityId && item.workerId === WORKER_ID,
   );
   const notified = session.notifications.some(
     (notification) =>
@@ -136,10 +133,10 @@ export default function WorkerInvitationDetailPage() {
   const visible =
     isWorker &&
     session.seed === world.seed &&
-    offered &&
+    engagement !== undefined &&
     notified &&
     record !== undefined &&
-    record.lifecycle.state === 'Published';
+    (record.lifecycle.state === 'Published' || record.lifecycle.state === 'Filled');
   const evaluated = visible && record !== undefined ? candidateList(world, record) : undefined;
   const evaluation =
     evaluated?.ranked.find((item) => item.workerId === WORKER_ID) ??
@@ -186,8 +183,8 @@ export default function WorkerInvitationDetailPage() {
             <section className={styles.section} data-testid="worker-invitation-detail">
               <h2 className="type-title">{record.title}</h2>
               <p className="type-body">
-                این دعوت در نمایش ثبت شده و هنوز <Latin>Offered</Latin> است؛ نه تأییدشده، نه
-                پذیرفته‌شده. هیچ پیامکی ارسال نشده است.{' '}
+                این دعوت در نمایش ثبت شده و وضعیت فعلی همکاری <Latin>{engagement?.state}</Latin>{' '}
+                است. خود پیام موجب پذیرش نشده و هیچ پیامکی ارسال نشده است.{' '}
                 <TruthChip level="MOCK" href="/truth#truth-row-16" />
               </p>
               <dl className={styles.facts}>
@@ -259,13 +256,15 @@ export default function WorkerInvitationDetailPage() {
                 بررسی آزمایشی هویت (<Latin>W-03</Latin>) اکنون برای همین دعوت در دسترس است. مشاهدهٔ
                 این صفحه هیچ تغییری در وضعیت همکاری، تعهد پرداخت یا پیام ثبت‌شده نمی‌دهد.
               </p>
-              <Link
-                href={`/worker/opportunity/${opportunityId}/verify`}
-                className={styles.back}
-                data-testid="worker-verification-link"
-              >
-                رفتن به بررسی آزمایشی هویت
-              </Link>
+              {engagement?.state === 'Offered' && record.lifecycle.state === 'Published' ? (
+                <Link
+                  href={`/worker/opportunity/${opportunityId}/verify`}
+                  className={styles.back}
+                  data-testid="worker-verification-link"
+                >
+                  رفتن به بررسی آزمایشی هویت
+                </Link>
+              ) : null}
               <p className="type-detail">
                 تکمیل بررسی آزمایشی، دعوت را نمی‌پذیرد. پاسخ کارگر جداگانه در <Latin>W-04</Latin>
                 ثبت می‌شود.

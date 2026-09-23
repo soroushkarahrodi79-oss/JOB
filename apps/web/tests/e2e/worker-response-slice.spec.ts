@@ -53,6 +53,10 @@ test.describe('W-04 — worker responds to invitation', () => {
     await page.reload();
     await page.locator('[data-session-restored="true"]').waitFor();
     await expect(page.getByTestId('response-accepted')).toContainText('Accepted');
+    await open(page, '/worker');
+    await expect(page.getByTestId('worker-recorded-work')).toContainText('Accepted');
+    await open(page, '/outbox');
+    await expect(page.getByTestId('outbox-offered')).toContainText('Accepted');
   });
 
   test('declines an Offered invitation without requiring verification', async ({ page }) => {
@@ -65,6 +69,8 @@ test.describe('W-04 — worker responds to invitation', () => {
     await page.reload();
     await page.locator('[data-session-restored="true"]').waitFor();
     await expect(page.getByTestId('response-declined')).toContainText('Declined');
+    await open(page, '/worker');
+    await expect(page.getByTestId('worker-recorded-work')).toContainText('Declined');
   });
 
   test('does not create a response by opening W-04 directly', async ({ page }) => {
