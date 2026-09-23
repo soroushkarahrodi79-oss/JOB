@@ -62,8 +62,10 @@ function Invitation({ item, employerView }: { item: InvitationView; employerView
         </div>
       </dl>
       <p className={`type-detail ${styles.notice}`} data-testid="outbox-offered">
-        {employerView ? 'پیش‌نمایش دعوت ثبت‌شده برای کارگر' : 'دعوت ثبت‌شده برای این کارگر در نمایش'}؛
-        وضعیت همکاری <Latin>{engagement.state}</Latin> است، نه پذیرفته‌شده. هیچ پیامکی ارسال یا
+        {employerView
+          ? 'پیش‌نمایش دعوت ثبت‌شده برای کارگر'
+          : 'دعوت ثبت‌شده برای این کارگر در نمایش'}
+        ؛ وضعیت همکاری <Latin>{engagement.state}</Latin> است، نه پذیرفته‌شده. هیچ پیامکی ارسال یا
         تحویل نشده است. <TruthChip level="MOCK" href="/truth#truth-row-16" />
       </p>
       {!employerView ? (
@@ -137,8 +139,8 @@ export default function NotificationOutboxPage() {
               </>
             ) : employerView ? (
               <>
-                فقط دعوت‌های ثبت‌شده توسط <Latin>{EMPLOYER_ID}</Latin>؛ این‌ها پیام‌های ارسالی
-                واقعی نیستند.
+                فقط دعوت‌های ثبت‌شده توسط <Latin>{EMPLOYER_ID}</Latin>؛ این‌ها پیام‌های ارسالی واقعی
+                نیستند.
               </>
             ) : (
               'برای نقش عملیات در این داستان پیام دعوتی ثبت نشده است.'
@@ -152,11 +154,7 @@ export default function NotificationOutboxPage() {
           ) : (
             <div className={styles.messages} data-testid="outbox-messages">
               {invitations.map((item) => (
-                <Invitation
-                  key={item.notification.id}
-                  item={item}
-                  employerView={employerView}
-                />
+                <Invitation key={item.notification.id} item={item} employerView={employerView} />
               ))}
             </div>
           )}
