@@ -47,7 +47,9 @@ test.describe('W-01 — one-world worker home', () => {
     await expect(page.getByTestId('worker-eligible-opportunity')).toHaveCount(0);
   });
 
-  test('renders the employer-published opportunity without fabricating an invitation', async ({ page }) => {
+  test('renders the employer-published opportunity without fabricating an invitation', async ({
+    page,
+  }) => {
     await publish(page);
     await enterWorker(page);
     await expect(page.getByTestId('worker-eligible-opportunity')).toHaveCount(1);
@@ -64,7 +66,10 @@ test.describe('W-01 — one-world worker home', () => {
     await expect(page.getByTestId('invited-WKR-DEMO-01')).toBeVisible();
     await enterWorker(page);
     await expect(page.getByTestId('worker-offered-work')).toHaveCount(1);
-    await expect(page.getByTestId('worker-feed-detail')).toHaveAttribute('href', '/worker/opportunity/OPP-DEMO-01');
+    await expect(page.getByTestId('worker-feed-detail')).toHaveAttribute(
+      'href',
+      '/worker/opportunity/OPP-DEMO-01',
+    );
     await page.getByTestId('worker-feed-detail').click();
     await expect(page.getByTestId('worker-invitation-detail')).toBeVisible();
     await expect(page.getByRole('button', { name: /پذیرش/ })).toHaveCount(0);
@@ -73,10 +78,18 @@ test.describe('W-01 — one-world worker home', () => {
     await page.locator('[data-session-restored="true"]').waitFor();
     await expect(page.getByTestId('worker-offered-work')).toContainText('Offered');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBe(true);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+      ),
+    ).toBe(true);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();
-    expect(results.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([]);
+    expect(
+      results.violations
+        .filter((v) => v.impact === 'serious' || v.impact === 'critical')
+        .map((v) => v.id),
+    ).toEqual([]);
   });
 });

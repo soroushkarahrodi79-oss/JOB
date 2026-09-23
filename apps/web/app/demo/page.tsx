@@ -32,7 +32,9 @@ export default function DemoEntryPage() {
           </p>
         </header>
         <section className={styles.section} aria-labelledby="actors-heading">
-          <h2 id="actors-heading" className="type-title">انتخاب نقش</h2>
+          <h2 id="actors-heading" className="type-title">
+            انتخاب نقش
+          </h2>
           <ul className={styles.actorList}>
             {DEMO_ACTORS.map((actor) => {
               const selected = active?.key === actor.key;
@@ -59,23 +61,32 @@ export default function DemoEntryPage() {
         </section>
         <section className={styles.section} aria-live="polite">
           {active === null ? (
-            <p className="type-body" style={{ color: 'var(--color-fg-muted)' }}>نقشی انتخاب نشده است.</p>
+            <p className="type-body" style={{ color: 'var(--color-fg-muted)' }}>
+              نقشی انتخاب نشده است.
+            </p>
           ) : (
             <div className={styles.selection} data-testid="active-actor">
               <p className="type-body">
                 نقش فعال: <span className="type-body-strong">{active.label}</span> (
-                <span className="type-identifier"><Latin>{active.reference}</Latin></span>)
+                <span className="type-identifier">
+                  <Latin>{active.reference}</Latin>
+                </span>
+                )
               </p>
               {active.homeHref === null ? (
                 <p className="type-body" data-testid="home-planned">
                   خانهٔ این نقش، «{active.homeScreenLabel}» (<Latin>{active.homeScreenId}</Latin>)،
-                  هنوز ساخته نشده است — <span className="type-body-strong">برنامه‌ریزی‌شده (<Latin>PLANNED</Latin>)</span>.
-                  خانه‌های کارگر و کارفرما ساخته شده‌اند؛ خانهٔ عملیات هنوز ساخته نشده است.
+                  هنوز ساخته نشده است —{' '}
+                  <span className="type-body-strong">
+                    برنامه‌ریزی‌شده (<Latin>PLANNED</Latin>)
+                  </span>
+                  . خانه‌های کارگر و کارفرما ساخته شده‌اند؛ خانهٔ عملیات هنوز ساخته نشده است.
                 </p>
               ) : (
                 <>
                   <p className="type-body" data-testid="home-built">
-                    خانهٔ این نقش، «{active.homeScreenLabel}» (<Latin>{active.homeScreenId}</Latin>)، ساخته شده است.
+                    خانهٔ این نقش، «{active.homeScreenLabel}» (<Latin>{active.homeScreenId}</Latin>
+                    )، ساخته شده است.
                   </p>
                   <Link
                     className={`type-body-strong ${styles.primaryLink}`}
