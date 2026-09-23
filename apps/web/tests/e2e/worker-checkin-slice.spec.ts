@@ -7,7 +7,6 @@ const FACTORS = '/employer/opportunity/new/factors';
 const CANDIDATES = '/employer/opportunity/OPP-DEMO-01/candidates';
 const DETAIL = '/worker/opportunity/OPP-DEMO-01';
 const VERIFY = `${DETAIL}/verify`;
-const RESPOND = `${DETAIL}/respond`;
 const ENGAGEMENT_ID = 'ENG-DEMO-OPP-DEMO-01-WKR-DEMO-01';
 const EMPLOYER_ENGAGEMENT = `/employer/engagement/${ENGAGEMENT_ID}`;
 const WORKER_ENGAGEMENT = `/worker/engagement/${ENGAGEMENT_ID}`;
