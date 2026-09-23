@@ -153,9 +153,7 @@ describe('invitation has its own application guards, independent of the UI butto
 
   it('refuses a mismatched employer, stale title and non-invite-only terms', () => {
     const session = published();
-    expect(() => invite(session, 'WKR-DEMO-01', 'EMP-DEMO-02')).toThrow(
-      DemoSessionConflictError,
-    );
+    expect(() => invite(session, 'WKR-DEMO-01', 'EMP-DEMO-02')).toThrow(DemoSessionConflictError);
     expect(() =>
       inviteWorker(session, {
         opportunityId: plan.id,
