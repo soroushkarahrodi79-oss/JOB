@@ -1,20 +1,10 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-// GATE 4 slice: SH-01 (Demo Entry and Actor Switch) → SH-02 (Truth Ledger). These are rendered
-// checks over the real screens — navigation, Persian-first RTL, and truthful capability labels at
-// the point of use (docs/product/screen-inventory.md; docs/demo-truth-matrix.md).
-
+// SH-01 actor switch and SH-02 truth ledger: one world, no authentication claim.
 const DEMO = '/demo';
 const TRUTH = '/truth';
 
-/**
- * Navigate to SH-01, then wait until this tab's demo session has been read.
- *
- * SH-01 is server-rendered with no active actor and swaps in the tab's own session once the
- * client mounts, so a click that lands before that is a click on markup about to be replaced.
- * The page publishes `data-session-restored` for exactly this.
- */
 async function openDemo(page: import('@playwright/test').Page) {
   await page.goto(DEMO);
   await page.locator('[data-session-restored="true"]').waitFor();
@@ -48,29 +38,25 @@ test.describe('SH-01 — Demo Entry and Actor Switch', () => {
     await expect(page.getByTestId('actor-operations')).toContainText('عملیات');
   });
 
-  test('states plainly that an unbuilt home is PLANNED and renders no link to it', async ({
+  test('routes the worker to built W-01 while keeping OPS-01 PLANNED and unlinked', async ({
     page,
   }) => {
-    // W-01 and OPS-01 are not built in this slice. Selecting either must say so and must not
-    // render a live destination — "prefer absence over a dead affordance" (color.md).
-    for (const [actor, screenId] of [
-      ['actor-worker', 'W-01'],
-      ['actor-operations', 'OPS-01'],
-    ] as const) {
-      await openDemo(page);
-      await page.getByTestId(actor).click();
-      const planned = page.getByTestId('home-planned');
-      await expect(planned).toContainText('PLANNED');
-      await expect(planned).toContainText(screenId);
-      await expect(page.getByTestId('go-home')).toHaveCount(0);
-    }
+    await openDemo(page);
+    await page.getByTestId('actor-worker').click();
+    await expect(page.getByTestId('home-built')).toContainText('W-01');
+    await page.getByTestId('go-home').click();
+    await expect(page).toHaveURL(/\/worker$/);
+    await openDemo(page);
+    await page.getByTestId('actor-operations').click();
+    await expect(page.getByTestId('home-planned')).toContainText('OPS-01');
+    await expect(page.getByTestId('home-planned')).toContainText('PLANNED');
+    await expect(page.getByTestId('go-home')).toHaveCount(0);
   });
 
   test('declares that choosing an actor is not signing in', async ({ page }) => {
     await page.goto(DEMO);
     const statement = page.getByTestId('not-authentication');
     await expect(statement).toContainText('حساب کاربری نیست');
-    // Nothing on the screen asks for a credential of any kind.
     await expect(page.locator('input[type="password"]')).toHaveCount(0);
   });
 
@@ -106,17 +92,14 @@ test.describe('SH-02 — Truth Ledger', () => {
     await page.goto(TRUTH);
     await expect(page.getByTestId('row-1')).toBeVisible();
     await expect(page.getByTestId('row-24')).toBeVisible();
-    // The two capabilities this slice built read FUNCTIONAL.
     await expect(page.getByTestId('actual-21')).toHaveText('FUNCTIONAL');
     await expect(page.getByTestId('actual-22')).toHaveText('FUNCTIONAL');
   });
 
   test('labels simulated and mock capabilities truthfully, in words', async ({ page }) => {
     await page.goto(TRUTH);
-    // Authentication (row 17) is SIMULATED; messaging (row 16) is MOCK — the honest gaps.
     await expect(page.getByTestId('actual-17')).toContainText('شبیه‌سازی‌شده');
     await expect(page.getByTestId('actual-16')).toContainText('ساختگی');
-    // Escrow (row 12) is never presented as real.
     await expect(page.getByTestId('actual-12')).toHaveText('PLANNED');
   });
 
