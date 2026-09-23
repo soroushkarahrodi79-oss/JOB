@@ -17,6 +17,7 @@ import {
   type FactorAnswerKey,
   type FactorAnswers,
 } from './classification-capture';
+import { candidateList } from './candidate-list';
 import { areRequirementsBinaryEvaluable } from './requirement-catalogue';
 import type { ValidatedOpportunityInput } from './opportunity-input';
 
@@ -338,10 +339,14 @@ export function isInvited(session: DemoSession, opportunityId: string, workerId:
 /**
  * Beat B8 (first half) — the employer invites a candidate from E-04.
  *
- * This creates a real `Offered` engagement in the shared session and records the notification as
- * `MOCK`. It stops exactly there: it never advances the engagement to `Accepted` and never asserts a
- * message was delivered, because both would be fiction the prototype refuses (truth-matrix row 16;
- * state-transitions.md). Idempotent — inviting the same worker twice changes nothing.
+ * A direct application caller cannot bypass the guards simply because the UI hides its button:
+ * the opportunity must exist, be Published and InviteOnly, the supplied employer/title must match
+ * the authoritative record, and the worker must be eligible for its CURRENT recorded terms.
+ * No limit on outstanding offers is inferred from headcount: the lifecycle counts ACCEPTED work,
+ * not invitations. A repeated valid invitation is idempotent.
+ *
+ * This creates an Offered engagement and a MOCK notification. It never claims external delivery
+ * or acceptance (truth-matrix row 16).
  */
 export function inviteWorker(
   session: DemoSession,
@@ -353,13 +358,33 @@ export function inviteWorker(
     readonly recordedAt: string;
   },
 ): DemoSession {
+  const opportunity = opportunityById(session, input.opportunityId);
+  if (opportunity === undefined) {
+    throw new DemoSessionConflictError(`Cannot invite: opportunity ${input.opportunityId} does not exist.`);
+  }
+  if (opportunity.lifecycle.state !== 'Published') {
+    throw new DemoSessionConflictError(`Cannot invite: opportunity ${input.opportunityId} is not Published.`);
+  }
+  if (opportunity.terms.acceptanceMode !== 'InviteOnly') {
+    throw new DemoSessionConflictError('Cannot invite: this opportunity does not accept invitations.');
+  }
+  if (opportunity.employerId !== input.employerId || opportunity.title !== input.opportunityTitle) {
+    throw new DemoSessionConflictError('Cannot invite: employer or opportunity details no longer match the record.');
+  }
+
+  const world = generateSyntheticDemoWorld();
+  if (session.seed !== world.seed || !candidateList(world, opportunity).ranked.some(
+    (candidate) => candidate.workerId === input.workerId,
+  )) {
+    throw new DemoSessionConflictError('Cannot invite: worker is not currently eligible for this opportunity.');
+  }
   if (isInvited(session, input.opportunityId, input.workerId)) return session;
 
   const engagement: DemoEngagementRecord = {
     id: `ENG-DEMO-${input.opportunityId}-${input.workerId}`,
     opportunityId: input.opportunityId,
     workerId: input.workerId,
-    employerId: input.employerId,
+    employerId: opportunity.employerId,
     state: 'Offered',
     offeredAt: input.recordedAt,
   };
@@ -367,7 +392,7 @@ export function inviteWorker(
     id: `NOTE-DEMO-${input.opportunityId}-${input.workerId}`,
     recipientId: input.workerId,
     channel: 'sms',
-    message: `دعوت به همکاری در «${input.opportunityTitle}»`,
+    message: `دعوت به همکاری در «${opportunity.title}»`,
     recordedAt: input.recordedAt,
     truth: 'MOCK',
   };
