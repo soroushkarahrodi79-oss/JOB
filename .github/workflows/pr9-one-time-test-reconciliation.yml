@@ -1,0 +1,69 @@
+name: PR9 one-time test reconciliation (temporary)
+on:
+  push:
+    branches:
+      - gate/4-sh03-notification-outbox
+permissions:
+  contents: write
+jobs:
+  reconcile-existing-e2e:
+    if: github.event.head_commit.message == 'Run one-time SH-03 compatibility test patch on feature branch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gate/4-sh03-notification-outbox
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Update only stale employer E2E assertions after SH-03 becomes built
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('apps/web/tests/e2e/employer-need-slice.spec.ts')
+          text = path.read_text(encoding='utf-8')
+          old = '''  test('the employer chrome names its unbuilt destinations without making them controls', async ({
+              page,
+            }) => {
+              await enterAsEmployer(page);
+              for (const screenId of ['E-08', 'SH-03']) {
+                await expect(page.getByTestId(`rail-planned-${screenId}`)).toContainText('PLANNED');
+              }
+              // Neither is a link — a PLANNED destination is not rendered as a control at all.
+              const rail = page.getByRole('navigation', { name: 'پیمایش کارفرما' });
+              await expect(rail.getByRole('link', { name: 'نمایهٔ اعتماد' })).toHaveCount(0);
+              await expect(rail.getByRole('link', { name: 'پیام‌ها' })).toHaveCount(0);
+            });'''
+          # YAML block indentation adds six spaces inside Python's triple-quoted literal above.
+          old = '\n'.join(line[6:] if line.startswith('      ') else line for line in old.split('\n'))
+          new = '''  test('keeps E-08 planned but exposes SH-03 as the real MOCK outbox destination', async ({
+    page,
+  }) => {
+    await enterAsEmployer(page);
+    await expect(page.getByTestId('rail-planned-E-08')).toContainText('PLANNED');
+    const rail = page.getByRole('navigation', { name: 'پیمایش کارفرما' });
+    await expect(rail.getByRole('link', { name: 'نمایهٔ اعتماد' })).toHaveCount(0);
+    await expect(rail.getByTestId('rail-SH-03')).toHaveAttribute('href', '/outbox');
+    await expect(rail.getByRole('link', { name: 'پیام‌ها' })).toHaveCount(1);
+  });'''
+          assert text.count(old) == 1, 'Existing chrome test not found exactly once — no edit'
+          text = text.replace(old, new)
+          previous = "for (const screenId of ['E-06', 'E-07', 'E-08', 'SH-03'])"
+          assert text.count(previous) == 1, 'Existing planned-area test not found exactly once — no edit'
+          text = text.replace(previous, "for (const screenId of ['E-06', 'E-07', 'E-08'])")
+          anchor = "    // E-04 is now built, so it is no longer named as an unbuilt area."
+          assert text.count(anchor) == 1, 'Planned-area assertion anchor missing — no edit'
+          text = text.replace(anchor, "    await expect(planned).not.toContainText('SH-03');\n" + anchor)
+          path.write_text(text, encoding='utf-8')
+          PY
+          pnpm exec prettier --write apps/web/tests/e2e/employer-need-slice.spec.ts
+          git diff --check
+          git diff -- apps/web/tests/e2e/employer-need-slice.spec.ts
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/web/tests/e2e/employer-need-slice.spec.ts
+          git commit -m 'Reconcile E-01 rendered checks with built SH-03 destination'
+          git push origin HEAD:gate/4-sh03-notification-outbox
