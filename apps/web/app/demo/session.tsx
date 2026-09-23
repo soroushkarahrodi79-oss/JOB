@@ -12,10 +12,13 @@ import {
 } from 'react';
 import {
   answerFactor,
+  advanceDemoClockToShiftStart,
+  checkInWithDemoCode,
   createOpportunity,
   discardDraft,
   initialDemoSession,
   inviteWorker,
+  issueDemoArrivalCode,
   markClassificationShown,
   opportunityById,
   publishOpportunity,
@@ -70,6 +73,9 @@ interface DemoSessionContextValue {
     opportunityId: string,
     decision: WorkerInvitationDecision,
   ) => void;
+  readonly issueArrivalCode: (opportunityId: string) => void;
+  readonly advanceScenarioClock: (opportunityId: string) => void;
+  readonly checkIn: (opportunityId: string, code: string) => void;
   readonly abandonDraft: () => void;
 }
 
@@ -84,6 +90,7 @@ function read(): DemoSession | null {
       ...stored,
       identityAttempts: stored.identityAttempts ?? [],
       engagementEvents: stored.engagementEvents ?? [],
+      arrivalCodes: stored.arrivalCodes ?? [],
     };
   } catch {
     // Private mode, blocked storage, or a stale shape. An unrestorable session is a fresh one.
@@ -203,6 +210,15 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
             recordedAt: current.now,
           }),
         );
+      },
+      issueArrivalCode: (opportunityId) => {
+        apply((current) => issueDemoArrivalCode(current, opportunityId));
+      },
+      advanceScenarioClock: (opportunityId) => {
+        apply((current) => advanceDemoClockToShiftStart(current, opportunityId));
+      },
+      checkIn: (opportunityId, code) => {
+        apply((current) => checkInWithDemoCode(current, { opportunityId, code }));
       },
       abandonDraft: () => {
         apply(discardDraft);

@@ -100,3 +100,10 @@ export {
 } from './employer-home';
 
 export { respondToInvitation, type WorkerInvitationDecision } from './worker-response';
+
+export {
+  advanceDemoClockToShiftStart,
+  checkInWithDemoCode,
+  issueDemoArrivalCode,
+  type DemoArrivalCode,
+} from './arrival-check-in';

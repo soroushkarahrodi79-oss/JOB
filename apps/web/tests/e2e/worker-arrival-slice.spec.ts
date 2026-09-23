@@ -34,7 +34,9 @@ async function acceptFirstWorker(page: Page) {
   await expect(page.getByTestId('response-accepted')).toBeVisible();
 }
 
-test('W-05 requires an accepted engagement; URL alone cannot create an arrival', async ({ page }) => {
+test('W-05 requires an accepted engagement; URL alone cannot create an arrival', async ({
+  page,
+}) => {
   await open(page, ENGAGEMENT);
   await expect(page.getByTestId('engagement-unavailable')).toBeVisible();
   await open(page, '/demo');
@@ -43,7 +45,9 @@ test('W-05 requires an accepted engagement; URL alone cannot create an arrival',
   await expect(page.getByTestId('engagement-unavailable')).toBeVisible();
 });
 
-test('W-05 check-in needs employer code and explicit demo time, rejects bad code and cannot replay', async ({ page }) => {
+test('W-05 check-in needs employer code and explicit demo time, rejects bad code and cannot replay', async ({
+  page,
+}) => {
   await acceptFirstWorker(page);
   await open(page, ENGAGEMENT);
   await expect(page.getByTestId('engagement-accepted-terms')).toContainText('۹۸۰');

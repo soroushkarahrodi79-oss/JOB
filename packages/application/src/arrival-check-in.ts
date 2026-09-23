@@ -5,11 +5,7 @@ import {
   type ArrivalCode,
 } from '@platform/domain';
 import { FixedClockAdapter } from '@platform/adapters';
-import {
-  DemoSessionConflictError,
-  opportunityById,
-  type DemoSession,
-} from './demo-session';
+import { DemoSessionConflictError, opportunityById, type DemoSession } from './demo-session';
 
 /** A one-tab, fictional, employer-issued shared secret. Not an authentication credential. */
 export interface DemoArrivalCode {
@@ -25,7 +21,8 @@ function acceptedEngagement(session: DemoSession, opportunityId: string) {
   const engagement = session.engagements.find(
     (item) => item.opportunityId === opportunityId && item.workerId === WORKER_ID,
   );
-  const accepted = engagement !== undefined &&
+  const accepted =
+    engagement !== undefined &&
     (engagement.state === 'Accepted' || engagement.state === 'InProgress');
   const acceptance = session.engagementEvents.find(
     (event) => event.engagementId === engagement?.id && event.kind === 'Accepted',
@@ -37,7 +34,9 @@ function acceptedEngagement(session: DemoSession, opportunityId: string) {
     !accepted ||
     acceptance?.kind !== 'Accepted'
   ) {
-    throw new DemoSessionConflictError('W-05 requires an accepted engagement and its recorded terms.');
+    throw new DemoSessionConflictError(
+      'W-05 requires an accepted engagement and its recorded terms.',
+    );
   }
   return { opportunity, engagement, acceptance };
 }
@@ -106,9 +105,7 @@ export function checkInWithDemoCode(
   if (engagement.state !== 'Accepted') {
     throw new DemoSessionConflictError('Only accepted engagements may check in.');
   }
-  const issued = (session.arrivalCodes ?? []).find(
-    (item) => item.engagementId === engagement.id,
-  );
+  const issued = (session.arrivalCodes ?? []).find((item) => item.engagementId === engagement.id);
   if (issued === undefined) {
     throw new DemoSessionConflictError('The employer must issue a code before check-in.');
   }

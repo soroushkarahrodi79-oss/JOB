@@ -83,7 +83,9 @@ function ready(): DemoSession {
 
 describe('W-05 one-world demo check-in', () => {
   it('will not issue a code to a worker who has not accepted or to a different role', () => {
-    expect(() => issueDemoArrivalCode(selectActor(initialDemoSession(), 'employer'), OPP)).toThrow();
+    expect(() =>
+      issueDemoArrivalCode(selectActor(initialDemoSession(), 'employer'), OPP),
+    ).toThrow();
     expect(() => issueDemoArrivalCode(accepted(), OPP)).toThrow();
   });
 
@@ -136,15 +138,21 @@ describe('W-05 one-world demo check-in', () => {
     const acceptedEvent = session.engagementEvents.find((event) => event.kind === 'Accepted');
     const result = checkInWithDemoCode(session, { opportunityId: OPP, code: '681204' });
     expect(result.engagements[0]?.state).toBe('InProgress');
-    expect(result.engagements[0]?.arrivedAt).toBe(opportunityById(session, OPP)?.terms.workStartsAt);
+    expect(result.engagements[0]?.arrivedAt).toBe(
+      opportunityById(session, OPP)?.terms.workStartsAt,
+    );
     expect(result.arrivalCodes[0]?.code.used).toBe(true);
     expect(result.engagementEvents[2]).toMatchObject({
       kind: 'ArrivedSimulated',
       recordedAt: result.now,
       source: 'DemoSharedCode',
     });
-    expect(result.engagementEvents.find((event) => event.kind === 'Accepted')).toEqual(acceptedEvent);
+    expect(result.engagementEvents.find((event) => event.kind === 'Accepted')).toEqual(
+      acceptedEvent,
+    );
     expect(result.notifications).toEqual(session.notifications);
-    expect(result.engagementEvents.filter((event) => event.kind === 'ArrivedSimulated')).toHaveLength(1);
+    expect(
+      result.engagementEvents.filter((event) => event.kind === 'ArrivedSimulated'),
+    ).toHaveLength(1);
   });
 });

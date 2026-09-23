@@ -21,6 +21,7 @@ import { candidateList } from './candidate-list';
 import { areRequirementsBinaryEvaluable } from './requirement-catalogue';
 import type { ValidatedOpportunityInput } from './opportunity-input';
 import type { DemoIdentityAttempt } from './worker-verification';
+import type { DemoArrivalCode } from './arrival-check-in';
 
 // The prototype's shared demo world, and the only place its state lives.
 //
@@ -65,6 +66,13 @@ export type DemoEngagementEvent =
   | {
       readonly id: string;
       readonly engagementId: string;
+      readonly kind: 'ArrivedSimulated';
+      readonly recordedAt: string;
+      readonly source: 'DemoSharedCode';
+    }
+  | {
+      readonly id: string;
+      readonly engagementId: string;
       readonly kind: 'Accepted';
       readonly recordedAt: string;
       readonly agreedTerms: DemoAgreedTermsSnapshot;
@@ -79,10 +87,11 @@ export interface DemoEngagementRecord {
   readonly opportunityId: string;
   readonly workerId: string;
   readonly employerId: string;
-  readonly state: 'Offered' | 'Accepted' | 'Declined';
+  readonly state: 'Offered' | 'Accepted' | 'Declined' | 'InProgress';
   readonly offeredAt: string;
   readonly acceptedAt?: string;
   readonly declinedAt?: string;
+  readonly arrivedAt?: string;
 }
 
 /**
@@ -133,6 +142,7 @@ export interface DemoSession {
   readonly engagements: readonly DemoEngagementRecord[];
   /** Append-only invitation and response events; no inferred events for legacy browser-tab sessions. */
   readonly engagementEvents: readonly DemoEngagementEvent[];
+  readonly arrivalCodes: readonly DemoArrivalCode[];
   /** The MOCK notification outbox — messages that would have been sent, none of which leaves the system. */
   readonly notifications: readonly DemoNotification[];
   /** Synthetic verification outcomes for W-03. Never stores an identifier or document. */
@@ -159,6 +169,7 @@ export function initialDemoSession(): DemoSession {
     opportunities: [],
     engagements: [],
     engagementEvents: [],
+    arrivalCodes: [],
     notifications: [],
     identityAttempts: [],
     factorAnswers: {},

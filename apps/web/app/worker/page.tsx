@@ -236,23 +236,33 @@ export default function WorkerHomePage() {
                       {item.state === 'Offered'
                         ? 'این دعوت ثبت شده ولی هنوز پذیرفته نشده است.'
                         : item.state === 'Accepted'
-                          ? 'شرایط پذیرفته شده‌اند؛ شروع کار و پرداخت هنوز ثبت نشده‌اند.'
-                          : 'کارگر این دعوت را رد کرده است؛ رد دعوت به‌خودی‌خود سیگنال قابلیت اعتماد نیست.'}{' '}
+                          ? 'شرایط پذیرفته شده‌اند؛ ورود به شیفت جداگانه ثبت می‌شود و پرداختی انجام نشده است.'
+                          : item.state === 'InProgress'
+                            ? 'ورود با کد برای ساعت ساختگی سناریو ثبت شده است؛ نه مدرک حضور واقعی و نه پرداخت.'
+                            : 'کارگر این دعوت را رد کرده است؛ رد دعوت به‌خودی‌خود سیگنال قابلیت اعتماد نیست.'}{' '}
                       هیچ پیامکی ارسال نشده است.{' '}
                       <TruthChip level="MOCK" href="/truth#truth-row-16" />
                     </p>
                     <Link
-                      href={`/worker/opportunity/${item.opportunityId}/respond`}
+                      href={
+                        item.state === 'Accepted' || item.state === 'InProgress'
+                          ? `/worker/opportunity/${item.opportunityId}/engagement`
+                          : `/worker/opportunity/${item.opportunityId}/respond`
+                      }
                       className={styles.action}
                     >
-                      {item.state === 'Offered' ? 'پاسخ به دعوت' : 'دیدن پاسخ ثبت‌شده'}
+                      {item.state === 'Accepted' || item.state === 'InProgress'
+                        ? 'جزئیات همکاری و ورود به شیفت'
+                        : item.state === 'Offered'
+                          ? 'پاسخ به دعوت'
+                          : 'دیدن پاسخ ثبت‌شده'}
                     </Link>
                   </article>
                 ))
               )}
               <p className={`${styles.plannedNote} type-detail`}>
-                حضور در کار و سابقهٔ تکمیل‌شده هنوز در این برش ساخته نشده‌اند —{' '}
-                <Latin>PLANNED</Latin>.
+                تکمیل کار و سابقهٔ تکمیل‌شده هنوز در این برش ساخته نشده‌اند — <Latin>PLANNED</Latin>
+                .
               </p>
             </section>
           </>

@@ -107,6 +107,12 @@ export default function WorkerResponsePage() {
               بررسی هویتِ مبنا <TruthChip level="SIMULATED" href="/truth#truth-row-3" /> · پیام دعوت{' '}
               <TruthChip level="MOCK" href="/truth#truth-row-16" />
             </p>
+            <Link
+              href={`/worker/opportunity/${opportunityId}/engagement`}
+              data-testid="worker-engagement-link"
+            >
+              دیدن شرایط پذیرفته‌شده و ورود به شیفت
+            </Link>
             <Link href="/worker">بازگشت به کارهای من</Link>
           </section>
         ) : engagement.state === 'Declined' ? (

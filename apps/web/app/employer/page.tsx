@@ -64,6 +64,14 @@ function OpportunityRow({ record }: { record: DemoOpportunityRecord }) {
           </dd>
         </div>
       </dl>
+      <p className="type-detail" data-testid="arrival-link">
+        <Link
+          className={`type-body-strong ${styles.inlineLink}`}
+          href={`/employer/opportunity/${record.id}/arrival`}
+        >
+          کد ورود نمایشیِ همکاری پذیرفته‌شده (<Latin>E-06</Latin>)
+        </Link>
+      </p>
       <p className="type-detail" data-testid="candidates-link">
         <Link
           className={`type-body-strong ${styles.inlineLink}`}
