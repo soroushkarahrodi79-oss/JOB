@@ -75,8 +75,16 @@ describe('soft location ordering is an actual, evidence-based tie-break', () => 
 
   // Both have the SAME eligibility, skills and event history; their identifiers intentionally
   // favour the farther worker, so an ID-only ordering would produce the opposite result.
-  const farther = { ...original, id: 'WKR-DEMO-A', location: { city: 'Tehran', neighbourhood: 'Demo-West' } };
-  const nearer = { ...original, id: 'WKR-DEMO-Z', location: { city: 'Tehran', neighbourhood: 'Demo-East' } };
+  const farther = {
+    ...original,
+    id: 'WKR-DEMO-A',
+    location: { city: 'Tehran', neighbourhood: 'Demo-West' },
+  };
+  const nearer = {
+    ...original,
+    id: 'WKR-DEMO-Z',
+    location: { city: 'Tehran', neighbourhood: 'Demo-East' },
+  };
   const tiedWorld = {
     ...world,
     workers: [farther, nearer],
@@ -89,21 +97,20 @@ describe('soft location ordering is an actual, evidence-based tie-break', () => 
     preferredCrew: [],
   };
 
+  const termsWithoutBoundary: OpportunityTerms = {
+    amount: plan.amount,
+    payBasis: plan.payBasis,
+    workStartsAt: plan.workStartsAt,
+    workEndsAt: plan.workEndsAt,
+    location: plan.location,
+    headcount: plan.headcount,
+    acceptanceMode: plan.acceptanceMode,
+  };
+
   it('places the closer known distance first when no boundary is recorded', () => {
-    const terms: OpportunityTerms = {
-      amount: plan.amount,
-      payBasis: plan.payBasis,
-      workStartsAt: plan.workStartsAt,
-      workEndsAt: plan.workEndsAt,
-      location: plan.location,
-      headcount: plan.headcount,
-      acceptanceMode: plan.acceptanceMode,
-    };
-    const result = candidateList(tiedWorld, opportunity(terms));
-    expect(result.ranked.map((candidate) => candidate.workerId)).toEqual([
-      nearer.id,
-      farther.id,
-    ]);
+    const result = candidateList(tiedWorld, opportunity(termsWithoutBoundary));
+    const ids = result.ranked.map((candidate) => candidate.workerId);
+    expect(ids).toEqual([nearer.id, farther.id]);
     expect(result.excluded).toHaveLength(0);
   });
 
@@ -121,50 +128,26 @@ describe('soft location ordering is an actual, evidence-based tie-break', () => 
         [nearer.id]: world.availabilityByWorker[original.id] ?? [],
       },
     };
-    const terms: OpportunityTerms = {
-      amount: plan.amount,
-      payBasis: plan.payBasis,
-      workStartsAt: plan.workStartsAt,
-      workEndsAt: plan.workEndsAt,
-      location: plan.location,
-      headcount: plan.headcount,
-      acceptanceMode: plan.acceptanceMode,
-    };
-    const result = candidateList(withUnknown, opportunity(terms));
+    const result = candidateList(withUnknown, opportunity(termsWithoutBoundary));
+    const ids = result.ranked.map((candidate) => candidate.workerId);
     expect(result.excluded).toHaveLength(0);
-    expect(result.ranked.map((candidate) => candidate.workerId)).toEqual([
-      nearer.id,
-      missingDistanceWorker.id,
-    ]);
+    expect(ids).toEqual([nearer.id, missingDistanceWorker.id]);
     expect(result.ranked[1]?.distanceKilometres).toBeUndefined();
   });
 
   it('does not use distance to reorder two workers when a hard travel boundary exists', () => {
     const result = candidateList(
       tiedWorld,
-      opportunity({
-        amount: plan.amount,
-        payBasis: plan.payBasis,
-        workStartsAt: plan.workStartsAt,
-        workEndsAt: plan.workEndsAt,
-        location: plan.location,
-        headcount: plan.headcount,
-        acceptanceMode: plan.acceptanceMode,
-        travelBoundary: { maxKilometres: 10 },
-      }),
+      opportunity({ ...termsWithoutBoundary, travelBoundary: { maxKilometres: 10 } }),
     );
-    expect(result.ranked.map((candidate) => candidate.workerId)).toEqual([
-      farther.id,
-      nearer.id,
-    ]);
+    const ids = result.ranked.map((candidate) => candidate.workerId);
+    expect(ids).toEqual([farther.id, nearer.id]);
   });
 });
 
 describe('invitation has its own application guards, independent of the UI button', () => {
   it('refuses an absent or unpublished opportunity without recording any offer', () => {
-    expect(() => invite(initialDemoSession(), 'WKR-DEMO-01')).toThrow(
-      DemoSessionConflictError,
-    );
+    expect(() => invite(initialDemoSession(), 'WKR-DEMO-01')).toThrow(DemoSessionConflictError);
     expect(() => invite(draft(), 'WKR-DEMO-01')).toThrow(DemoSessionConflictError);
   });
 
@@ -196,12 +179,8 @@ describe('invitation has its own application guards, independent of the UI butto
 
   it('refuses excluded, unavailable, distant and unknown workers, without side effects', () => {
     const session = published();
-    for (const workerId of [
-      'WKR-DEMO-03',
-      'WKR-DEMO-04',
-      'WKR-DEMO-05',
-      'WKR-DEMO-UNKNOWN',
-    ]) {
+    const excludedIds = ['WKR-DEMO-03', 'WKR-DEMO-04', 'WKR-DEMO-05', 'WKR-DEMO-UNKNOWN'];
+    for (const workerId of excludedIds) {
       expect(() => invite(session, workerId)).toThrow(DemoSessionConflictError);
     }
     expect(session.engagements).toHaveLength(0);
@@ -238,13 +217,9 @@ describe('invitation has its own application guards, independent of the UI butto
     const once = invite(published(), 'WKR-DEMO-01');
     expect(invite(once, 'WKR-DEMO-01')).toBe(once);
     const twice = invite(once, 'WKR-DEMO-02');
-    expect(twice.engagements.map((engagement) => engagement.state)).toEqual([
-      'Offered',
-      'Offered',
-    ]);
-    expect(twice.notifications.map((notification) => notification.truth)).toEqual([
-      'MOCK',
-      'MOCK',
-    ]);
+    const offeredStates = twice.engagements.map((engagement) => engagement.state);
+    const notificationTruths = twice.notifications.map((notification) => notification.truth);
+    expect(offeredStates).toEqual(['Offered', 'Offered']);
+    expect(notificationTruths).toEqual(['MOCK', 'MOCK']);
   });
 });
