@@ -50,7 +50,7 @@ test.describe('W-03 — simulated identity verification', () => {
     await open(page, DETAIL);
     await page.getByTestId('worker-verification-link').click();
     await expect(page).toHaveURL(/\/worker\/opportunity\/OPP-DEMO-01\/verify$/);
-    await expect(page.getByTestId('verification-ready')).toContainText('SIMULATED');
+    await expect(page.getByTestId('verification-ready')).toContainText('شبیه‌سازی‌شده');
     await expect(page.getByTestId('verification-ready')).toContainText('شمارهٔ ملی');
     await page.getByTestId('verification-rejected').click();
     await expect(page.getByTestId('verification-failure')).toContainText('رد کرد');
