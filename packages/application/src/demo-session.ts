@@ -41,18 +41,19 @@ import type { DemoIdentityAttempt } from './worker-verification';
 export type ActorKey = 'worker' | 'employer' | 'operations';
 
 /**
- * An engagement the employer has offered from E-04. It is a real `Offered` engagement in the shared
- * session — the invite-only entry into the engagement lifecycle (state-transitions.md; beat B8's
- * first half). It is NOT an acceptance: nothing here advances it to `Accepted`, because the worker's
- * side (W-02/W-04) is not built, and claiming acceptance would be fiction (truth-matrix row 16).
+ * The bounded engagement record exercised by E-04 → W-04 in the shared demo session.
+ * It begins as `Offered`; W-04 may move it to `Accepted` or `Declined` only through the canonical
+ * domain lifecycle. Later states remain outside this slice.
  */
 export interface DemoEngagementRecord {
   readonly id: string;
   readonly opportunityId: string;
   readonly workerId: string;
   readonly employerId: string;
-  readonly state: 'Offered';
+  readonly state: 'Offered' | 'Accepted' | 'Declined';
   readonly offeredAt: string;
+  readonly acceptedAt?: string;
+  readonly declinedAt?: string;
 }
 
 /**
@@ -99,7 +100,7 @@ export interface DemoSession {
   readonly activeActor: ActorKey | null;
   /** Published and draft opportunities, in creation order. */
   readonly opportunities: readonly DemoOpportunityRecord[];
-  /** Offered engagements created by inviting candidates from E-04. */
+  /** Engagements created by E-04 and, when W-04 runs, their accepted/declined outcome. */
   readonly engagements: readonly DemoEngagementRecord[];
   /** The MOCK notification outbox — messages that would have been sent, none of which leaves the system. */
   readonly notifications: readonly DemoNotification[];
