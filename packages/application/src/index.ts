@@ -100,3 +100,5 @@ export {
 } from './employer-home';
 
 export { respondToInvitation, type WorkerInvitationDecision } from './worker-response';
+
+export { checkInWorker, issueArrivalCode } from './worker-checkin';
