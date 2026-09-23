@@ -1,0 +1,30 @@
+name: W02 one-time bounded finalization
+on:
+  push:
+    branches: [gate/4-w02-invitation-detail]
+    paths: ['.github/workflows/w02-finalize.yml']
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gate/4-w02-invitation-detail
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: pnpm install --frozen-lockfile
+      - name: Apply exact correction and format only W-02 files
+        run: |
+          python3 .github/scripts/w02_finalize.py
+          pnpm exec prettier --write apps/web/app/worker/opportunity/'[opportunityId]'/page.tsx apps/web/app/outbox/page.tsx apps/web/tests/e2e/worker-invitation-detail.spec.ts
+          git diff --check
+          git add apps/web/app/worker/opportunity/'[opportunityId]'/page.tsx apps/web/app/outbox/page.tsx apps/web/tests/e2e/worker-invitation-detail.spec.ts
+          git diff --cached --stat
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Align W-02 location status with canonical domain and format views'
+          git push origin HEAD:gate/4-w02-invitation-detail
