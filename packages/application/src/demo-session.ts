@@ -370,7 +370,9 @@ export function inviteWorker(
     );
   }
   if (opportunity.terms.acceptanceMode !== 'InviteOnly') {
-    throw new DemoSessionConflictError('Cannot invite: this opportunity does not accept invitations.');
+    throw new DemoSessionConflictError(
+      'Cannot invite: this opportunity does not accept invitations.',
+    );
   }
   if (opportunity.employerId !== input.employerId || opportunity.title !== input.opportunityTitle) {
     throw new DemoSessionConflictError(
