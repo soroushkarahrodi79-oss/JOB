@@ -11,9 +11,10 @@ import { draftOpportunity, publishedOpportunities } from './demo-session';
 // It also reports what is NOT built. The employer's queue is chiefly submitted proof decisions
 // (screen-inventory.md E-01), and proof review, engagement monitoring and the trust profile do not
 // exist in this slice. Candidate listing and invitation now do (E-04), reached from each published
-// opportunity row rather than from this planned list. A screen that omitted the rest would read as
-// an employer with a quiet day rather than a product with several unbuilt screens, which is the
-// difference between an honest empty state and a flattering one.
+// opportunity row rather than from this planned list. SH-03 is a working MOCK-message outbox in
+// the employer rail and is no longer described here as a planned area. A screen that omitted the
+// remaining gaps would read as an employer with a quiet day rather than a product with unbuilt
+// screens, which is the difference between an honest empty state and a flattering one.
 
 /** A queue entry. One work item, with the state that makes it an item. */
 export interface EmployerQueueItem {
@@ -24,7 +25,7 @@ export interface EmployerQueueItem {
 /** A part of the employer's day this slice does not build. Rendered as PLANNED, never as a control. */
 export interface EmployerPlannedArea {
   /** The screen id, so the ledger and the inventory can be traced from the screen. */
-  readonly screenId: 'E-06' | 'E-07' | 'E-08' | 'SH-03';
+  readonly screenId: 'E-06' | 'E-07' | 'E-08';
   readonly label: string;
   readonly whatItWouldShow: string;
 }
@@ -60,11 +61,6 @@ const PLANNED_AREAS: readonly EmployerPlannedArea[] = [
     screenId: 'E-08',
     label: 'نمایهٔ اعتماد شما',
     whatItWouldShow: 'سابقهٔ پرداخت، لغو و تغییرات شما — همان چیزی که کارگر دربارهٔ شما می‌بیند.',
-  },
-  {
-    screenId: 'SH-03',
-    label: 'پیام‌ها',
-    whatItWouldShow: 'صندوق پیام‌های خروجی. هیچ پیامی از سامانه خارج نمی‌شود.',
   },
 ];
 

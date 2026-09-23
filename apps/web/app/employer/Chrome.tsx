@@ -8,15 +8,9 @@ import { Latin } from '../Latin';
 import styles from './employer.module.css';
 
 // The employer's navigation (navigation.md, "Employer"): a slim rail at the inline start at
-// `wide` and `regular`, collapsing to a top bar at `compact`. Three destinations and one action —
-// and no more, because "a navigation destination exists only if the screen inventory makes it an
-// entry point".
-//
-// Two of the three destinations are not built. They render as named, non-interactive items marked
-// PLANNED rather than as links: color.md's rule for PLANNED is "not rendered as a control at all —
-// prefer absence over a dead affordance", and the screen inventory's own list is the reason they
-// are named rather than silently dropped. A rail that quietly showed one destination would read as
-// a product with one screen instead of a slice of a product with several.
+// `wide` and `regular`, collapsing to a top bar at `compact`. Three destinations and one action.
+// E-08 remains PLANNED; SH-03 is now a working view of the MOCK invitations already in the
+// shared session. The third destination is never a real SMS integration or a conversation.
 //
 // E-04, E-05, E-06, E-07 and E-09 are never in the chrome. Each is about a specific opportunity or
 // engagement, and a candidate list with no opportunity is not a screen.
@@ -33,7 +27,7 @@ interface RailItem {
 const DESTINATIONS: readonly RailItem[] = [
   { label: 'کارها', screenId: 'E-01', href: '/employer' },
   { label: 'نمایهٔ اعتماد', screenId: 'E-08', href: null },
-  { label: 'پیام‌ها', screenId: 'SH-03', href: null },
+  { label: 'پیام‌ها', screenId: 'SH-03', href: '/outbox' },
 ];
 
 export function EmployerChrome({ children }: { children: React.ReactNode }) {
@@ -71,6 +65,7 @@ export function EmployerChrome({ children }: { children: React.ReactNode }) {
                   <Link
                     className={`type-label ${styles.railLink}`}
                     href={item.href}
+                    data-testid={`rail-${item.screenId}`}
                     aria-current={pathname === item.href ? 'page' : undefined}
                   >
                     {item.label}
@@ -80,9 +75,7 @@ export function EmployerChrome({ children }: { children: React.ReactNode }) {
             )}
           </ul>
 
-          {/* An ACTION, not a destination (navigation.md). It is the employer's one reason to be
-              here that does not start from a work item, so it is the most prominent control in
-              the chrome. */}
+          {/* The employer's one prominent action does not become a fourth navigation item. */}
           <Link
             className={`type-body-strong ${styles.railAction}`}
             href="/employer/opportunity/new"

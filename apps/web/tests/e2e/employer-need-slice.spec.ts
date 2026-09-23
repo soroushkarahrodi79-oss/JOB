@@ -74,17 +74,15 @@ test.describe('SH-01 → E-01 — the employer actor reaches a built home', () =
     await expect(page.getByRole('heading', { level: 1, name: 'کارها' })).toBeVisible();
   });
 
-  test('the employer chrome names its unbuilt destinations without making them controls', async ({
+  test('keeps E-08 planned but exposes SH-03 as a real MOCK outbox destination', async ({
     page,
   }) => {
     await enterAsEmployer(page);
-    for (const screenId of ['E-08', 'SH-03']) {
-      await expect(page.getByTestId(`rail-planned-${screenId}`)).toContainText('PLANNED');
-    }
-    // Neither is a link — a PLANNED destination is not rendered as a control at all.
+    await expect(page.getByTestId('rail-planned-E-08')).toContainText('PLANNED');
     const rail = page.getByRole('navigation', { name: 'پیمایش کارفرما' });
     await expect(rail.getByRole('link', { name: 'نمایهٔ اعتماد' })).toHaveCount(0);
-    await expect(rail.getByRole('link', { name: 'پیام‌ها' })).toHaveCount(0);
+    await expect(rail.getByTestId('rail-SH-03')).toHaveAttribute('href', '/outbox');
+    await expect(rail.getByRole('link', { name: 'پیام‌ها' })).toHaveCount(1);
   });
 });
 
@@ -102,9 +100,10 @@ test.describe('E-01 — Employer Home', () => {
   }) => {
     await enterAsEmployer(page);
     const planned = page.getByTestId('planned-areas');
-    for (const screenId of ['E-06', 'E-07', 'E-08', 'SH-03']) {
+    for (const screenId of ['E-06', 'E-07', 'E-08']) {
       await expect(planned).toContainText(screenId);
     }
+    await expect(planned).not.toContainText('SH-03');
     // E-04 is now built, so it is no longer named as an unbuilt area.
     await expect(planned).not.toContainText('E-04');
   });

@@ -1,0 +1,84 @@
+.shell {
+  min-block-size: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 52rem;
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-gutter) var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+}
+
+.header,
+.section {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.header {
+  max-inline-size: 42rem;
+}
+
+.back {
+  color: var(--color-fg-accent);
+  align-self: flex-start;
+  min-block-size: var(--target-minimum);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.message {
+  min-inline-size: 0;
+  padding-block: var(--space-row);
+  border-block-start: var(--border-width-hairline) solid var(--color-border-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  overflow-wrap: anywhere;
+}
+
+.messageHeading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+}
+
+.facts > div {
+  min-inline-size: 0;
+}
+
+.facts dt {
+  color: var(--color-fg-muted);
+}
+
+.facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.notice {
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  background: var(--color-surface-recessed);
+  border-inline-start: var(--border-width-emphasis) solid var(--color-border-emphasis);
+}
