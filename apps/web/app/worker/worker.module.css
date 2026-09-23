@@ -1,6 +1,7 @@
 /* W-01: compact page rhythm with generous worker-sized fact rows. A published opportunity is a
    flat record, not a rounded marketplace card (design/foundations.md). */
 .workerPage {
+  flex: 1;
   max-inline-size: 46rem;
   gap: var(--space-5);
   padding-block: var(--space-4) var(--space-6);
