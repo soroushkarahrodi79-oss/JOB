@@ -267,9 +267,16 @@ export default function WorkerInvitationDetailPage() {
                 رفتن به بررسی آزمایشی هویت
               </Link>
               <p className="type-detail">
-                پذیرش یا رد دعوت (<Latin>W-04</Latin>) هنوز ساخته نشده است — <Latin>PLANNED</Latin>.
-                تکمیل بررسی آزمایشی، دعوت را نمی‌پذیرد.
+                تکمیل بررسی آزمایشی، دعوت را نمی‌پذیرد. پاسخ کارگر جداگانه در <Latin>W-04</Latin>
+                ثبت می‌شود.
               </p>
+              <Link
+                href={`/worker/opportunity/${opportunityId}/respond`}
+                className={styles.back}
+                data-testid="worker-response-link"
+              >
+                پذیرش یا رد دعوت
+              </Link>
             </section>
           </>
         )}
