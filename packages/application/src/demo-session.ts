@@ -3,6 +3,8 @@ import {
   evaluateClassificationSignal,
   generateSyntheticDemoWorld,
   transitionOpportunity,
+  type ArrivalCode,
+  type Attestation,
   type ClassificationFactor,
   type ClassificationSignal,
   type EligibilityRequirement,
@@ -72,6 +74,13 @@ export type DemoEngagementEvent =
         readonly source: 'SimulatedIdentityProvider';
         readonly recordedAt: string;
       };
+    }
+  | {
+      readonly id: string;
+      readonly engagementId: string;
+      readonly kind: 'Arrived';
+      readonly recordedAt: string;
+      readonly arrivalAttestation: Attestation;
     };
 
 export interface DemoEngagementRecord {
@@ -79,10 +88,12 @@ export interface DemoEngagementRecord {
   readonly opportunityId: string;
   readonly workerId: string;
   readonly employerId: string;
-  readonly state: 'Offered' | 'Accepted' | 'Declined';
+  readonly state: 'Offered' | 'Accepted' | 'InProgress' | 'Declined';
   readonly offeredAt: string;
   readonly acceptedAt?: string;
   readonly declinedAt?: string;
+  readonly arrivalCode?: ArrivalCode;
+  readonly arrivalAttestation?: Attestation;
 }
 
 /**
