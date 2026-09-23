@@ -1,0 +1,228 @@
+name: W04 accepted-terms evidence integration
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/zz-w04-terms-one-time.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.head_ref == 'gate/4-w04-accepted-terms-evidence' && github.event.pull_request.head.repo.full_name == 'soroushkarahrodi79-oss/JOB'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gate/4-w04-accepted-terms-evidence
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable && pnpm install --frozen-lockfile
+      - name: Add immutable acceptance evidence and event regressions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def edit(path, before, after):
+              f=Path(path)
+              s=f.read_text(encoding='utf-8')
+              count=s.count(before)
+              if count != 1:
+                  raise RuntimeError(f'{path}: expected one match, got {count}: {before[:90]!r}')
+              f.write_text(s.replace(before,after), encoding='utf-8')
+
+          demo='packages/application/src/demo-session.ts'
+          edit(demo, 'export interface DemoEngagementRecord {', '''/** A value copy of the terms the worker saw and confirmed at W-04. No live Opportunity alias. */
+          export interface DemoAgreedTermsSnapshot {
+            readonly title: string;
+            readonly terms: OpportunityTerms;
+            readonly requirements: readonly EligibilityRequirement[];
+            readonly employerNote: string;
+            readonly commitment: PaymentCommitment;
+          }
+
+          /** Append-only facts. In particular, accepting carries the agreed terms and simulated verification provenance. */
+          export type DemoEngagementEvent =
+            | {
+                readonly id: string;
+                readonly engagementId: string;
+                readonly kind: 'Invited' | 'Declined';
+                readonly recordedAt: string;
+              }
+            | {
+                readonly id: string;
+                readonly engagementId: string;
+                readonly kind: 'Accepted';
+                readonly recordedAt: string;
+                readonly agreedTerms: DemoAgreedTermsSnapshot;
+                readonly verification: {
+                  readonly source: 'SimulatedIdentityProvider';
+                  readonly recordedAt: string;
+                };
+              };
+
+          export interface DemoEngagementRecord {''')
+          edit(demo, '  readonly engagements: readonly DemoEngagementRecord[];', '''  readonly engagements: readonly DemoEngagementRecord[];
+            /** Append-only invitation and response events; no inferred events for legacy browser-tab sessions. */
+            readonly engagementEvents: readonly DemoEngagementEvent[];''')
+          edit(demo, '    engagements: [],', '    engagements: [],\n    engagementEvents: [],')
+          edit(demo, '    engagements: [...session.engagements, engagement],\n    notifications:', '''    engagements: [...session.engagements, engagement],
+            engagementEvents: [
+              ...(session.engagementEvents ?? []),
+              {
+                id: `${engagement.id}:invited`,
+                engagementId: engagement.id,
+                kind: 'Invited',
+                recordedAt: input.recordedAt,
+              },
+            ],
+            notifications:''')
+
+          worker='packages/application/src/worker-response.ts'
+          edit(worker, "import { DemoSessionConflictError, opportunityById, type DemoSession } from './demo-session';", "import { DemoSessionConflictError, opportunityById, type DemoAgreedTermsSnapshot, type DemoSession } from './demo-session';")
+          edit(worker, '''      ),
+            };
+          }
+
+          if (
+            opportunity.lifecycle.state''', '''      ),
+              engagementEvents: [
+                ...(session.engagementEvents ?? []),
+                {
+                  id: `${engagement.id}:declined`,
+                  engagementId: engagement.id,
+                  kind: 'Declined',
+                  recordedAt: input.recordedAt,
+                },
+              ],
+            };
+          }
+
+          if (
+            opportunity.lifecycle.state''')
+          edit(worker, '''  const verified =
+            lastIdentityAttempt(session, input.opportunityId, input.workerId)?.result ===
+            'VerifiedSimulated';''', '''  const verificationAttempt = lastIdentityAttempt(session, input.opportunityId, input.workerId);
+          const verified = verificationAttempt?.result === 'VerifiedSimulated';''')
+          edit(worker, '''  const acceptedCount = opportunity.lifecycle.acceptedEngagementCount + 1;''', '''  if (verificationAttempt?.result !== 'VerifiedSimulated') {
+            throw new DemoSessionConflictError('Cannot record acceptance without simulated verification evidence.');
+          }
+          const agreedTerms: DemoAgreedTermsSnapshot = {
+            title: opportunity.title,
+            terms: {
+              ...opportunity.terms,
+              amount: { ...opportunity.terms.amount },
+              location: { ...opportunity.terms.location },
+              ...(opportunity.terms.travelBoundary === undefined
+                ? {}
+                : { travelBoundary: { ...opportunity.terms.travelBoundary } }),
+            },
+            requirements: opportunity.requirements.map((requirement) => ({ ...requirement })),
+            employerNote: opportunity.employerNote,
+            commitment: {
+              ...opportunity.commitment,
+              amount: { ...opportunity.commitment.amount },
+            },
+          };
+
+          const acceptedCount = opportunity.lifecycle.acceptedEngagementCount + 1;''')
+          edit(worker, '''    opportunities: session.opportunities.map((item) =>
+              item.id === opportunity.id ? { ...item, lifecycle: opportunityLifecycle } : item,
+            ),
+          };''', '''    opportunities: session.opportunities.map((item) =>
+              item.id === opportunity.id ? { ...item, lifecycle: opportunityLifecycle } : item,
+            ),
+            engagementEvents: [
+              ...(session.engagementEvents ?? []),
+              {
+                id: `${engagement.id}:accepted`,
+                engagementId: engagement.id,
+                kind: 'Accepted',
+                recordedAt: input.recordedAt,
+                agreedTerms,
+                verification: {
+                  source: verificationAttempt.source,
+                  recordedAt: verificationAttempt.recordedAt,
+                },
+              },
+            ],
+          };''')
+
+          provider='apps/web/app/demo/session.tsx'
+          edit(provider, '''    return { ...stored, identityAttempts: stored.identityAttempts ?? [] };''', '''    return {
+              ...stored,
+              identityAttempts: stored.identityAttempts ?? [],
+              engagementEvents: stored.engagementEvents ?? [],
+            };''')
+
+          test='packages/application/src/worker-response.test.ts'
+          edit(test, "  it('refuses a second response after the offer has left Offered', () => {", '''  it('records one append-only invitation and one acceptance with a copied pay-basis-aware terms snapshot', () => {
+            const original = verified(offered());
+            const accepted = respondToInvitation(original, {
+              opportunityId: FEATURED,
+              workerId: WORKER,
+              decision: 'Accept',
+              recordedAt: DEMO_NOW,
+            });
+            expect(original.engagementEvents.map((event) => event.kind)).toEqual(['Invited']);
+            expect(accepted.engagementEvents.map((event) => event.kind)).toEqual(['Invited', 'Accepted']);
+            const event = accepted.engagementEvents[1];
+            if (event?.kind !== 'Accepted') throw new Error('missing acceptance evidence');
+            expect(event.agreedTerms.title).toBe(FEATURED_OPPORTUNITY_PLAN.title);
+            expect(event.agreedTerms.terms.payBasis).toBe('PerShift');
+            expect(event.agreedTerms.terms.amount).toEqual(event.agreedTerms.commitment.amount);
+            expect(event.agreedTerms.commitment.platformHoldsFunds).toBe(false);
+            expect(event.agreedTerms.requirements).toEqual(accepted.opportunities[0]?.requirements);
+            expect(event.verification).toEqual({
+              source: 'SimulatedIdentityProvider',
+              recordedAt: DEMO_NOW,
+            });
+            const updatedOpportunity = {
+              ...accepted.opportunities[0]!,
+              title: 'Changed after acceptance',
+              terms: { ...accepted.opportunities[0]!.terms, workEndsAt: '2026-09-24T09:00:00.000Z' },
+            };
+            const later = { ...accepted, opportunities: [updatedOpportunity] };
+            expect(later.engagementEvents[1]).toEqual(event);
+            expect(event.agreedTerms.title).not.toBe(updatedOpportunity.title);
+            expect(event.agreedTerms.terms.workEndsAt).not.toBe(updatedOpportunity.terms.workEndsAt);
+          });
+
+          it('records a decline without inventing accepted terms, and rejects duplicate events', () => {
+            const declined = respondToInvitation(offered(), {
+              opportunityId: FEATURED,
+              workerId: WORKER,
+              decision: 'Decline',
+              recordedAt: DEMO_NOW,
+            });
+            expect(declined.engagementEvents.map((event) => event.kind)).toEqual(['Invited', 'Declined']);
+            expect('agreedTerms' in declined.engagementEvents[1]!).toBe(false);
+            expect(() => respondToInvitation(declined, {
+              opportunityId: FEATURED,
+              workerId: WORKER,
+              decision: 'Decline',
+              recordedAt: DEMO_NOW,
+            })).toThrow();
+            expect(declined.engagementEvents).toHaveLength(2);
+          });
+
+          it('refuses a second response after the offer has left Offered', () => {''')
+          PY
+      - name: Format and verify targeted files
+        run: |
+          pnpm exec prettier --write packages/application/src/demo-session.ts packages/application/src/worker-response.ts packages/application/src/worker-response.test.ts apps/web/app/demo/session.tsx
+          git diff --check
+          pnpm --filter @platform/application typecheck
+          pnpm --filter @platform/application test
+      - name: Commit only acceptance evidence changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add packages/application/src/demo-session.ts packages/application/src/worker-response.ts packages/application/src/worker-response.test.ts apps/web/app/demo/session.tsx
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record copied acceptance terms and append-only engagement events'
+            git push origin HEAD:gate/4-w04-accepted-terms-evidence
+          fi
