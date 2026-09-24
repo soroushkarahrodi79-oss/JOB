@@ -24,6 +24,7 @@ import {
   recordSimulatedIdentityOutcome,
   respondToInvitation,
   selectActor,
+  submitCompletionProof,
   type ActorKey,
   type DemoSession,
   type FactorAnswerKey,
@@ -74,6 +75,7 @@ interface DemoSessionContextValue {
   ) => void;
   readonly issueWorkerArrivalCode: (engagementId: string) => void;
   readonly checkIn: (engagementId: string, suppliedCode: string) => void;
+  readonly submitCompletion: (engagementId: string) => void;
   readonly abandonDraft: () => void;
 }
 
@@ -221,6 +223,17 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
           engagementId,
           workerId: 'WKR-DEMO-01',
           suppliedCode,
+          recordedAt: session.now,
+        });
+        write(updated);
+        setSession(updated);
+      },
+      submitCompletion: (engagementId) => {
+        // Synchronous like checkIn: a domain refusal propagates to the caller's try/catch rather
+        // than throwing inside a deferred state updater.
+        const updated = submitCompletionProof(session, {
+          engagementId,
+          workerId: 'WKR-DEMO-01',
           recordedAt: session.now,
         });
         write(updated);

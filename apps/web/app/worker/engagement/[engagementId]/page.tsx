@@ -146,14 +146,18 @@ export default function WorkerEngagementPage() {
                   قدرت گواه ورود <TruthChip level="SIMULATED" href="/truth#truth-row-10" /> — این
                   نمونه هیچ موقعیت واقعی دستگاه را جمع‌آوری نکرده است.
                 </p>
+                <Link href={`/worker/engagement/${engagementId}/completion`} data-testid="go-w06">
+                  ثبت گزارش پایان کار (<Latin>W-06</Latin>)
+                </Link>
               </section>
             )}
 
             <section className={shared.section}>
               <h2 className="type-title">بعد از ورود</h2>
               <p className="type-detail">
-                ثبت تغییر ساختاریافتهٔ کار و ارسال گزارش پایان کار هنوز در این برش ساخته نشده‌اند —{' '}
-                <Latin>PLANNED</Latin>. ورود به‌تنهایی هیچ پرداختی را آزاد نمی‌کند.
+                گزارش پایان کار اکنون در <Latin>W-06</Latin> قابل ثبت است. ثبت تغییر ساختاریافتهٔ
+                کار هنوز ساخته نشده است — <Latin>PLANNED</Latin>. ورود به‌تنهایی هیچ پرداختی را آزاد
+                نمی‌کند.
               </p>
             </section>
           </>

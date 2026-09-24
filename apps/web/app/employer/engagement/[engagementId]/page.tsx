@@ -117,6 +117,28 @@ export default function EmployerEngagementPage() {
             </section>
           )}
 
+          <section className={shared.section} data-testid="employer-completion-review">
+            <h2 className="type-title">بررسی گزارش پایان کار</h2>
+            {engagement.completionProof?.state === 'Submitted' ? (
+              <>
+                <p className="type-body">
+                  کارگر گزارش پایان کار را ثبت کرده و وضعیت گواهِ کار اکنون <Latin>Submitted</Latin>{' '}
+                  است؛ منتظر بررسی شماست.
+                </p>
+                <p className="type-detail">
+                  قدرت این گواه <TruthChip level="SIMULATED" href="/truth#truth-row-10" /> است —
+                  اظهارِ خودِ کارگر، نه سند تأییدشدهٔ انجام واقعی کار. تأیید یا اعتراض کارفرما هنوز
+                  ساخته نشده است — <Latin>PLANNED</Latin>؛ تا آن زمان هیچ پرداختی آزاد نمی‌شود.
+                </p>
+              </>
+            ) : (
+              <p className="type-detail" data-testid="employer-completion-awaited">
+                هنوز گزارشی از سوی کارگر ثبت نشده است. پس از ثبت، همین‌جا برای بررسی نمایش داده
+                می‌شود.
+              </p>
+            )}
+          </section>
+
           <section className={shared.section}>
             <h2 className="type-title">تغییر در کار</h2>
             <p className="type-detail">

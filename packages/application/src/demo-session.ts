@@ -13,6 +13,7 @@ import {
   type OpportunityTerms,
   type PaymentCommitment,
   type PaymentIntentState,
+  type ProofOfWorkState,
 } from '@platform/domain';
 import {
   captureClassificationFactors,
@@ -81,7 +82,28 @@ export type DemoEngagementEvent =
       readonly kind: 'Arrived';
       readonly recordedAt: string;
       readonly arrivalAttestation: Attestation;
+    }
+  | {
+      readonly id: string;
+      readonly engagementId: string;
+      readonly kind: 'CompletionSubmitted';
+      readonly recordedAt: string;
+      readonly completionAttestation: Attestation;
     };
+
+/**
+ * The engagement's ProofOfWork, projected into the demo session. One per engagement (arrival is
+ * held on the engagement itself; this record carries the completion half). `state` is the canonical
+ * `ProofOfWorkState`, moved only through `transitionProofOfWork`; the application never invents a
+ * proof state. The completion `attestation.strength` is `SelfDeclared`: the worker declares the work
+ * done, which the domain records faithfully but does not verify — `SIMULATED` at the point of use
+ * (truth-matrix row 10). Submission is not approval; the employer half stays PLANNED.
+ */
+export interface DemoCompletionProof {
+  readonly state: ProofOfWorkState;
+  readonly attestation: Attestation;
+  readonly submittedAt: string;
+}
 
 export interface DemoEngagementRecord {
   readonly id: string;
@@ -94,6 +116,8 @@ export interface DemoEngagementRecord {
   readonly declinedAt?: string;
   readonly arrivalCode?: ArrivalCode;
   readonly arrivalAttestation?: Attestation;
+  /** The completion ProofOfWork, present once the worker submits at W-06. */
+  readonly completionProof?: DemoCompletionProof;
 }
 
 /**
