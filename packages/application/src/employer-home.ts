@@ -49,8 +49,9 @@ export interface EmployerHomeModel {
 const PLANNED_AREAS: readonly EmployerPlannedArea[] = [
   {
     screenId: 'E-06',
-    label: 'پیگیری همکاری در جریان',
-    whatItWouldShow: 'وضعیت حضور و ثبت تغییر در شرح یا زمان کار.',
+    label: 'تغییر ساختاریافتهٔ همکاری',
+    whatItWouldShow:
+      'بخش کد ورود و وضعیت حضور ساخته شده است؛ ثبت تغییر در شرح یا زمان کار هنوز برنامه‌ریزی‌شده است.',
   },
   {
     screenId: 'E-07',

@@ -12,10 +12,12 @@ import {
 } from 'react';
 import {
   answerFactor,
+  checkInWorker,
   createOpportunity,
   discardDraft,
   initialDemoSession,
   inviteWorker,
+  issueArrivalCode,
   markClassificationShown,
   opportunityById,
   publishOpportunity,
@@ -70,6 +72,8 @@ interface DemoSessionContextValue {
     opportunityId: string,
     decision: WorkerInvitationDecision,
   ) => void;
+  readonly issueWorkerArrivalCode: (engagementId: string) => void;
+  readonly checkIn: (engagementId: string, suppliedCode: string) => void;
   readonly abandonDraft: () => void;
 }
 
@@ -203,6 +207,24 @@ export function DemoSessionProvider({ children }: { children: ReactNode }) {
             recordedAt: current.now,
           }),
         );
+      },
+      issueWorkerArrivalCode: (engagementId) => {
+        apply((current) =>
+          issueArrivalCode(current, {
+            engagementId,
+            employerId: FEATURED_OPPORTUNITY_PLAN.employerId,
+          }),
+        );
+      },
+      checkIn: (engagementId, suppliedCode) => {
+        const updated = checkInWorker(session, {
+          engagementId,
+          workerId: 'WKR-DEMO-01',
+          suppliedCode,
+          recordedAt: session.now,
+        });
+        write(updated);
+        setSession(updated);
       },
       abandonDraft: () => {
         apply(discardDraft);

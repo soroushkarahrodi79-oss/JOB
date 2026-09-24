@@ -79,7 +79,12 @@ function OpportunityRow({ record }: { record: DemoOpportunityRecord }) {
 export default function EmployerHomePage() {
   const { session, restored } = useDemoSession();
   const model = employerHomeModel(session, EMPLOYER_ID);
-  const nothingWaiting = model.queue.length === 0 && model.draft === undefined;
+  const liveEngagements = session.engagements.filter(
+    (item) =>
+      item.employerId === EMPLOYER_ID && (item.state === 'Accepted' || item.state === 'InProgress'),
+  );
+  const nothingWaiting =
+    model.queue.length === 0 && model.draft === undefined && liveEngagements.length === 0;
 
   return (
     <div className={styles.page}>
@@ -144,6 +149,27 @@ export default function EmployerHomePage() {
         {restored
           ? model.queue.map((item) => <OpportunityRow key={item.record.id} record={item.record} />)
           : null}
+
+        {restored && liveEngagements.length > 0 ? (
+          <div data-testid="live-engagements">
+            {liveEngagements.map((engagement) => (
+              <article className={styles.workItem} key={engagement.id}>
+                <div className={styles.workItemHead}>
+                  <h3 className="type-subtitle">همکاری با {engagement.workerId}</h3>
+                  <span className="type-identifier">{engagement.state}</span>
+                </div>
+                <p className="type-body">کد ورود، وضعیت رسیدن و ادامهٔ همکاری را در E‑06 ببینید.</p>
+                <Link
+                  className={`type-body-strong ${styles.inlineLink}`}
+                  href={`/employer/engagement/${engagement.id}`}
+                  data-testid={`engagement-monitor-${engagement.workerId}`}
+                >
+                  پیگیری همکاری (<Latin>E-06</Latin>)
+                </Link>
+              </article>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       {/* What the employer's day would otherwise contain. Named, with what each would show, and

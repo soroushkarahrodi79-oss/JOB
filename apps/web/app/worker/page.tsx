@@ -236,22 +236,32 @@ export default function WorkerHomePage() {
                       {item.state === 'Offered'
                         ? 'این دعوت ثبت شده ولی هنوز پذیرفته نشده است.'
                         : item.state === 'Accepted'
-                          ? 'شرایط پذیرفته شده‌اند؛ شروع کار و پرداخت هنوز ثبت نشده‌اند.'
-                          : 'کارگر این دعوت را رد کرده است؛ رد دعوت به‌خودی‌خود سیگنال قابلیت اعتماد نیست.'}{' '}
+                          ? 'شرایط پذیرفته شده‌اند؛ ورود به کار هنوز ثبت نشده است.'
+                          : item.state === 'InProgress'
+                            ? 'ورود ثبت شده و همکاری در حال انجام است.'
+                            : 'کارگر این دعوت را رد کرده است؛ رد دعوت به‌خودی‌خود سیگنال قابلیت اعتماد نیست.'}{' '}
                       هیچ پیامکی ارسال نشده است.{' '}
                       <TruthChip level="MOCK" href="/truth#truth-row-16" />
                     </p>
                     <Link
-                      href={`/worker/opportunity/${item.opportunityId}/respond`}
+                      href={
+                        item.state === 'Accepted' || item.state === 'InProgress'
+                          ? `/worker/engagement/${item.id}`
+                          : `/worker/opportunity/${item.opportunityId}/respond`
+                      }
                       className={styles.action}
                     >
-                      {item.state === 'Offered' ? 'پاسخ به دعوت' : 'دیدن پاسخ ثبت‌شده'}
+                      {item.state === 'Offered'
+                        ? 'پاسخ به دعوت'
+                        : item.state === 'Accepted' || item.state === 'InProgress'
+                          ? 'جزئیات همکاری و ورود'
+                          : 'دیدن پاسخ ثبت‌شده'}
                     </Link>
                   </article>
                 ))
               )}
               <p className={`${styles.plannedNote} type-detail`}>
-                حضور در کار و سابقهٔ تکمیل‌شده هنوز در این برش ساخته نشده‌اند —{' '}
+                گزارش پایان کار و سابقهٔ تکمیل‌شده هنوز در این برش ساخته نشده‌اند —{' '}
                 <Latin>PLANNED</Latin>.
               </p>
             </section>

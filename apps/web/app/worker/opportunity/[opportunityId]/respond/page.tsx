@@ -107,7 +107,18 @@ export default function WorkerResponsePage() {
               بررسی هویتِ مبنا <TruthChip level="SIMULATED" href="/truth#truth-row-3" /> · پیام دعوت{' '}
               <TruthChip level="MOCK" href="/truth#truth-row-16" />
             </p>
-            <Link href="/worker">بازگشت به کارهای من</Link>
+            <Link href={`/worker/engagement/${engagement.id}`} data-testid="go-w05">
+              رفتن به جزئیات همکاری و ثبت ورود
+            </Link>
+          </section>
+        ) : engagement.state === 'InProgress' ? (
+          <section className={shared.section} data-testid="response-in-progress">
+            <h2 className="type-title">کار در جریان است</h2>
+            <p className="type-body">
+              پاسخ قبلاً ثبت شده و ورود نیز انجام شده است. وضعیت همکاری اکنون{' '}
+              <Latin>InProgress</Latin> است.
+            </p>
+            <Link href={`/worker/engagement/${engagement.id}`}>بازگشت به W‑05</Link>
           </section>
         ) : engagement.state === 'Declined' ? (
           <section className={shared.section} data-testid="response-declined">
