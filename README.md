@@ -20,10 +20,16 @@ neither default is a production or pilot policy. See
   demo data. No adapter contacts a real external service.
 - A pnpm workspace, strict TypeScript, linting, test runners, a self-hosted font, and the token and
   design-system-primitive layers (GATE 2 / GATE 1.5).
+- A growing Persian-first, RTL prototype surface over the domain: the worker and employer demo
+  journeys through simulated arrival check-in (W-05) and completion-proof submission (W-06), plus
+  opportunity creation, candidate matching, invitation and identity verification. It is a
+  single-browser-tab demo with no database. Which screens are built versus planned is tracked in
+  the [screen inventory](docs/product/screen-inventory.md).
 
-**What does not exist yet:** product screens. GATE 4 — composing the primitives into a
-Persian-first, RTL-native prototype surface over the domain — has not been built. There is still
-no database; the prototype's data is synthetic and in-repo.
+**What does not exist yet:** the later stages of the journey — payment and receipt (W-07), the
+Worker Passport, and the employer-side proof review, approval and dispute flow — remain **PLANNED**.
+GATE 4 is in progress, not complete. There is still no database; the prototype's data is synthetic
+and in-repo, and no adapter contacts a real external service.
 
 ## Start here
 

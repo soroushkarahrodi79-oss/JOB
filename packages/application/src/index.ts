@@ -66,6 +66,7 @@ export {
   selectActor,
   toOpportunity,
   type ActorKey,
+  type DemoCompletionProof,
   type DemoEngagementRecord,
   type DemoNotification,
   type DemoOpportunityRecord,
@@ -102,3 +103,5 @@ export {
 export { respondToInvitation, type WorkerInvitationDecision } from './worker-response';
 
 export { checkInWorker, issueArrivalCode } from './worker-checkin';
+
+export { submitCompletionProof } from './worker-completion';
