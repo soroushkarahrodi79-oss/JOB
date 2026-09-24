@@ -7,7 +7,6 @@ import { formatJalali, formatTimeWindow, TruthChip } from '@platform/ui';
 import { useDemoSession } from '../../../demo/session';
 import { Latin } from '../../../Latin';
 import shared from '../../../outbox/outbox.module.css';
-import { EmployerChrome } from '../../Chrome';
 import styles from '../../employer.module.css';
 
 export default function EmployerEngagementPage() {
@@ -30,7 +29,7 @@ export default function EmployerEngagementPage() {
   const end = opportunity === undefined ? undefined : new Date(opportunity.terms.workEndsAt);
 
   const content = (
-    <main className={shared.page} data-session-restored={restored ? 'true' : 'false'}>
+    <main className={shared.page}>
       <header className={shared.header}>
         <Link className={shared.back} href="/employer">
           بازگشت به کارها
@@ -129,5 +128,9 @@ export default function EmployerEngagementPage() {
     </main>
   );
 
-  return <EmployerChrome>{content}</EmployerChrome>;
+  // The employer route group's layout.tsx already wraps every page in EmployerChrome
+  // (which renders the shell, the DemoBar and the single data-session-restored signal).
+  // Returning content bare avoids a second nested chrome — the defect that rendered two
+  // DemoBars and made [data-session-restored="true"] non-unique on this route.
+  return content;
 }
